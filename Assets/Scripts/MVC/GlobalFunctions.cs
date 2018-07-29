@@ -1209,44 +1209,49 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void CombatAttack(int parentX, int parentY, int targetX, int targetY){
 
-        // instantiate units
-        UnitType attacker = GlobalVariables.unitsMatrix[ parentX,parentY ];
-        UnitType defender = GlobalVariables.unitsMatrix[ targetX,targetY ];
+        if( GlobalVariables.unitsMatrix[ targetX,targetY ] != null ){
 
-        // variable bank
-        int attackRoll = UnityEngine.Random.Range(1, 21);
-        int defendRoll = UnityEngine.Random.Range(1, 21);
-        int damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
-        int BALvalue = 10;
-        Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
-        if(battleOption == Enums.BattleOption.LightAttack){
-            BALvalue = 10;
-        }else if(battleOption == Enums.BattleOption.HeavyAttack){
-            BALvalue = 30; 
+            // instantiate units
+            UnitType attacker = GlobalVariables.unitsMatrix[ parentX,parentY ];
+            UnitType defender = GlobalVariables.unitsMatrix[ targetX,targetY ];
+
+            // variable bank
+            int attackRoll = UnityEngine.Random.Range(1, 21);
+            int defendRoll = UnityEngine.Random.Range(1, 21);
+            int damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
+            int BALvalue = 10;
+            Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
+            if(battleOption == Enums.BattleOption.LightAttack){
+                BALvalue = 10;
+            }else if(battleOption == Enums.BattleOption.HeavyAttack){
+                BALvalue = 30; 
+            }
+
+            // generate attack and defense scores
+            attackRoll += (int)attacker.accuracy;
+            defendRoll += (int)defender.defense;
+
+            Debug.Log("attack roll: "+attackRoll);
+            Debug.Log("defend roll: "+defendRoll);
+
+            // conduct attack
+                // HIT!
+            if(attackRoll >= defendRoll){ 
+                defender.hitPoints = LessThanZero(defender.hitPoints - damageRoll);
+                defender.balance = LessThanZero(defender.balance - BALvalue);
+                Debug.Log("attacker deals "+damageRoll+" damage with "+battleOption.ToString());
+                // MISS!
+            }else{ 
+                attacker.balance = LessThanZero(attacker.balance - BALvalue);
+                Debug.Log("attacker missed!");
+            }
+
+            // update units
+            GlobalVariables.unitsMatrix[ parentX,parentY ] = attacker;
+            GlobalVariables.unitsMatrix[ targetX,targetY ] = defender;
+
         }
 
-        // generate attack and defense scores
-        attackRoll += (int)attacker.accuracy;
-        defendRoll += (int)defender.defense;
-
-        Debug.Log("attack roll: "+attackRoll);
-        Debug.Log("defend roll: "+defendRoll);
-
-        // conduct attack
-            // HIT!
-        if(attackRoll >= defendRoll){ 
-            defender.hitPoints = LessThanZero(defender.hitPoints - damageRoll);
-            defender.balance = LessThanZero(defender.balance - BALvalue);
-            Debug.Log("attacker deals "+damageRoll+" damage with "+battleOption.ToString());
-            // MISS!
-        }else{ 
-            attacker.balance = LessThanZero(attacker.balance - BALvalue);
-            Debug.Log("attacker missed!");
-        }
-
-        // update units
-        GlobalVariables.unitsMatrix[ parentX,parentY ] = attacker;
-        GlobalVariables.unitsMatrix[ targetX,targetY ] = defender;
     }
 
     public static void UpdateStamina(int posX, int posY){
