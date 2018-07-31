@@ -599,19 +599,29 @@ public class GlobalFunctions : MonoBehaviour {
 
     } // FindBestPath
 
-    public static void RefreshUnitAvailabileCells(){
-        for(int c = 1; c < GlobalVariables.unitsMatrix.GetLength(0); c++){
-            for(int r = 1; r < GlobalVariables.unitsMatrix.GetLength(1); r++){
-				if(GlobalVariables.unitsMatrix[ c,r ] != null){
-                    UnitType character = GlobalVariables.unitsMatrix[ c,r ];
-                    AvailableCells ac = FindAvailableCells(character.movementPoints, character.stamina, c, r);
-					character.availableCells = ac.available;
-                    character.availableCellsSTA = ac.availableSTA;
-
-                    // Debug.Log("Found a character at " + c + " " + r);
-				}
-			}
-		}
+    public static void RefreshUnitAvailabileCells(int posX = 0, int posY = 0){
+        // all units
+        if (posX == 0 || posY == 0){
+            for(int c = 1; c < GlobalVariables.unitsMatrix.GetLength(0); c++){
+                for(int r = 1; r < GlobalVariables.unitsMatrix.GetLength(1); r++){
+                    if(GlobalVariables.unitsMatrix[ c,r ] != null){
+                        UnitType character = GlobalVariables.unitsMatrix[ c,r ];
+                        AvailableCells ac = FindAvailableCells(character.movementPoints, character.stamina, c, r);
+                        character.availableCells = ac.available;
+                        character.availableCellsSTA = ac.availableSTA;
+                    }
+                }
+            }
+        // just this unit 
+        }else{
+            if(GlobalVariables.unitsMatrix[ posX,posY ] != null){
+                UnitType character = GlobalVariables.unitsMatrix[ posX,posY ];
+                AvailableCells ac = FindAvailableCells(character.movementPoints, character.stamina, posX,posY);
+                character.availableCells = ac.available;
+                character.availableCellsSTA = ac.availableSTA;
+            }
+        }
+        
     }
 
 

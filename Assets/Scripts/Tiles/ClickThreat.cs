@@ -25,6 +25,9 @@ public class ClickThreat : MonoBehaviour {
 		GlobalFunctions.UpdateStamina(parentX,parentY);
 		// Debug.Log("\n"+posX+" "+posY+" is my target!");
 
+		// since STA might have changed, update availableCells
+		GlobalFunctions.RefreshUnitAvailabileCells(parentX,parentY);
+
 	}
 
 	
