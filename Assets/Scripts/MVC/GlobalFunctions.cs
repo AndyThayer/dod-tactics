@@ -904,10 +904,10 @@ public class GlobalFunctions : MonoBehaviour {
         }
     }
 
-    public static void DisplayTileInfo(int posX, int posY){
+    public static void DisplayTileInfo(int posX, int posY, bool units = true, bool terrain = true){
 
 		// UNITS
-		if(GlobalVariables.unitsMatrix[ posX,posY ] != null){
+		if(GlobalVariables.unitsMatrix[ posX,posY ] != null && units){
             // show the Unit Panel
             GlobalVariables.infoPanelUnitGO.SetActive(true);
             CleanUpHUDIcons();
@@ -938,7 +938,7 @@ public class GlobalFunctions : MonoBehaviour {
 			GlobalFunctions.CleanUpUnitInfoPanel();
 		}
 		// TERRAIN
-        if(GlobalVariables.tilesMatrix[ posX,posY ] != null){
+        if(GlobalVariables.tilesMatrix[ posX,posY ] != null && terrain){
             // show the Terrain Panel
             GlobalVariables.infoPanelTerrainGO.SetActive(true);
             // header
@@ -1239,6 +1239,9 @@ public class GlobalFunctions : MonoBehaviour {
 
             // generate attack and defense scores
             attackRoll += (int)attacker.accuracy;
+            if(battleOption == Enums.BattleOption.HeavyAttack){
+                attackRoll = attackRoll - 2;
+            }
             defendRoll += (int)defender.defense;
 
             Debug.Log("attack roll: "+attackRoll);
@@ -1259,6 +1262,8 @@ public class GlobalFunctions : MonoBehaviour {
             // update units
             GlobalVariables.unitsMatrix[ parentX,parentY ] = attacker;
             GlobalVariables.unitsMatrix[ targetX,targetY ] = defender;
+            // reflect updates	
+		    GlobalFunctions.DisplayTileInfo(parentX, parentY, true, false); 
 
         }
 

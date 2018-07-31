@@ -23,6 +23,9 @@ public class ClickThreat : MonoBehaviour {
 		}
 		GlobalFunctions.CombatAttack(parentX,parentY,posX,posY);
 		GlobalFunctions.UpdateStamina(parentX,parentY);
+		// reflect updated STA	
+		GlobalFunctions.DisplayTileInfo(parentX, parentY, true, false); 
+
 		// Debug.Log("\n"+posX+" "+posY+" is my target!");
 
 		// since STA might have changed, update availableCells
