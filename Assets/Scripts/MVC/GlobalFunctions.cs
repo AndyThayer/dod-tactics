@@ -336,8 +336,6 @@ public class GlobalFunctions : MonoBehaviour {
 
 
    
-
-    // public static string[,] FindAvailableCells(float points, int posX, int posY){
     public static AvailableCells FindAvailableCells(float movement, float stamina, int posX, int posY){
         
         // reset each list in each index of availablePaths for this unit
