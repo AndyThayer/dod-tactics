@@ -143,7 +143,6 @@ public class MovementUnit : MonoBehaviour {
 		GlobalVariables.freezeHUD = false;
 		GlobalFunctions.UpdateUnitLocation(parentX, parentY, targetX, targetY);    //  NOTE: crucial - what is above and below this function!!
 		GlobalFunctions.RemoveAvailableCellsFromAllUnits();
-		// GlobalVariables.selectedUnit = new Vector3Int(0,0,0);
 		GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
 		GlobalFunctions.RemovePathCellsFromAllUnits();
 		// SELECT this unit
