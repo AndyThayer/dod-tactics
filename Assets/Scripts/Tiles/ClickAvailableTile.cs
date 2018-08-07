@@ -18,7 +18,7 @@ public class ClickAvailableTile : MonoBehaviour {
 
 			GlobalVariables.unitsMatrix[ parentX,parentY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(parentX,parentY,posX,posY);
 
-			GlobalFunctions.CheckForEndOfTurn(parentX,parentY);
+			// GlobalFunctions.CheckForEndOfTurn(parentX,parentY);
 		}else{
 			Debug.Log("Trying to click an available cell while HUD is frozen!");
 		}

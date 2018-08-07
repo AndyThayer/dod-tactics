@@ -131,6 +131,7 @@ public class MovementUnit : MonoBehaviour {
 	private void cleanUpAfterMove(int parentX, int parentY, int targetX, int targetY){
 		// consume unit's ability to move again this turn
 		GlobalVariables.unitsMatrix[ parentX,parentY ].canMove = false;
+		GlobalFunctions.CheckForEndOfTurn(parentX,parentY);
 		// consider MV cost vs STA cost
 		updateSTA(parentX, parentY, targetX, targetY);
 		// update HUD info boxes

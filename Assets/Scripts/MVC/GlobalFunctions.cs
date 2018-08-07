@@ -947,9 +947,13 @@ public class GlobalFunctions : MonoBehaviour {
 			GlobalVariables.infoPanelUnitText2.text += "\n";
             GlobalVariables.infoPanelUnitText2.text += "CRI: " + GlobalVariables.unitsMatrix[ posX,posY ].critical;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
-            GlobalVariables.infoPanelUnitText2.text += "SPD: " + GlobalVariables.unitsMatrix[ posX,posY ].speed;
+            // GlobalVariables.infoPanelUnitText2.text += "SPD: " + GlobalVariables.unitsMatrix[ posX,posY ].speed;
+			// GlobalVariables.infoPanelUnitText2.text += "\n";
+            // GlobalVariables.infoPanelUnitText2.text += "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
+			// GlobalVariables.infoPanelUnitText2.text += "\n";
+            GlobalVariables.infoPanelUnitText2.text += "ACT: " + GlobalVariables.unitsMatrix[ posX,posY ].canAct;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
-            GlobalVariables.infoPanelUnitText2.text += "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
+            GlobalVariables.infoPanelUnitText2.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].canMove;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
             // unit icon
             DisplayUnitIcon(posX, posY);
@@ -1335,7 +1339,7 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
                 GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
             }
- 
+            Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
         }
     }
 
@@ -1362,8 +1366,8 @@ public class GlobalFunctions : MonoBehaviour {
                     UpdateInitiative();
                 }else{
                     // is this part necessary? don't we already do this in UpdateInitiative()?
-                    GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
-                    GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+                    // GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
+                    // GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
                 }
 
                 for(int x = 0; x < GlobalVariables.initRoster.Count; x++){
