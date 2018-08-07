@@ -84,12 +84,12 @@ public class UnitType {
                 hitPointMax = 16;
                 balRecovery = 0;
                 staRecovery = 0;
-                accuracy = 6;
+                accuracy = 16; // 6
                 critical = 10;
                 speed = 1;
                 defense = 3;
                 lowDamage = 1;
-                highDamage = 6;
+                highDamage = 16; // 6
                 break;
             case Enums.UnitType.Gatherer:
                 name = "Gatherer";
@@ -145,12 +145,12 @@ public class UnitType {
                 hitPointMax = 4;
                 balRecovery = 0;
                 staRecovery = 0;
-                accuracy = 3;
+                accuracy = 13; // 3
                 critical = 5;
                 speed = 0;
                 defense = 1;
                 lowDamage = 1;
-                highDamage = 2;
+                highDamage = 12; // 2
                 // traits
                 passThroughGrassRough = true;
                 passThroughWaterShallow = true;
@@ -163,12 +163,12 @@ public class UnitType {
                 hitPointMax = 8;
                 balRecovery = 10;
                 staRecovery = 10;
-                accuracy = 1;
+                accuracy = 11; // 1
                 critical = 2;
                 speed = 4;
                 defense = 5;
                 lowDamage = 1;
-                highDamage = 5;
+                highDamage = 15; // 5
                 break;
         }
     }

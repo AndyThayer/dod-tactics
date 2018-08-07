@@ -1281,7 +1281,7 @@ public class GlobalFunctions : MonoBehaviour {
             // update units
             GlobalVariables.unitsMatrix[ parentX,parentY ] = attacker;
             GlobalVariables.unitsMatrix[ targetX,targetY ] = defender;
-            // reflect updates	
+            // reflect updates in HUD
 		    GlobalFunctions.DisplayTileInfo(parentX, parentY, true, false); 
 
         }
@@ -1331,11 +1331,48 @@ public class GlobalFunctions : MonoBehaviour {
             if(GlobalVariables.initRoster.Count <= 0){
                 UpdateInitiative();
             }else{
+                // is this part necessary? don't we already do this in UpdateInitiative()?
                 GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
                 GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
             }
  
         }
+    }
+
+    public static void CheckForDeadUnit(int posX, int posY){
+        
+        if (GlobalVariables.unitsMatrix[ posX,posY ] != null ){
+            // if unit is dead
+            if( GlobalVariables.unitsMatrix[ posX,posY ].hitPoints <= 0 ){
+                // remove from initRoster
+                for(int i = 0; i < GlobalVariables.initRoster.Count; i++){
+                    if( GlobalVariables.initRoster[i].unitID == GlobalVariables.unitsMatrix[ posX,posY ].unitID ){
+                        Debug.Log("\nremoving "+GlobalVariables.initRoster[i].unitID+" from initRoster!");
+                        GlobalVariables.initRoster.RemoveAt(i);
+                    }
+                }
+                // destroy on screen prefab
+                Destroy(GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab);
+                // destroy actual data of unit
+                GlobalVariables.unitsMatrix[ posX,posY ] = null;
+                // allow other units to move to this space now
+                GlobalFunctions.RefreshUnitAvailabileCells();
+                // update initiative roster
+                if(GlobalVariables.initRoster.Count <= 0){
+                    UpdateInitiative();
+                }else{
+                    // is this part necessary? don't we already do this in UpdateInitiative()?
+                    GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
+                    GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+                }
+
+                for(int x = 0; x < GlobalVariables.initRoster.Count; x++){
+                    Debug.Log(GlobalVariables.initRoster[x].unitID+" at "+x+" in initRoster");
+                }
+            }
+
+        }
+
     }
 
 

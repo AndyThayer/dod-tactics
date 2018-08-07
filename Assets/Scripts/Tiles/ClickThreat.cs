@@ -32,6 +32,9 @@ public class ClickThreat : MonoBehaviour {
 		GlobalFunctions.RefreshUnitAvailabileCells(parentX,parentY);
 
 		GlobalFunctions.CheckForEndOfTurn(parentX,parentY);
+		// make sure you do this last, because it might NULL a unit!
+		GlobalFunctions.CheckForDeadUnit(posX,posY);
+		GlobalFunctions.CheckForDeadUnit(parentX,parentY);
 
 	}
 
