@@ -47,8 +47,6 @@ public class GlobalVariables : MonoBehaviour {
         public static bool freezeHUD;
         public static bool freezeIconHUD;
 
-        public static GameObject battleOptionHeavyAttack;
-
     // HUD elements
         public static GameObject infoPanelUnitHeaderGO;
         public static Text infoPanelUnitHeader;
@@ -64,6 +62,7 @@ public class GlobalVariables : MonoBehaviour {
         public static Text infoPanelTerrainText2;
         public static GameObject infoPanelUnitGO;
         public static GameObject infoPanelTerrainGO;
+        public static GameObject infoPanelTorchesGO;
 
     // PATHFINDING
 

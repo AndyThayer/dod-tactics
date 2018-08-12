@@ -143,12 +143,11 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTerrainText2GO = GameObject.Find("InfoPanelTerrainText2");
         GlobalVariables.infoPanelTerrainText2 = GlobalVariables.infoPanelTerrainText2GO.GetComponent<Text>();
         GlobalVariables.infoPanelTerrainText2.text = "";
-        // infoPanelUnitGO
-        // GlobalVariables.infoPanelUnitGO = GameObject.Find("UnitPanel");
         // infoPanels for Units and Terrain
         GlobalVariables.infoPanelTerrainGO = GameObject.Find("HUD_side_panel_terrain");
         GlobalVariables.infoPanelTerrainGO.SetActive(false);
         GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_units");
+
 
         // GlobalVariables.infoPanelTerrainGO = Instantiate(Instance.HUDPanelTerrain, new Vector3(19.175f, 2, 0), Quaternion.identity);
         // GlobalVariables.infoPanelTerrainGO.name = "HUD_info_panel_terrain";
@@ -947,14 +946,24 @@ public class GlobalFunctions : MonoBehaviour {
 			GlobalVariables.infoPanelUnitText2.text += "\n";
             GlobalVariables.infoPanelUnitText2.text += "CRI: " + GlobalVariables.unitsMatrix[ posX,posY ].critical;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
-            // GlobalVariables.infoPanelUnitText2.text += "SPD: " + GlobalVariables.unitsMatrix[ posX,posY ].speed;
-			// GlobalVariables.infoPanelUnitText2.text += "\n";
-            // GlobalVariables.infoPanelUnitText2.text += "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
-			// GlobalVariables.infoPanelUnitText2.text += "\n";
-            GlobalVariables.infoPanelUnitText2.text += "ACT: " + GlobalVariables.unitsMatrix[ posX,posY ].canAct;
+            GlobalVariables.infoPanelUnitText2.text += "SPD: " + GlobalVariables.unitsMatrix[ posX,posY ].speed;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
-            GlobalVariables.infoPanelUnitText2.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].canMove;
+            GlobalVariables.infoPanelUnitText2.text += "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
+            // GlobalVariables.infoPanelUnitText2.text += "ACT: " + GlobalVariables.unitsMatrix[ posX,posY ].canAct;
+			// GlobalVariables.infoPanelUnitText2.text += "\n";
+            // GlobalVariables.infoPanelUnitText2.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].canMove;
+			// GlobalVariables.infoPanelUnitText2.text += "\n";
+            if(GlobalVariables.unitsMatrix[ posX,posY ].canAct){
+                GameObject.Find("torch_flame_ACT").GetComponent<IconAnimations>().PlayLit();
+            }else{
+                GameObject.Find("torch_flame_ACT").GetComponent<IconAnimations>().PlayIdle();
+            }
+            if(GlobalVariables.unitsMatrix[ posX,posY ].canMove){
+                GameObject.Find("torch_flame_MOV").GetComponent<IconAnimations>().PlayLit();
+            }else{
+                GameObject.Find("torch_flame_MOV").GetComponent<IconAnimations>().PlayIdle();
+            }
             // unit icon
             DisplayUnitIcon(posX, posY);
 		}else{
