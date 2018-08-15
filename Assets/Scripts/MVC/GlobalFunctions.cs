@@ -14,8 +14,8 @@ public class GlobalFunctions : MonoBehaviour {
    
 
     // HUD objects
-    public GameObject HUDPanelTerrain;
-    public GameObject HUDPanelUnit;
+    // public GameObject HUDPanelTerrain;
+    // public GameObject HUDPanelUnit;
     public GameObject HUDCursor;
     public GameObject HUDCursorThreat;
     public GameObject HUDPathCell;
@@ -119,6 +119,14 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.HUDCursorThreat.name = "HUD_cursor_threat";
 
         // HUD text
+        // - top panel unit header
+        GlobalVariables.infoPanelTopHeaderGO = GameObject.Find("InfoPanelTopHeader");
+        GlobalVariables.infoPanelTopHeader = GlobalVariables.infoPanelTopHeaderGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopHeader.text = "";
+        // - top panel unit text
+        GlobalVariables.infoPanelTopTextGO = GameObject.Find("InfoPanelTopText");
+        GlobalVariables.infoPanelTopText = GlobalVariables.infoPanelTopTextGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopText.text = "";
         // - info panel unit header
         GlobalVariables.infoPanelUnitHeaderGO = GameObject.Find("InfoPanelUnitHeader");
         GlobalVariables.infoPanelUnitHeader = GlobalVariables.infoPanelUnitHeaderGO.GetComponent<Text>();
@@ -144,9 +152,9 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTerrainText2 = GlobalVariables.infoPanelTerrainText2GO.GetComponent<Text>();
         GlobalVariables.infoPanelTerrainText2.text = "";
         // infoPanels for Units and Terrain
-        GlobalVariables.infoPanelTerrainGO = GameObject.Find("HUD_side_panel_terrain");
+        GlobalVariables.infoPanelTerrainGO = GameObject.Find("HUD_side_panel_bottom");
         GlobalVariables.infoPanelTerrainGO.SetActive(false);
-        GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_units");
+        GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_middle");
 
 
         // GlobalVariables.infoPanelTerrainGO = Instantiate(Instance.HUDPanelTerrain, new Vector3(19.175f, 2, 0), Quaternion.identity);
@@ -867,28 +875,37 @@ public class GlobalFunctions : MonoBehaviour {
 	}
 
     public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption){
+        int posX = GlobalVariables.selectedUnit.x;
+        int posY = GlobalVariables.selectedUnit.y;
         switch(battleOption){
             case Enums.BattleOption.LightAttack:
                 GlobalVariables.infoPanelTerrainHeader.text = "Light Attack";
+                // col 1
                 GlobalVariables.infoPanelTerrainText.text = "Worth 10 BAL";
                 GlobalVariables.infoPanelTerrainText.text += "\n";
                 GlobalVariables.infoPanelTerrainText.text += "Costs 10 STA";
+                // col 2
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONLightAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
             case Enums.BattleOption.HeavyAttack:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Heavy Attack";
                 GlobalVariables.infoPanelTerrainText.text = "Worth 30 BAL";
                 GlobalVariables.infoPanelTerrainText.text += "\n";
                 GlobalVariables.infoPanelTerrainText.text += "Costs 30 STA";
+                // col 2
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+(GlobalVariables.unitsMatrix[ posX,posY ].highDamage * 2);
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONHeavyAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
             case Enums.BattleOption.Rally:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Rally";
                 GlobalVariables.infoPanelTerrainText.text = "+ 5 DEF";
                 GlobalVariables.infoPanelTerrainText.text += "\n";
@@ -1084,6 +1101,7 @@ public class GlobalFunctions : MonoBehaviour {
         // enable first unit
         GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
         GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+        UpdateWhoIsNext();
 
 		Debug.Log("\nAfter sort by initiative:");
         foreach (Initiative init in GlobalVariables.initRoster)
@@ -1341,6 +1359,7 @@ public class GlobalFunctions : MonoBehaviour {
         if( !thisUnit.canAct && !thisUnit.canMove ){
 
             GlobalVariables.initRoster.RemoveAt(0);
+            Debug.Log("removing (0) from initRoster. Count is now: "+GlobalVariables.initRoster.Count);
             if(GlobalVariables.initRoster.Count <= 0){
                 UpdateInitiative();
             }else{
@@ -1348,6 +1367,9 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
                 GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
             }
+            UpdateWhoIsNext();
+            // un-SELECT this unit
+			GlobalVariables.selectedUnit = new Vector3Int(0,0,0); // this doesn't seem to work?
             Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
         }
     }
@@ -1374,6 +1396,8 @@ public class GlobalFunctions : MonoBehaviour {
                 if(GlobalVariables.initRoster.Count <= 0){
                     UpdateInitiative();
                 }else{
+                    UpdateWhoIsNext();
+
                     // is this part necessary? don't we already do this in UpdateInitiative()?
                     // GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
                     // GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
@@ -1386,6 +1410,14 @@ public class GlobalFunctions : MonoBehaviour {
 
         }
 
+    }
+
+    public static void UpdateWhoIsNext(){
+        if (GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ] != null){
+            UnitType thisChar = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
+            // display first current unit in TOP PANEL
+            GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
+        }
     }
 
 

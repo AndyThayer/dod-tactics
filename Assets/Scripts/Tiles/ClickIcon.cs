@@ -29,7 +29,7 @@ public class ClickIcon : MonoBehaviour {
 		
 	}
 
-	void OnMouseUp() {
+	void OnMouseDown() {
 		
 		// selected unit's coords
 		int posX = GlobalVariables.selectedUnit.x;
@@ -51,39 +51,40 @@ public class ClickIcon : MonoBehaviour {
 			GlobalVariables.freezeIconHUD = false;
 		}
 		
-		if(lightAttack){
-			GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
-			// determine threat cells
-			GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].lightAttackRange,posX,posY );
-			// display threat cells
-			if( GlobalVariables.freezeIconHUD ){
-				GlobalFunctions.DisplayThreatCells( posX,posY );
-				GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.LightAttack;
-			}
-		}else if(heavyAttack){
-			GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.HeavyAttack);
-			// determine threat cells
-			GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].heavyAttckRange,posX,posY );
-			// display threat cells
-			if( GlobalVariables.freezeIconHUD ){
-				GlobalFunctions.DisplayThreatCells( posX,posY );
-				GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.HeavyAttack;
-			}
-		}else if(useItem){
-			GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.UseItem);
-			Debug.Log("Use Item clicked!");
-		}else if(rally){
-			GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.Rally);
-			Debug.Log("Rally clicked!");
-		}else if(castSpell){
-			GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.CastSpell);
-			Debug.Log("Cast Spell clicked!");
-		}else if(specialAbility){
-			GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.SpecialAbility);
-			Debug.Log("Special Ability clicked!");
+		if( GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){
+			if(lightAttack){
+				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
+				// determine threat cells
+				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].lightAttackRange,posX,posY );
+				// display threat cells
+				if( GlobalVariables.freezeIconHUD ){
+					GlobalFunctions.DisplayThreatCells( posX,posY );
+					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.LightAttack;
+				}
+			}else if(heavyAttack){
+				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.HeavyAttack);
+				// determine threat cells
+				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].heavyAttckRange,posX,posY );
+				// display threat cells
+				if( GlobalVariables.freezeIconHUD ){
+					GlobalFunctions.DisplayThreatCells( posX,posY );
+					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.HeavyAttack;
+				}
+			}else if(useItem){
+				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.UseItem);
+				Debug.Log("Use Item clicked!");
+			}else if(rally){
+				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.Rally);
+				Debug.Log("Rally clicked!");
+			}else if(castSpell){
+				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.CastSpell);
+				Debug.Log("Cast Spell clicked!");
+			}else if(specialAbility){
+				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.SpecialAbility);
+				Debug.Log("Special Ability clicked!");
 
+			}
 		}
-
 		
 
 	}

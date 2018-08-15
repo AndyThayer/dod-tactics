@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ClickAvailableTile : MonoBehaviour {
 
-	void OnMouseUp() {
+	void OnMouseDown() {
 
 		if( !GlobalVariables.freezeHUD ){
 			int posX = (int)this.transform.position.x;

@@ -30,6 +30,7 @@ public class HoverTile : MonoBehaviour {
 					GlobalFunctions.DisplayAvailableCells(posX,posY);
 			}
 		}
+		GlobalFunctions.CleanUpOldHUDcursorThreat();
 		
     }
 
