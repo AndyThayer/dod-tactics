@@ -18,6 +18,7 @@ public class GlobalFunctions : MonoBehaviour {
     // public GameObject HUDPanelUnit;
     public GameObject HUDCursor;
     public GameObject HUDCursorThreat;
+    public GameObject HUDReadyUnit;
     public GameObject HUDPathCell;
     public GameObject HUDAvailableCell;
     public GameObject HUDAvailableCellSelf;
@@ -117,6 +118,11 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.HUDCursorThreat = Instantiate(Instance.HUDCursorThreat, new Vector3(-1, -1, 0), Quaternion.identity);
         GlobalVariables.HUDCursorThreat.SetActive(false);
         GlobalVariables.HUDCursorThreat.name = "HUD_cursor_threat";
+
+        // HUD ready unit
+        GlobalVariables.HUDReadyUnit = Instantiate(Instance.HUDReadyUnit, new Vector3(-1, -1, 0), Quaternion.identity);
+        GlobalVariables.HUDReadyUnit.SetActive(false);
+        GlobalVariables.HUDReadyUnit.name = "HUD_ready_unit";
 
         // HUD text
         // - top panel unit header
@@ -844,6 +850,17 @@ public class GlobalFunctions : MonoBehaviour {
 		GlobalVariables.HUDCursorThreat.SetActive(false);
 	}
 
+    public static void UpdateHUDreadyUnit(int posX, int posY){
+		CleanUpOldHUDreadyUnit();
+		
+		GlobalVariables.HUDReadyUnit.transform.position = new Vector3(posX,posY, 0);
+		GlobalVariables.HUDReadyUnit.SetActive(true);
+	}
+
+	public static void CleanUpOldHUDreadyUnit(){
+		GlobalVariables.HUDReadyUnit.SetActive(false);
+	}
+
     public static void CleanUpUnitInfoPanel(){
 		GlobalVariables.infoPanelUnitHeader.text = "";
 		GlobalVariables.infoPanelUnitText.text = "";
@@ -1417,6 +1434,7 @@ public class GlobalFunctions : MonoBehaviour {
             UnitType thisChar = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
             // display first current unit in TOP PANEL
             GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
+            UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
         }
     }
 

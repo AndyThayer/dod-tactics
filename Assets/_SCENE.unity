@@ -3782,6 +3782,8 @@ MonoBehaviour:
   HUDCursor: {fileID: 1293845785884386, guid: 0694e9a3336d08949815c369cf88483f, type: 2}
   HUDCursorThreat: {fileID: 1092744116661566, guid: 10d9d85b587da1a43b34dd0c816e38d4,
     type: 2}
+  HUDReadyUnit: {fileID: 1402525056647406, guid: f8cf342e3a03ad0489daa7b7a7b202b6,
+    type: 2}
   HUDPathCell: {fileID: 1072358677032542, guid: 7d41308dd815a994bb8448044569dd0d,
     type: 2}
   HUDAvailableCell: {fileID: 1712589312413796, guid: 8e197376076f94c42b253dcd94756bcc,

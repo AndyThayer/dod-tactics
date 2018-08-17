@@ -43,6 +43,7 @@ public class GlobalVariables : MonoBehaviour {
         // public static GameObject HUDInfoPanel;
         public static GameObject HUDCursor;
         public static GameObject HUDCursorThreat;
+        public static GameObject HUDReadyUnit;
         // bool to track whether or not we can "disturb" HUD or other game functionality
         public static bool freezeHUD;
         public static bool freezeIconHUD;

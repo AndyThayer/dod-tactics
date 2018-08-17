@@ -81,6 +81,8 @@ public class MovementUnit : MonoBehaviour {
 	}
 
 	public void MoveUnit(int parX, int parY, int posX, int posY){
+		// hide ready unit cursor
+		GlobalFunctions.CleanUpOldHUDreadyUnit();
 		// refresh class variables
 		it = 1;
 		totalNodes = 0;
@@ -151,6 +153,8 @@ public class MovementUnit : MonoBehaviour {
 		GlobalFunctions.UpdateHUDcursor(targetX,targetY);
 		// flash this unit
 		StartCoroutine(GlobalFunctions.FlashUnit(targetX,targetY, true));
+		// restore ready unit cursor
+		GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
 	}
 
 }
