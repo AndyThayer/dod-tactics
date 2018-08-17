@@ -1434,7 +1434,7 @@ public class GlobalFunctions : MonoBehaviour {
             UnitType thisChar = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
             // display first current unit in TOP PANEL
             GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
-            UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
+            UpdateHUDreadyUnit( (int)thisChar.unitPrefab.transform.position.x,(int)thisChar.unitPrefab.transform.position.y );
         }
     }
 

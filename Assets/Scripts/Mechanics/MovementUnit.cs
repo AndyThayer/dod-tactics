@@ -154,7 +154,8 @@ public class MovementUnit : MonoBehaviour {
 		// flash this unit
 		StartCoroutine(GlobalFunctions.FlashUnit(targetX,targetY, true));
 		// restore ready unit cursor
-		GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
+		// GlobalFunctions.UpdateHUDreadyUnit( targetX,targetY );
+		GlobalFunctions.UpdateWhoIsNext();
 	}
 
 }

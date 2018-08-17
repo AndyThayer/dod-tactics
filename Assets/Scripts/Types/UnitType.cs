@@ -89,7 +89,7 @@ public class UnitType {
                 speed = 1;
                 defense = 3;
                 lowDamage = 1;
-                highDamage = 16; // 6
+                highDamage = 6; // 6
                 break;
             case Enums.UnitType.Gatherer:
                 name = "Gatherer";
@@ -150,7 +150,7 @@ public class UnitType {
                 speed = 0;
                 defense = 1;
                 lowDamage = 1;
-                highDamage = 12; // 2
+                highDamage = 2; // 2
                 // traits
                 passThroughGrassRough = true;
                 passThroughWaterShallow = true;
@@ -168,7 +168,7 @@ public class UnitType {
                 speed = 4;
                 defense = 5;
                 lowDamage = 1;
-                highDamage = 15; // 5
+                highDamage = 5; // 5
                 break;
         }
     }

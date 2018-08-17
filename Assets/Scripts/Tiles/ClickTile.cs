@@ -52,7 +52,10 @@ public class ClickTile : MonoBehaviour {
 					// remove available cells from everyone, then display them for this unit
 					if(GlobalVariables.unitsMatrix[ posX,posY ].canMove){
 						GlobalFunctions.RemoveAvailableCellsFromAllUnits();
+						// display available cells
 						GlobalFunctions.DisplayAvailableCells(posX, posY, true);	
+						// hide ready unit cursor
+						GlobalFunctions.CleanUpOldHUDreadyUnit();
 					}
 
 					// flash this unit
