@@ -680,10 +680,17 @@ public class GlobalFunctions : MonoBehaviour {
     }  // end FindDirection
 
     public static void UpdateUnitLocation(int parX, int parY, int desX, int desY){
-        // Debug.Log("we need to update a unit that started in "+parX+" "+parY);
-        // Debug.Log("...and move it to "+desX+" "+desY);
+        // swap this unit's coords in the unitMatrix
         GlobalVariables.unitsMatrix[ desX,desY ] = GlobalVariables.unitsMatrix[ parX,parY ];
         GlobalVariables.unitsMatrix[ parX,parY ] = null;
+        // update initRoster's positioning of this unit
+        for(int i = 0; i < GlobalVariables.initRoster.Count; i++){
+            if( GlobalVariables.initRoster[ i ].posX == parX && GlobalVariables.initRoster[ i ].posY == parY ){
+                GlobalVariables.initRoster[ i ].posX = desX;
+                GlobalVariables.initRoster[ i ].posY = desY;
+            }
+        }
+        // refresh ALL UNIT's available cells
         GlobalFunctions.RefreshUnitAvailabileCells();
     }
 
@@ -1434,7 +1441,8 @@ public class GlobalFunctions : MonoBehaviour {
             UnitType thisChar = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
             // display first current unit in TOP PANEL
             GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
-            UpdateHUDreadyUnit( (int)thisChar.unitPrefab.transform.position.x,(int)thisChar.unitPrefab.transform.position.y );
+            // UpdateHUDreadyUnit( (int)thisChar.unitPrefab.transform.position.x,(int)thisChar.unitPrefab.transform.position.y );
+            UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
         }
     }
 

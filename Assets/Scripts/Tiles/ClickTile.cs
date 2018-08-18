@@ -54,8 +54,6 @@ public class ClickTile : MonoBehaviour {
 						GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 						// display available cells
 						GlobalFunctions.DisplayAvailableCells(posX, posY, true);	
-						// hide ready unit cursor
-						GlobalFunctions.CleanUpOldHUDreadyUnit();
 					}
 
 					// flash this unit
@@ -66,11 +64,17 @@ public class ClickTile : MonoBehaviour {
 					GlobalFunctions.CleanUpUnitInfoPanel();
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
+					// hide ready unit cursor
+					GlobalFunctions.CleanUpOldHUDreadyUnit();
+
 				}else{
 					// reset cursor and selected tile
 					GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 					GlobalVariables.selectedUnit = new Vector3Int(0,0,0);
 					GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
+					// restore ready unit cursor
+					// GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
+			
 				}	
 
 			}else{
@@ -78,6 +82,8 @@ public class ClickTile : MonoBehaviour {
 				GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 				GlobalVariables.selectedUnit = new Vector3Int(0,0,0);
 				GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
+				// restore ready unit cursor
+				GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
 			}
 
 			// update HUD info boxes (does this belong at the bottom of EVERYTHING, or after SELECT and un-SELECT?)
