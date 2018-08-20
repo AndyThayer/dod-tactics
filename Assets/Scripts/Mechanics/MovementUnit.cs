@@ -133,6 +133,10 @@ public class MovementUnit : MonoBehaviour {
 	private void cleanUpAfterMove(int parentX, int parentY, int targetX, int targetY){
 		// consume unit's ability to move again this turn
 		GlobalVariables.unitsMatrix[ parentX,parentY ].canMove = false;
+
+		// SELECT this unit (checkForEndOfTurn will UN-SELECT it if that's what should happen)
+		GlobalVariables.selectedUnit = new Vector3Int(targetX,targetY,0);
+
 		GlobalFunctions.CheckForEndOfTurn(parentX,parentY);
 		// consider MV cost vs STA cost
 		updateSTA(parentX, parentY, targetX, targetY);
@@ -142,14 +146,14 @@ public class MovementUnit : MonoBehaviour {
 		// stop walking animation
 		// anim.Play("idle");
 		GlobalVariables.unitsMatrix[ parentX,parentY ].unitPrefab.GetComponent<UnitAnimations>().PlayIdle();
-		// clean up all HUD after the move is complete
+		// resest freezeHUD
 		GlobalVariables.freezeHUD = false;
+		// swap unit's location old/new
 		GlobalFunctions.UpdateUnitLocation(parentX, parentY, targetX, targetY);    //  NOTE: crucial - what is above and below this function!!
+		// clean up all HUD after the move is complete
 		GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 		GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
 		GlobalFunctions.RemovePathCellsFromAllUnits();
-		// SELECT this unit
-		GlobalVariables.selectedUnit = new Vector3Int(targetX,targetY,0);
 		GlobalFunctions.UpdateHUDcursor(targetX,targetY);
 		// flash this unit
 		StartCoroutine(GlobalFunctions.FlashUnit(targetX,targetY, true));

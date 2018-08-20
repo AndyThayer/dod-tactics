@@ -1380,6 +1380,7 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void CheckForEndOfTurn(int posX, int posY){
         UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        // if this unit is done attacking, and moving
         if( !thisUnit.canAct && !thisUnit.canMove ){
 
             GlobalVariables.initRoster.RemoveAt(0);
@@ -1395,7 +1396,14 @@ public class GlobalFunctions : MonoBehaviour {
             // un-SELECT this unit
 			GlobalVariables.selectedUnit = new Vector3Int(0,0,0); // this doesn't seem to work?
             Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
+
+            GlobalVariables.selectedUnit.x = 0;
+            GlobalVariables.selectedUnit.y = 0;
+        // if this unit is done attacking, but can still move
+        }else if( !thisUnit.canAct && thisUnit.canMove ){
+            DisplayAvailableCells(posX,posY);
         }
+
     }
 
     public static void CheckForDeadUnit(int posX, int posY){
