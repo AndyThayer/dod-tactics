@@ -8,7 +8,7 @@ public class ClickThreat : MonoBehaviour {
 		
 	}
 
-	void OnMouseUp() {
+	void OnMouseDown() {
 
 		int posX = (int)this.transform.position.x;
 		int posY = (int)this.transform.position.y;
@@ -21,6 +21,9 @@ public class ClickThreat : MonoBehaviour {
 		if(GlobalVariables.unitsMatrix[ posX,posY ] != null){
 			GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<UnitAnimations>().PlayBleed();
 		}
+		// remove threat cells
+		GlobalFunctions.RemoveAvailableCellsFromAllUnits();
+		// process attack
 		GlobalFunctions.CombatAttack(parentX,parentY,posX,posY);
 		GlobalFunctions.UpdateStamina(parentX,parentY);
 		// reflect updated STA	
@@ -31,7 +34,10 @@ public class ClickThreat : MonoBehaviour {
 		// since STA might have changed, update availableCells
 		GlobalFunctions.RefreshUnitAvailabileCells(parentX,parentY);
 
-		GlobalFunctions.CheckForEndOfTurn(parentX,parentY);
+		// make sure you do this last, because it might NULL a unit!
+		GlobalFunctions.CheckForDeadUnit(posX,posY);
+		GlobalFunctions.CheckForEndOfTurn(parentX,parentY); // before possibly NULLing parent
+		GlobalFunctions.CheckForDeadUnit(parentX,parentY);
 
 	}
 

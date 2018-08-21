@@ -28,7 +28,7 @@ public class GlobalController : MonoBehaviour {
 
 		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 7,5, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
 		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 9,5, GlobalFunctions.FindDirection(Enums.Direction.Left), 2);
-		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.SaberToothWolf, 4,6, GlobalFunctions.FindDirection(Enums.Direction.Down), 2);
+		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.SaberToothWolf, 8,5, GlobalFunctions.FindDirection(Enums.Direction.Down), 2);
 		// gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 8,4, GlobalFunctions.FindDirection(Enums.Direction.Down));
 		// gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 8,10, GlobalFunctions.FindDirection(Enums.Direction.Left));
 
@@ -43,6 +43,7 @@ public class GlobalController : MonoBehaviour {
 		GlobalFunctions.UpdateInitiative();
 		// Debug.Log("\nunit 4,6 availableSTA at 7,6: "+GlobalVariables.unitsMatrix[ 4,6 ].availableCellsSTA[ 7,6]);
 		// Debug.Log("unit 4,6 availableSTA at 6,6: "+GlobalVariables.unitsMatrix[ 4,6 ].availableCellsSTA[ 6,7]);
+
 
 	}
 

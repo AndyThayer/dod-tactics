@@ -84,12 +84,12 @@ public class UnitType {
                 hitPointMax = 16;
                 balRecovery = 0;
                 staRecovery = 0;
-                accuracy = 6;
+                accuracy = 16; // 6
                 critical = 10;
                 speed = 1;
                 defense = 3;
                 lowDamage = 1;
-                highDamage = 6;
+                highDamage = 6; // 6
                 break;
             case Enums.UnitType.Gatherer:
                 name = "Gatherer";
@@ -99,7 +99,7 @@ public class UnitType {
                 hitPointMax = 15;
                 balRecovery = 2;
                 staRecovery = 2;
-                accuracy = 4;
+                accuracy = 14; // 4
                 critical = 0;
                 speed = 5;
                 defense = 8;
@@ -114,7 +114,7 @@ public class UnitType {
                 hitPointMax = 14;
                 balRecovery = 5;
                 staRecovery = 0;
-                accuracy = 3;
+                accuracy = 13; // 3
                 critical = 5;
                 speed = 4;
                 defense = 5;
@@ -129,7 +129,7 @@ public class UnitType {
                 hitPointMax = 18;
                 balRecovery = 0;
                 staRecovery = 5;
-                accuracy = 2;
+                accuracy = 12; // 2
                 critical = 7;
                 speed = 0;
                 defense = 4;
@@ -145,12 +145,12 @@ public class UnitType {
                 hitPointMax = 4;
                 balRecovery = 0;
                 staRecovery = 0;
-                accuracy = 3;
+                accuracy = 13; // 3
                 critical = 5;
                 speed = 0;
                 defense = 1;
                 lowDamage = 1;
-                highDamage = 2;
+                highDamage = 2; // 2
                 // traits
                 passThroughGrassRough = true;
                 passThroughWaterShallow = true;
@@ -163,12 +163,12 @@ public class UnitType {
                 hitPointMax = 8;
                 balRecovery = 10;
                 staRecovery = 10;
-                accuracy = 1;
+                accuracy = 11; // 1
                 critical = 2;
                 speed = 4;
                 defense = 5;
                 lowDamage = 1;
-                highDamage = 5;
+                highDamage = 5; // 5
                 break;
         }
     }

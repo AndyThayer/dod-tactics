@@ -15,12 +15,7 @@ public class ClickTile : MonoBehaviour {
 
 			// reset ICON state
 			GlobalVariables.freezeIconHUD = false;
-			// Debug.Log("ts happening");
-			if(GameObject.Find("battleOptionIcon")){
-				GameObject gotileIcon = GameObject.Find("battleOptionIcon");
-				Destroy(gotileIcon);
-			}
-
+			GlobalFunctions.CleanUpBattleOptionIcons();
 
 			if( GlobalVariables.unitsMatrix[ posX,posY ] != null ){
 
@@ -52,6 +47,7 @@ public class ClickTile : MonoBehaviour {
 					// remove available cells from everyone, then display them for this unit
 					if(GlobalVariables.unitsMatrix[ posX,posY ].canMove){
 						GlobalFunctions.RemoveAvailableCellsFromAllUnits();
+						// display available cells
 						GlobalFunctions.DisplayAvailableCells(posX, posY, true);	
 					}
 
@@ -63,11 +59,17 @@ public class ClickTile : MonoBehaviour {
 					GlobalFunctions.CleanUpUnitInfoPanel();
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
+					// hide ready unit cursor
+					GlobalFunctions.CleanUpOldHUDreadyUnit();
+
 				}else{
 					// reset cursor and selected tile
 					GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 					GlobalVariables.selectedUnit = new Vector3Int(0,0,0);
 					GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
+					// restore ready unit cursor
+					// GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
+			
 				}	
 
 			}else{
@@ -75,6 +77,8 @@ public class ClickTile : MonoBehaviour {
 				GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 				GlobalVariables.selectedUnit = new Vector3Int(0,0,0);
 				GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
+				// restore ready unit cursor
+				GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
 			}
 
 			// update HUD info boxes (does this belong at the bottom of EVERYTHING, or after SELECT and un-SELECT?)

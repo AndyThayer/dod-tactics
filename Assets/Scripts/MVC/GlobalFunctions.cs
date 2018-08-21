@@ -14,10 +14,11 @@ public class GlobalFunctions : MonoBehaviour {
    
 
     // HUD objects
-    public GameObject HUDPanelTerrain;
-    public GameObject HUDPanelUnit;
+    // public GameObject HUDPanelTerrain;
+    // public GameObject HUDPanelUnit;
     public GameObject HUDCursor;
     public GameObject HUDCursorThreat;
+    public GameObject HUDReadyUnit;
     public GameObject HUDPathCell;
     public GameObject HUDAvailableCell;
     public GameObject HUDAvailableCellSelf;
@@ -118,7 +119,20 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.HUDCursorThreat.SetActive(false);
         GlobalVariables.HUDCursorThreat.name = "HUD_cursor_threat";
 
+        // HUD ready unit
+        GlobalVariables.HUDReadyUnit = Instantiate(Instance.HUDReadyUnit, new Vector3(-1, -1, 0), Quaternion.identity);
+        GlobalVariables.HUDReadyUnit.SetActive(false);
+        GlobalVariables.HUDReadyUnit.name = "HUD_ready_unit";
+
         // HUD text
+        // - top panel unit header
+        GlobalVariables.infoPanelTopHeaderGO = GameObject.Find("InfoPanelTopHeader");
+        GlobalVariables.infoPanelTopHeader = GlobalVariables.infoPanelTopHeaderGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopHeader.text = "";
+        // - top panel unit text
+        GlobalVariables.infoPanelTopTextGO = GameObject.Find("InfoPanelTopText");
+        GlobalVariables.infoPanelTopText = GlobalVariables.infoPanelTopTextGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopText.text = "";
         // - info panel unit header
         GlobalVariables.infoPanelUnitHeaderGO = GameObject.Find("InfoPanelUnitHeader");
         GlobalVariables.infoPanelUnitHeader = GlobalVariables.infoPanelUnitHeaderGO.GetComponent<Text>();
@@ -143,12 +157,11 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTerrainText2GO = GameObject.Find("InfoPanelTerrainText2");
         GlobalVariables.infoPanelTerrainText2 = GlobalVariables.infoPanelTerrainText2GO.GetComponent<Text>();
         GlobalVariables.infoPanelTerrainText2.text = "";
-        // infoPanelUnitGO
-        // GlobalVariables.infoPanelUnitGO = GameObject.Find("UnitPanel");
         // infoPanels for Units and Terrain
-        GlobalVariables.infoPanelTerrainGO = GameObject.Find("HUD_side_panel_terrain");
+        GlobalVariables.infoPanelTerrainGO = GameObject.Find("HUD_side_panel_bottom");
         GlobalVariables.infoPanelTerrainGO.SetActive(false);
-        GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_units");
+        GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_middle");
+
 
         // GlobalVariables.infoPanelTerrainGO = Instantiate(Instance.HUDPanelTerrain, new Vector3(19.175f, 2, 0), Quaternion.identity);
         // GlobalVariables.infoPanelTerrainGO.name = "HUD_info_panel_terrain";
@@ -667,10 +680,17 @@ public class GlobalFunctions : MonoBehaviour {
     }  // end FindDirection
 
     public static void UpdateUnitLocation(int parX, int parY, int desX, int desY){
-        // Debug.Log("we need to update a unit that started in "+parX+" "+parY);
-        // Debug.Log("...and move it to "+desX+" "+desY);
+        // swap this unit's coords in the unitMatrix
         GlobalVariables.unitsMatrix[ desX,desY ] = GlobalVariables.unitsMatrix[ parX,parY ];
         GlobalVariables.unitsMatrix[ parX,parY ] = null;
+        // update initRoster's positioning of this unit
+        for(int i = 0; i < GlobalVariables.initRoster.Count; i++){
+            if( GlobalVariables.initRoster[ i ].posX == parX && GlobalVariables.initRoster[ i ].posY == parY ){
+                GlobalVariables.initRoster[ i ].posX = desX;
+                GlobalVariables.initRoster[ i ].posY = desY;
+            }
+        }
+        // refresh ALL UNIT's available cells
         GlobalFunctions.RefreshUnitAvailabileCells();
     }
 
@@ -837,6 +857,17 @@ public class GlobalFunctions : MonoBehaviour {
 		GlobalVariables.HUDCursorThreat.SetActive(false);
 	}
 
+    public static void UpdateHUDreadyUnit(int posX, int posY){
+		CleanUpOldHUDreadyUnit();
+		
+		GlobalVariables.HUDReadyUnit.transform.position = new Vector3(posX,posY, 0);
+		GlobalVariables.HUDReadyUnit.SetActive(true);
+	}
+
+	public static void CleanUpOldHUDreadyUnit(){
+		GlobalVariables.HUDReadyUnit.SetActive(false);
+	}
+
     public static void CleanUpUnitInfoPanel(){
 		GlobalVariables.infoPanelUnitHeader.text = "";
 		GlobalVariables.infoPanelUnitText.text = "";
@@ -867,29 +898,45 @@ public class GlobalFunctions : MonoBehaviour {
 
 	}
 
+    public static void CleanUpBattleOptionIcons(){
+        if(GameObject.Find("battleOptionIcon")){
+            GameObject gotileIcon = GameObject.Find("battleOptionIcon");
+            Destroy(gotileIcon);
+        }
+    }
+
     public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption){
+        int posX = GlobalVariables.selectedUnit.x;
+        int posY = GlobalVariables.selectedUnit.y;
         switch(battleOption){
             case Enums.BattleOption.LightAttack:
                 GlobalVariables.infoPanelTerrainHeader.text = "Light Attack";
+                // col 1
                 GlobalVariables.infoPanelTerrainText.text = "Worth 10 BAL";
                 GlobalVariables.infoPanelTerrainText.text += "\n";
                 GlobalVariables.infoPanelTerrainText.text += "Costs 10 STA";
+                // col 2
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONLightAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
             case Enums.BattleOption.HeavyAttack:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Heavy Attack";
                 GlobalVariables.infoPanelTerrainText.text = "Worth 30 BAL";
                 GlobalVariables.infoPanelTerrainText.text += "\n";
                 GlobalVariables.infoPanelTerrainText.text += "Costs 30 STA";
+                // col 2
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+(GlobalVariables.unitsMatrix[ posX,posY ].highDamage * 2);
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONHeavyAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
             case Enums.BattleOption.Rally:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Rally";
                 GlobalVariables.infoPanelTerrainText.text = "+ 5 DEF";
                 GlobalVariables.infoPanelTerrainText.text += "\n";
@@ -951,6 +998,20 @@ public class GlobalFunctions : MonoBehaviour {
 			GlobalVariables.infoPanelUnitText2.text += "\n";
             GlobalVariables.infoPanelUnitText2.text += "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
+            // GlobalVariables.infoPanelUnitText2.text += "ACT: " + GlobalVariables.unitsMatrix[ posX,posY ].canAct;
+			// GlobalVariables.infoPanelUnitText2.text += "\n";
+            // GlobalVariables.infoPanelUnitText2.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].canMove;
+			// GlobalVariables.infoPanelUnitText2.text += "\n";
+            if(GlobalVariables.unitsMatrix[ posX,posY ].canAct){
+                GameObject.Find("torch_flame_ACT").GetComponent<IconAnimations>().PlayLit();
+            }else{
+                GameObject.Find("torch_flame_ACT").GetComponent<IconAnimations>().PlayIdle();
+            }
+            if(GlobalVariables.unitsMatrix[ posX,posY ].canMove){
+                GameObject.Find("torch_flame_MOV").GetComponent<IconAnimations>().PlayLit();
+            }else{
+                GameObject.Find("torch_flame_MOV").GetComponent<IconAnimations>().PlayIdle();
+            }
             // unit icon
             DisplayUnitIcon(posX, posY);
 		}else{
@@ -1071,6 +1132,7 @@ public class GlobalFunctions : MonoBehaviour {
         // enable first unit
         GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
         GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+        UpdateWhoIsNext();
 
 		Debug.Log("\nAfter sort by initiative:");
         foreach (Initiative init in GlobalVariables.initRoster)
@@ -1245,11 +1307,16 @@ public class GlobalFunctions : MonoBehaviour {
             UnitType defender = GlobalVariables.unitsMatrix[ targetX,targetY ];
 
             // variable bank
+            Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
             int attackRoll = UnityEngine.Random.Range(1, 21);
             int defendRoll = UnityEngine.Random.Range(1, 21);
-            int damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
-            int BALvalue = 10;
-            Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
+            int damageRoll = 0; // initialize
+            if(battleOption == Enums.BattleOption.LightAttack){
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
+            }else if(battleOption == Enums.BattleOption.HeavyAttack){
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((attacker.highDamage+1)*2) );
+            }
+            int BALvalue = 10; // initialize
             if(battleOption == Enums.BattleOption.LightAttack){
                 BALvalue = 10;
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
@@ -1259,7 +1326,7 @@ public class GlobalFunctions : MonoBehaviour {
             // generate attack and defense scores
             attackRoll += (int)attacker.accuracy;
             if(battleOption == Enums.BattleOption.HeavyAttack){
-                attackRoll = attackRoll - 2;
+                attackRoll = attackRoll - 5;
             }
             defendRoll += (int)defender.defense;
 
@@ -1281,7 +1348,7 @@ public class GlobalFunctions : MonoBehaviour {
             // update units
             GlobalVariables.unitsMatrix[ parentX,parentY ] = attacker;
             GlobalVariables.unitsMatrix[ targetX,targetY ] = defender;
-            // reflect updates	
+            // reflect updates in HUD
 		    GlobalFunctions.DisplayTileInfo(parentX, parentY, true, false); 
 
         }
@@ -1325,16 +1392,78 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void CheckForEndOfTurn(int posX, int posY){
         UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        // if this unit is done attacking, and moving
         if( !thisUnit.canAct && !thisUnit.canMove ){
 
             GlobalVariables.initRoster.RemoveAt(0);
+            Debug.Log("removing (0) from initRoster. Count is now: "+GlobalVariables.initRoster.Count);
             if(GlobalVariables.initRoster.Count <= 0){
                 UpdateInitiative();
             }else{
+                // is this part necessary? don't we already do this in UpdateInitiative()?
                 GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
                 GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
             }
- 
+            UpdateWhoIsNext();
+            // un-SELECT this unit
+			GlobalVariables.selectedUnit = new Vector3Int(0,0,0); // this doesn't seem to work?
+            Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
+
+            GlobalVariables.selectedUnit.x = 0;
+            GlobalVariables.selectedUnit.y = 0;
+        // if this unit is done attacking, but can still move
+        }else if( !thisUnit.canAct && thisUnit.canMove ){
+            DisplayAvailableCells(posX,posY);
+            CleanUpBattleOptionIcons(); // should it remove this HERE?
+        }
+
+    }
+
+    public static void CheckForDeadUnit(int posX, int posY){
+        
+        if (GlobalVariables.unitsMatrix[ posX,posY ] != null ){
+            // if unit is dead
+            if( GlobalVariables.unitsMatrix[ posX,posY ].hitPoints <= 0 ){
+                // remove from initRoster
+                for(int i = 0; i < GlobalVariables.initRoster.Count; i++){
+                    if( GlobalVariables.initRoster[i].unitID == GlobalVariables.unitsMatrix[ posX,posY ].unitID ){
+                        Debug.Log("\nremoving "+GlobalVariables.initRoster[i].unitID+" from initRoster!");
+                        GlobalVariables.initRoster.RemoveAt(i);
+                    }
+                }
+                // destroy on screen prefab
+                Destroy(GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab);
+                // destroy actual data of unit
+                GlobalVariables.unitsMatrix[ posX,posY ] = null;
+                // allow other units to move to this space now
+                GlobalFunctions.RefreshUnitAvailabileCells();
+                // update initiative roster
+                if(GlobalVariables.initRoster.Count <= 0){
+                    UpdateInitiative();
+                }else{
+                    UpdateWhoIsNext();
+
+                    // is this part necessary? don't we already do this in UpdateInitiative()?
+                    // GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
+                    // GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+                }
+
+                for(int x = 0; x < GlobalVariables.initRoster.Count; x++){
+                    Debug.Log(GlobalVariables.initRoster[x].unitID+" at "+x+" in initRoster");
+                }
+            }
+
+        }
+
+    }
+
+    public static void UpdateWhoIsNext(){
+        if (GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ] != null){
+            UnitType thisChar = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
+            // display first current unit in TOP PANEL
+            GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
+            // UpdateHUDreadyUnit( (int)thisChar.unitPrefab.transform.position.x,(int)thisChar.unitPrefab.transform.position.y );
+            UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
         }
     }
 

@@ -27,9 +27,13 @@ public class HoverTile : MonoBehaviour {
 			if( GlobalVariables.unitsMatrix [posX,posY ] != null && 
 			    !GlobalVariables.unitsMatrix[ posX,posY ].displayAvailableCells && 
 				GlobalVariables.unitsMatrix[ posX,posY ].canMove ){
+					// display available cells
 					GlobalFunctions.DisplayAvailableCells(posX,posY);
+					// hide ready unit cursor
+					GlobalFunctions.CleanUpOldHUDreadyUnit();
 			}
 		}
+		GlobalFunctions.CleanUpOldHUDcursorThreat();
 		
     }
 
@@ -43,6 +47,9 @@ public class HoverTile : MonoBehaviour {
 			GlobalFunctions.CleanUpUnitInfoPanel();
 			GlobalFunctions.CleanUpTerrainInfoPanel();
 			GlobalFunctions.CleanUpHUDavailable(posX,posY);
+			// restore ready unit cursor
+			GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
+		 	// GlobalFunctions.UpdateWhoIsNext();
 		}
 		
 	}
