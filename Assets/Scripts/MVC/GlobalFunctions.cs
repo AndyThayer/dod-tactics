@@ -1307,11 +1307,16 @@ public class GlobalFunctions : MonoBehaviour {
             UnitType defender = GlobalVariables.unitsMatrix[ targetX,targetY ];
 
             // variable bank
+            Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
             int attackRoll = UnityEngine.Random.Range(1, 21);
             int defendRoll = UnityEngine.Random.Range(1, 21);
-            int damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
-            int BALvalue = 10;
-            Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
+            int damageRoll = 0; // initialize
+            if(battleOption == Enums.BattleOption.LightAttack){
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
+            }else if(battleOption == Enums.BattleOption.HeavyAttack){
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((attacker.highDamage+1)*2) );
+            }
+            int BALvalue = 10; // initialize
             if(battleOption == Enums.BattleOption.LightAttack){
                 BALvalue = 10;
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
@@ -1321,7 +1326,7 @@ public class GlobalFunctions : MonoBehaviour {
             // generate attack and defense scores
             attackRoll += (int)attacker.accuracy;
             if(battleOption == Enums.BattleOption.HeavyAttack){
-                attackRoll = attackRoll - 2;
+                attackRoll = attackRoll - 5;
             }
             defendRoll += (int)defender.defense;
 
@@ -1409,7 +1414,7 @@ public class GlobalFunctions : MonoBehaviour {
         // if this unit is done attacking, but can still move
         }else if( !thisUnit.canAct && thisUnit.canMove ){
             DisplayAvailableCells(posX,posY);
-            CleanUpBattleOptionIcons();
+            CleanUpBattleOptionIcons(); // should it remove this HERE?
         }
 
     }

@@ -99,7 +99,7 @@ public class UnitType {
                 hitPointMax = 15;
                 balRecovery = 2;
                 staRecovery = 2;
-                accuracy = 4;
+                accuracy = 14; // 4
                 critical = 0;
                 speed = 5;
                 defense = 8;
@@ -114,7 +114,7 @@ public class UnitType {
                 hitPointMax = 14;
                 balRecovery = 5;
                 staRecovery = 0;
-                accuracy = 3;
+                accuracy = 13; // 3
                 critical = 5;
                 speed = 4;
                 defense = 5;
@@ -129,7 +129,7 @@ public class UnitType {
                 hitPointMax = 18;
                 balRecovery = 0;
                 staRecovery = 5;
-                accuracy = 2;
+                accuracy = 12; // 2
                 critical = 7;
                 speed = 0;
                 defense = 4;
