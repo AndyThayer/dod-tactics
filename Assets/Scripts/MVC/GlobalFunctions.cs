@@ -898,6 +898,13 @@ public class GlobalFunctions : MonoBehaviour {
 
 	}
 
+    public static void CleanUpBattleOptionIcons(){
+        if(GameObject.Find("battleOptionIcon")){
+            GameObject gotileIcon = GameObject.Find("battleOptionIcon");
+            Destroy(gotileIcon);
+        }
+    }
+
     public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption){
         int posX = GlobalVariables.selectedUnit.x;
         int posY = GlobalVariables.selectedUnit.y;
@@ -1402,6 +1409,7 @@ public class GlobalFunctions : MonoBehaviour {
         // if this unit is done attacking, but can still move
         }else if( !thisUnit.canAct && thisUnit.canMove ){
             DisplayAvailableCells(posX,posY);
+            CleanUpBattleOptionIcons();
         }
 
     }

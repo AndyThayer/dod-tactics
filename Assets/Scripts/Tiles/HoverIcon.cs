@@ -67,10 +67,7 @@ public class HoverIcon : MonoBehaviour {
 		
 		if( !GlobalVariables.freezeIconHUD ){
 			// clean up battle option HUD icon
-			if(GameObject.Find("battleOptionIcon")){
-				GameObject gotileIcon = GameObject.Find("battleOptionIcon");
-				Destroy(gotileIcon);
-			}
+			GlobalFunctions.CleanUpBattleOptionIcons();
 			// display terrian info again
 			GlobalFunctions.DisplayTileInfo(GlobalVariables.selectedUnit.x, GlobalVariables.selectedUnit.y);
 			anim.Play("idle");

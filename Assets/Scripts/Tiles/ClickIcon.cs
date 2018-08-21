@@ -35,10 +35,6 @@ public class ClickIcon : MonoBehaviour {
 		int posX = GlobalVariables.selectedUnit.x;
 		int posY = GlobalVariables.selectedUnit.y;
 
-		// clean up available cells
-		GlobalFunctions.RemoveAvailableCellsFromAllUnits();
-		GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
-
 		// reset Icon animations
 		if( GlobalVariables.freezeIconHUD ){
 			GlobalFunctions.CleanUpHUDIcons();
@@ -52,6 +48,11 @@ public class ClickIcon : MonoBehaviour {
 		}
 		
 		if( GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){
+
+			// clean up available cells
+			GlobalFunctions.RemoveAvailableCellsFromAllUnits();
+			GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
+
 			if(lightAttack){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
 				// determine threat cells
@@ -84,7 +85,8 @@ public class ClickIcon : MonoBehaviour {
 				Debug.Log("Special Ability clicked!");
 
 			}
-		}
+
+		} // if canAct
 		
 
 	}

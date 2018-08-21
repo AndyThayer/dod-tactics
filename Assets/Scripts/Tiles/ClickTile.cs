@@ -15,12 +15,7 @@ public class ClickTile : MonoBehaviour {
 
 			// reset ICON state
 			GlobalVariables.freezeIconHUD = false;
-			// Debug.Log("ts happening");
-			if(GameObject.Find("battleOptionIcon")){
-				GameObject gotileIcon = GameObject.Find("battleOptionIcon");
-				Destroy(gotileIcon);
-			}
-
+			GlobalFunctions.CleanUpBattleOptionIcons();
 
 			if( GlobalVariables.unitsMatrix[ posX,posY ] != null ){
 
