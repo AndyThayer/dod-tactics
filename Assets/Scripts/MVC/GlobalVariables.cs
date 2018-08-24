@@ -18,18 +18,15 @@ public class GlobalVariables : MonoBehaviour {
         public static int boardXOffset = 8; // Grid transform.position (X was 8)
         public static int boardYOffset = 6; // Grid transform.position y (was 6)
 
-        //public static TileBase tile;
-
         // master list of each type of tile (for use as an in-house DB)
         public static TileType[] tileTypes;
 
         // master list of each tile on the board and what it's type is
-        // public static int[,] tilesMatrix;
         public static TileType[,] tilesMatrix;
         public static Tilemap tilemap;
         public static GameObject tilemapGO;
 	    public static GameObject grid;
-        // public static Node[,] graph;
+        public static Vector3Int selectedTile = new Vector3Int(0,0,0);
 
     // UNITS
 
@@ -79,7 +76,7 @@ public class GlobalVariables : MonoBehaviour {
 
     // PATHFINDING
 
-    // COMBATE
+    // COMBAT
         public static List<Initiative> initRoster = new List<Initiative>();
         
         // public static List<Node> currentPath;

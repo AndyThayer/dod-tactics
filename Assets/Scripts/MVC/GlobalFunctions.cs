@@ -741,8 +741,8 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.unitsMatrix [ posX,posY ].unitPrefab.GetComponent<Renderer>().enabled = true;
         // update unit and tile HUD boxes
         if(updateInfo){
-            GlobalFunctions.CleanUpTerrainInfoPanel();
-		    GlobalFunctions.CleanUpUnitInfoPanel();
+            // GlobalFunctions.CleanUpTerrainInfoPanel();
+		    // GlobalFunctions.CleanUpUnitInfoPanel();
 		    GlobalFunctions.DisplayTileInfo(posX,posY);
         }
     }
@@ -886,10 +886,7 @@ public class GlobalFunctions : MonoBehaviour {
 		GlobalVariables.infoPanelTerrainText.text = "";
         GlobalVariables.infoPanelTerrainText2.text = "";
         // clean up terrain HUD icon
-        if(GameObject.Find("tileIcon")){
-            GameObject gotileIcon = GameObject.Find("tileIcon");
-            Destroy(gotileIcon);
-        }
+        CleanUpTileIcon();
 
         // hide the Terrain Panel
         if(!panel){
@@ -897,6 +894,12 @@ public class GlobalFunctions : MonoBehaviour {
         }
 
 	}
+
+    public static IEnumerator UpdateTileIcon(int posX, int posY, float wait){
+        CleanUpTileIcon();
+        yield return new WaitForSeconds(wait);
+        DisplayTileIcon(posX,posY);
+    }
 
     public static void CleanUpBattleOptionIcons(){
         if(GameObject.Find("battleOptionIcon")){
@@ -1014,9 +1017,10 @@ public class GlobalFunctions : MonoBehaviour {
             }
             // unit icon
             DisplayUnitIcon(posX, posY);
-		}else{
-			GlobalFunctions.CleanUpUnitInfoPanel();
 		}
+        // else{
+		// 	GlobalFunctions.CleanUpUnitInfoPanel();
+		// }
 		// TERRAIN
         if(GlobalVariables.tilesMatrix[ posX,posY ] != null && terrain){
             // show the Terrain Panel
@@ -1033,6 +1037,10 @@ public class GlobalFunctions : MonoBehaviour {
             GlobalVariables.infoPanelTerrainText2.text = "DEF Bonus: " + GlobalVariables.tilesMatrix[ posX,posY ].defenseBonus;
             // terrain icon
             DisplayTileIcon(posX, posY);
+            // UpdateTileIcon(posX,posY,0.005f);
+            // track which tile we're displaying
+            GlobalVariables.selectedTile.x = posX;
+            GlobalVariables.selectedTile.y = posY;
         }
         
 	}
@@ -1051,6 +1059,14 @@ public class GlobalFunctions : MonoBehaviour {
             GameObject tilePrefab = GlobalVariables.tilesMatrix[ posX,posY ].tilePrefab;
             GameObject tileIcon = Instantiate(tilePrefab, new Vector3(17.575f, 2.2f, 0), tilePrefab.transform.localRotation);
             tileIcon.name = "tileIcon";
+        }
+    }
+
+    public static void CleanUpTileIcon(){
+        // clean up terrain HUD icon
+        if(GameObject.Find("tileIcon")){
+            GameObject gotileIcon = GameObject.Find("tileIcon");
+            Destroy(gotileIcon);
         }
     }
 

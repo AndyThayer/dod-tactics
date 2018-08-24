@@ -21,7 +21,12 @@ public class HoverTile : MonoBehaviour {
 
 	void OnMouseOver() {
 
-		if( GlobalVariables.selectedUnit.x == 0 && GlobalVariables.selectedUnit.y == 0 ){
+		int selUnitX = GlobalVariables.selectedUnit.x;
+		int selUnitY = GlobalVariables.selectedUnit.y;
+		int selTileX = GlobalVariables.selectedTile.x;
+		int selTileY = GlobalVariables.selectedTile.y;
+
+		if( selUnitX == 0 && selUnitY == 0 ){
 			GlobalFunctions.UpdateHUDcursor(posX, posY);
 			GlobalFunctions.DisplayTileInfo(posX,posY);
 			if( GlobalVariables.unitsMatrix [posX,posY ] != null && 
@@ -32,6 +37,13 @@ public class HoverTile : MonoBehaviour {
 					// hide ready unit cursor
 					GlobalFunctions.CleanUpOldHUDreadyUnit();
 			}
+		}else{
+			// Debug.Log(selUnitX +" "+ selTileX +" "+ selUnitY +" "+ selTileY);
+			if( selUnitX != selTileX || selUnitY != selTileY ){
+				GlobalFunctions.DisplayTileInfo(selUnitX,selUnitY,false,true);
+				StartCoroutine(GlobalFunctions.UpdateTileIcon(selUnitX,selUnitY,0.005f));
+			}
+
 		}
 		GlobalFunctions.CleanUpOldHUDcursorThreat();
 		
@@ -49,7 +61,6 @@ public class HoverTile : MonoBehaviour {
 			GlobalFunctions.CleanUpHUDavailable(posX,posY);
 			// restore ready unit cursor
 			GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
-		 	// GlobalFunctions.UpdateWhoIsNext();
 		}
 		
 	}

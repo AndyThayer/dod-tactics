@@ -13,6 +13,9 @@ public class HoverAvailableTile : MonoBehaviour {
 	}
 
 	void OnMouseEnter(){
+
+		GlobalFunctions.DisplayTileInfo(posX,posY,false,true);
+		StartCoroutine(GlobalFunctions.UpdateTileIcon(posX,posY,0.005f));
 		
 		if( !GlobalVariables.freezeHUD ){
 			int parentID = this.gameObject.GetComponent<HUDProperties>().parentID;
@@ -20,7 +23,6 @@ public class HoverAvailableTile : MonoBehaviour {
 			int parentY = this.gameObject.GetComponent<HUDProperties>().parentY;
 
 			if( (GlobalVariables.selectedUnit.x == parentX && GlobalVariables.selectedUnit.y == parentY) ){
-				// Debug.Log("Hovering over an AVAILABLE CELL: ("+parentID+") "+parentX+" "+parentY);
 				
 				GlobalFunctions.RemovePathCellsFromAllUnits();
 				GlobalFunctions.DisplayPathCells(posX,posY,parentX,parentY);
