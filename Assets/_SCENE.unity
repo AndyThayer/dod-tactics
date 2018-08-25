@@ -222,6 +222,11 @@ Prefab:
       propertyPath: m_TagString
       value: HUD_battle_option
       objectReference: {fileID: 0}
+    - target: {fileID: 212411866478304290, guid: 041f3303b93538a48ab4e6e5b2d0e27f,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 041f3303b93538a48ab4e6e5b2d0e27f, type: 2}
   m_IsPrefabParent: 0
@@ -324,6 +329,11 @@ Prefab:
       propertyPath: m_TagString
       value: HUD_battle_option
       objectReference: {fileID: 0}
+    - target: {fileID: 212569349772370346, guid: f3c9c4803da94554ebca2530fb9a1950,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f3c9c4803da94554ebca2530fb9a1950, type: 2}
   m_IsPrefabParent: 0
@@ -410,6 +420,11 @@ Prefab:
     - target: {fileID: 1524787975297624, guid: c9d669fd1689664408ee29360ae7f481, type: 2}
       propertyPath: m_TagString
       value: HUD_battle_option
+      objectReference: {fileID: 0}
+    - target: {fileID: 212881880516868544, guid: c9d669fd1689664408ee29360ae7f481,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c9d669fd1689664408ee29360ae7f481, type: 2}
@@ -676,6 +691,11 @@ Prefab:
     - target: {fileID: 1534782498043420, guid: f1c174e0bcefa3e479784667bcf571e6, type: 2}
       propertyPath: m_TagString
       value: HUD_battle_option
+      objectReference: {fileID: 0}
+    - target: {fileID: 212759400307439888, guid: f1c174e0bcefa3e479784667bcf571e6,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f1c174e0bcefa3e479784667bcf571e6, type: 2}
@@ -3312,7 +3332,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4207553096522530, guid: 6fece3972c3ca1342945d8a7d44be010, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.67
+      value: 0.2175
       objectReference: {fileID: 0}
     - target: {fileID: 4207553096522530, guid: 6fece3972c3ca1342945d8a7d44be010, type: 2}
       propertyPath: m_LocalPosition.z
@@ -3357,6 +3377,11 @@ Prefab:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 3d31bfd5d8e316e419e6933c5e2da8cb, type: 2}
+    - target: {fileID: 212914018147329356, guid: 6fece3972c3ca1342945d8a7d44be010,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6fece3972c3ca1342945d8a7d44be010, type: 2}
   m_IsPrefabParent: 0
@@ -3369,11 +3394,11 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4207553096522530, guid: 6fece3972c3ca1342945d8a7d44be010, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1.94
+      value: -1.941
       objectReference: {fileID: 0}
     - target: {fileID: 4207553096522530, guid: 6fece3972c3ca1342945d8a7d44be010, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.67
+      value: 0.2175
       objectReference: {fileID: 0}
     - target: {fileID: 4207553096522530, guid: 6fece3972c3ca1342945d8a7d44be010, type: 2}
       propertyPath: m_LocalPosition.z
@@ -3463,6 +3488,11 @@ Prefab:
     - target: {fileID: 1591454905217152, guid: 991ec2ea164979b4d9563ad8a0268870, type: 2}
       propertyPath: m_TagString
       value: HUD_battle_option
+      objectReference: {fileID: 0}
+    - target: {fileID: 212593652045057622, guid: 991ec2ea164979b4d9563ad8a0268870,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 991ec2ea164979b4d9563ad8a0268870, type: 2}
@@ -3711,6 +3741,11 @@ Prefab:
     - target: {fileID: 4758701838009986, guid: d1aea151c458b33468d4681543a20dbc, type: 2}
       propertyPath: m_RootOrder
       value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 212995147206660408, guid: d1aea151c458b33468d4681543a20dbc,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d1aea151c458b33468d4681543a20dbc, type: 2}
@@ -4068,6 +4103,11 @@ Prefab:
     - target: {fileID: 1156177409382178, guid: 36c7b7d7ecdb3e34d9306929f4ea3678, type: 2}
       propertyPath: m_TagString
       value: HUD_battle_option
+      objectReference: {fileID: 0}
+    - target: {fileID: 212619914938618790, guid: 36c7b7d7ecdb3e34d9306929f4ea3678,
+        type: 2}
+      propertyPath: m_SortingOrder
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 36c7b7d7ecdb3e34d9306929f4ea3678, type: 2}
