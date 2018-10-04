@@ -101,76 +101,7 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.grid = GameObject.FindGameObjectWithTag("Grid");
 		GlobalVariables.tilemapGO = GlobalVariables.grid.transform.Find("Tilemap").gameObject;
         GlobalVariables.tilemap = GlobalVariables.tilemapGO.GetComponent<Tilemap>();
-    }
-
-    public static void InitializeHUDObjects(){
-        // GlobalVariables.HUDinfoPanel = HUDinfoPanel;
-        // GlobalVariables.HUDInfoPanel = Instantiate(Instance.HUDInfoPanel, new Vector3(-5, -5, 0), Quaternion.identity);
-        // GlobalVariables.HUDInfoPanel.SetActive(false);
-        // GlobalVariables.HUDInfoPanel.name = "HUD_info_panel";
-
-        // HUD cursor
-        GlobalVariables.HUDCursor = Instantiate(Instance.HUDCursor, new Vector3(-1, -1, 0), Quaternion.identity);
-        GlobalVariables.HUDCursor.SetActive(false);
-        GlobalVariables.HUDCursor.name = "HUD_cursor";
-
-        // HUD cursor threat
-        GlobalVariables.HUDCursorThreat = Instantiate(Instance.HUDCursorThreat, new Vector3(-1, -1, 0), Quaternion.identity);
-        GlobalVariables.HUDCursorThreat.SetActive(false);
-        GlobalVariables.HUDCursorThreat.name = "HUD_cursor_threat";
-
-        // HUD ready unit
-        GlobalVariables.HUDReadyUnit = Instantiate(Instance.HUDReadyUnit, new Vector3(-1, -1, 0), Quaternion.identity);
-        GlobalVariables.HUDReadyUnit.SetActive(false);
-        GlobalVariables.HUDReadyUnit.name = "HUD_ready_unit";
-
-        // HUD text
-        // - top panel unit header
-        GlobalVariables.infoPanelTopHeaderGO = GameObject.Find("InfoPanelTopHeader");
-        GlobalVariables.infoPanelTopHeader = GlobalVariables.infoPanelTopHeaderGO.GetComponent<Text>();
-        GlobalVariables.infoPanelTopHeader.text = "";
-        // - top panel unit text
-        GlobalVariables.infoPanelTopTextGO = GameObject.Find("InfoPanelTopText");
-        GlobalVariables.infoPanelTopText = GlobalVariables.infoPanelTopTextGO.GetComponent<Text>();
-        GlobalVariables.infoPanelTopText.text = "";
-        // - info panel unit header
-        GlobalVariables.infoPanelUnitHeaderGO = GameObject.Find("InfoPanelUnitHeader");
-        GlobalVariables.infoPanelUnitHeader = GlobalVariables.infoPanelUnitHeaderGO.GetComponent<Text>();
-        GlobalVariables.infoPanelUnitHeader.text = "";
-        // - info panel unit text
-        GlobalVariables.infoPanelUnitTextGO = GameObject.Find("InfoPanelUnitText");
-        GlobalVariables.infoPanelUnitText = GlobalVariables.infoPanelUnitTextGO.GetComponent<Text>();
-        GlobalVariables.infoPanelUnitText.text = "";
-        // - info panel unit text column 2
-        GlobalVariables.infoPanelUnitText2GO = GameObject.Find("InfoPanelUnitText2");
-        GlobalVariables.infoPanelUnitText2 = GlobalVariables.infoPanelUnitText2GO.GetComponent<Text>();
-        GlobalVariables.infoPanelUnitText2.text = "";
-        // - info panel terrain header
-        GlobalVariables.infoPanelTerrainHeaderGO = GameObject.Find("InfoPanelTerrainHeader");
-        GlobalVariables.infoPanelTerrainHeader = GlobalVariables.infoPanelTerrainHeaderGO.GetComponent<Text>();
-        GlobalVariables.infoPanelTerrainHeader.text = "";
-        // - info panel terrain text
-        GlobalVariables.infoPanelTerrainTextGO = GameObject.Find("InfoPanelTerrainText");
-        GlobalVariables.infoPanelTerrainText = GlobalVariables.infoPanelTerrainTextGO.GetComponent<Text>();
-        GlobalVariables.infoPanelTerrainText.text = "";
-        // - info panel terrain text column 2
-        GlobalVariables.infoPanelTerrainText2GO = GameObject.Find("InfoPanelTerrainText2");
-        GlobalVariables.infoPanelTerrainText2 = GlobalVariables.infoPanelTerrainText2GO.GetComponent<Text>();
-        GlobalVariables.infoPanelTerrainText2.text = "";
-        // infoPanels for Units and Terrain
-        GlobalVariables.infoPanelTerrainGO = GameObject.Find("HUD_side_panel_bottom");
-        GlobalVariables.infoPanelTerrainGO.SetActive(false);
-        GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_middle");
-
-
-        // GlobalVariables.infoPanelTerrainGO = Instantiate(Instance.HUDPanelTerrain, new Vector3(19.175f, 2, 0), Quaternion.identity);
-        // GlobalVariables.infoPanelTerrainGO.name = "HUD_info_panel_terrain";
-        // GlobalVariables.infoPanelUnitGO = Instantiate(Instance.HUDPanelUnit, new Vector3(19.175f, 6.5f, 0), Quaternion.identity);
-        // GlobalVariables.infoPanelUnitGO.name = "HUD_info_panel_units";
-        // GlobalVariables.battleOptionHeavyAttack = GameObject.Find("icon_heavy_attack");
-    }
-
-   
+    }   
 
     public void LoadMapFromTilemap(){
 
@@ -714,6 +645,73 @@ public class GlobalFunctions : MonoBehaviour {
 
 
 
+    public static void InitializeHUDObjects(){
+        // GlobalVariables.HUDinfoPanel = HUDinfoPanel;
+        // GlobalVariables.HUDInfoPanel = Instantiate(Instance.HUDInfoPanel, new Vector3(-5, -5, 0), Quaternion.identity);
+        // GlobalVariables.HUDInfoPanel.SetActive(false);
+        // GlobalVariables.HUDInfoPanel.name = "HUD_info_panel";
+
+        // HUD cursor
+        GlobalVariables.HUDCursor = Instantiate(Instance.HUDCursor, new Vector3(-1, -1, 0), Quaternion.identity);
+        GlobalVariables.HUDCursor.SetActive(false);
+        GlobalVariables.HUDCursor.name = "HUD_cursor";
+
+        // HUD cursor threat
+        GlobalVariables.HUDCursorThreat = Instantiate(Instance.HUDCursorThreat, new Vector3(-1, -1, 0), Quaternion.identity);
+        GlobalVariables.HUDCursorThreat.SetActive(false);
+        GlobalVariables.HUDCursorThreat.name = "HUD_cursor_threat";
+
+        // HUD ready unit
+        GlobalVariables.HUDReadyUnit = Instantiate(Instance.HUDReadyUnit, new Vector3(-1, -1, 0), Quaternion.identity);
+        GlobalVariables.HUDReadyUnit.SetActive(false);
+        GlobalVariables.HUDReadyUnit.name = "HUD_ready_unit";
+
+        // HUD text
+        // - top panel unit header
+        GlobalVariables.infoPanelTopHeaderGO = GameObject.Find("InfoPanelTopHeader");
+        GlobalVariables.infoPanelTopHeader = GlobalVariables.infoPanelTopHeaderGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopHeader.text = "";
+        // - top panel unit text
+        GlobalVariables.infoPanelTopTextGO = GameObject.Find("InfoPanelTopText");
+        GlobalVariables.infoPanelTopText = GlobalVariables.infoPanelTopTextGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopText.text = "";
+        // - info panel unit header
+        GlobalVariables.infoPanelUnitHeaderGO = GameObject.Find("InfoPanelUnitHeader");
+        GlobalVariables.infoPanelUnitHeader = GlobalVariables.infoPanelUnitHeaderGO.GetComponent<Text>();
+        GlobalVariables.infoPanelUnitHeader.text = "";
+        // - info panel unit text
+        GlobalVariables.infoPanelUnitTextGO = GameObject.Find("InfoPanelUnitText");
+        GlobalVariables.infoPanelUnitText = GlobalVariables.infoPanelUnitTextGO.GetComponent<Text>();
+        GlobalVariables.infoPanelUnitText.text = "";
+        // - info panel unit text column 2
+        GlobalVariables.infoPanelUnitText2GO = GameObject.Find("InfoPanelUnitText2");
+        GlobalVariables.infoPanelUnitText2 = GlobalVariables.infoPanelUnitText2GO.GetComponent<Text>();
+        GlobalVariables.infoPanelUnitText2.text = "";
+        // - info panel terrain header
+        GlobalVariables.infoPanelTerrainHeaderGO = GameObject.Find("InfoPanelTerrainHeader");
+        GlobalVariables.infoPanelTerrainHeader = GlobalVariables.infoPanelTerrainHeaderGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTerrainHeader.text = "";
+        // - info panel terrain text
+        GlobalVariables.infoPanelTerrainTextGO = GameObject.Find("InfoPanelTerrainText");
+        GlobalVariables.infoPanelTerrainText = GlobalVariables.infoPanelTerrainTextGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTerrainText.text = "";
+        // - info panel terrain text column 2
+        GlobalVariables.infoPanelTerrainText2GO = GameObject.Find("InfoPanelTerrainText2");
+        GlobalVariables.infoPanelTerrainText2 = GlobalVariables.infoPanelTerrainText2GO.GetComponent<Text>();
+        GlobalVariables.infoPanelTerrainText2.text = "";
+        // infoPanels for Units and Terrain
+        GlobalVariables.infoPanelTerrainGO = GameObject.Find("HUD_side_panel_bottom");
+        GlobalVariables.infoPanelTerrainGO.SetActive(false);
+        GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_middle");
+
+
+        // GlobalVariables.infoPanelTerrainGO = Instantiate(Instance.HUDPanelTerrain, new Vector3(19.175f, 2, 0), Quaternion.identity);
+        // GlobalVariables.infoPanelTerrainGO.name = "HUD_info_panel_terrain";
+        // GlobalVariables.infoPanelUnitGO = Instantiate(Instance.HUDPanelUnit, new Vector3(19.175f, 6.5f, 0), Quaternion.identity);
+        // GlobalVariables.infoPanelUnitGO.name = "HUD_info_panel_units";
+        // GlobalVariables.battleOptionHeavyAttack = GameObject.Find("icon_heavy_attack");
+    }
+
     // used to pass the prefab HUDAvailableCell
     public GameObject GetHUDAvailableCell(bool self = false){
         if(self){
@@ -1146,8 +1144,7 @@ public class GlobalFunctions : MonoBehaviour {
 			return a.CompareTo(b);
 		});
         // enable first unit
-        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
-        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+        PrepForTurn();
         UpdateWhoIsNext();
 
 		Debug.Log("\nAfter sort by initiative:");
@@ -1373,6 +1370,32 @@ public class GlobalFunctions : MonoBehaviour {
 
     }
 
+    public static void CombatRally(int posX, int posY){
+        // reset ICON state
+		// GlobalVariables.freezeIconHUD = false;
+		GlobalFunctions.CleanUpBattleOptionIcons();
+
+        // gather existing values
+        int thisSTA = GlobalVariables.unitsMatrix[ posX,posY ].stamina;
+        int thisBAL = GlobalVariables.unitsMatrix[ posX,posY ].balance;
+
+        // modify values as per Rally
+        thisSTA = MoreThanOneHundred(thisSTA + 50);
+        thisBAL = MoreThanOneHundred(thisBAL + 50);
+
+        // update unit with modified values
+        GlobalVariables.unitsMatrix[ posX,posY ].stamina = thisSTA;
+        GlobalVariables.unitsMatrix[ posX,posY ].balance = thisBAL;
+
+        // reflect updates in HUD
+		GlobalFunctions.DisplayTileInfo( posX,posY, true, false); 
+
+        // consumer unit's movement
+        GlobalVariables.unitsMatrix[ posX,posY ].canAct = false;
+
+        CheckForEndOfTurn(posX,posY);
+    }
+
     public static void UpdateStamina(int posX, int posY){
         UnitType thisChar = GlobalVariables.unitsMatrix[ posX,posY ];
         switch(thisChar.battleOption){
@@ -1406,6 +1429,14 @@ public class GlobalFunctions : MonoBehaviour {
         }
     }
 
+    public static int MoreThanOneHundred(int value){
+        if(value < 100){
+            return value;
+        }else{
+            return 100;
+        }
+    }
+
     public static void CheckForEndOfTurn(int posX, int posY){
         UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
         // if this unit is done attacking, and moving
@@ -1417,8 +1448,7 @@ public class GlobalFunctions : MonoBehaviour {
                 UpdateInitiative();
             }else{
                 // is this part necessary? don't we already do this in UpdateInitiative()?
-                GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
-                GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+                PrepForTurn();
             }
             UpdateWhoIsNext();
             // un-SELECT this unit
@@ -1460,8 +1490,7 @@ public class GlobalFunctions : MonoBehaviour {
                     UpdateWhoIsNext();
 
                     // is this part necessary? don't we already do this in UpdateInitiative()?
-                    // GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
-                    // GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+                    // PrepForTurn();
                 }
 
                 for(int x = 0; x < GlobalVariables.initRoster.Count; x++){
@@ -1481,6 +1510,12 @@ public class GlobalFunctions : MonoBehaviour {
             // UpdateHUDreadyUnit( (int)thisChar.unitPrefab.transform.position.x,(int)thisChar.unitPrefab.transform.position.y );
             UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
         }
+    }
+
+    public static void PrepForTurn(){
+        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
+        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
+        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].rally = false;
     }
 
 

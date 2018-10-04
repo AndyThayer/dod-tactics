@@ -54,6 +54,7 @@ public class UnitType {
     public int team;
     public bool canAct;
     public bool canMove;
+    public bool rally;
     public int lightAttackRange;
     public int heavyAttckRange;
     public string[,] threatCells = new string[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
@@ -69,6 +70,7 @@ public class UnitType {
         displayAvailableCells = false;
         canAct = false;
         canMove = false;
+        rally = false;
         stamina = 100;
         balance = 100;
         lightAttackRange = 1;

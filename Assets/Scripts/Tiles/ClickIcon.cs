@@ -57,7 +57,7 @@ public class ClickIcon : MonoBehaviour {
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].lightAttackRange,posX,posY );
-				// display threat cells
+				// set battleOption and display threat cells
 				if( GlobalVariables.freezeIconHUD ){
 					GlobalFunctions.DisplayThreatCells( posX,posY );
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.LightAttack;
@@ -66,7 +66,7 @@ public class ClickIcon : MonoBehaviour {
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.HeavyAttack);
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].heavyAttckRange,posX,posY );
-				// display threat cells
+				// set battleOption and display threat cells
 				if( GlobalVariables.freezeIconHUD ){
 					GlobalFunctions.DisplayThreatCells( posX,posY );
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.HeavyAttack;
@@ -76,7 +76,12 @@ public class ClickIcon : MonoBehaviour {
 				Debug.Log("Use Item clicked!");
 			}else if(rally){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.Rally);
-				Debug.Log("Rally clicked!");
+				// perform Rally
+				GlobalFunctions.CombatRally( posX,posY );
+				// set battleOption
+				if( GlobalVariables.freezeIconHUD ){
+					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.Rally;
+				}
 			}else if(castSpell){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.CastSpell);
 				Debug.Log("Cast Spell clicked!");
