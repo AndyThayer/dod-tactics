@@ -26,7 +26,7 @@ public class GlobalController : MonoBehaviour {
 		GlobalVariables.tilemapGO.SetActive(false);
 
 
-		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 7,5, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
+		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 6,5, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
 		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 9,5, GlobalFunctions.FindDirection(Enums.Direction.Left), 2);
 		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.SaberToothWolf, 8,7, GlobalFunctions.FindDirection(Enums.Direction.Down), 2);
 		// gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 8,4, GlobalFunctions.FindDirection(Enums.Direction.Down));
