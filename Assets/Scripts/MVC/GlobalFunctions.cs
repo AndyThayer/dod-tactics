@@ -1372,7 +1372,6 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void CombatRally(int posX, int posY){
         // reset ICON state
-		// GlobalVariables.freezeIconHUD = false;
 		GlobalFunctions.CleanUpBattleOptionIcons();
 
         // gather existing values
@@ -1386,6 +1385,7 @@ public class GlobalFunctions : MonoBehaviour {
         // update unit with modified values
         GlobalVariables.unitsMatrix[ posX,posY ].stamina = thisSTA;
         GlobalVariables.unitsMatrix[ posX,posY ].balance = thisBAL;
+        GlobalVariables.unitsMatrix[ posX,posY ].rally = true;
 
         // reflect updates in HUD
 		GlobalFunctions.DisplayTileInfo( posX,posY, true, false); 
@@ -1393,6 +1393,7 @@ public class GlobalFunctions : MonoBehaviour {
         // consumer unit's movement
         GlobalVariables.unitsMatrix[ posX,posY ].canAct = false;
 
+        // clean up
         CheckForEndOfTurn(posX,posY);
     }
 
