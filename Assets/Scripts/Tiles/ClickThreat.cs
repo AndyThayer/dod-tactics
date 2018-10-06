@@ -16,6 +16,10 @@ public class ClickThreat : MonoBehaviour {
 		int parentX = this.GetComponent<HUDProperties>().parentX;
 		int parentY = this.GetComponent<HUDProperties>().parentY;
 
+		// reset ICON state
+		GlobalVariables.freezeIconHUD = false;
+		GlobalFunctions.CleanUpBattleOptionIcons();
+
 		// Debug.Log("\nthreat cell clicked!");
 		GlobalFunctions.SpawnSwordSwoosh(parentX,parentY,posX,posY);
 		if(GlobalVariables.unitsMatrix[ posX,posY ] != null){
