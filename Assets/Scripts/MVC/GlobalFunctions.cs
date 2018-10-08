@@ -687,6 +687,26 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelUnitText2GO = GameObject.Find("InfoPanelUnitText2");
         GlobalVariables.infoPanelUnitText2 = GlobalVariables.infoPanelUnitText2GO.GetComponent<Text>();
         GlobalVariables.infoPanelUnitText2.text = "";
+        // - info panel unit text column 3
+        GlobalVariables.infoPanelUnitText3GO = GameObject.Find("InfoPanelUnitText3");
+        GlobalVariables.infoPanelUnitText3 = GlobalVariables.infoPanelUnitText3GO.GetComponent<Text>();
+        GlobalVariables.infoPanelUnitText3.text = "";
+        // - info panel HP, STA, BAL bars
+        // - HP
+        GlobalVariables.barHPbgGO = GameObject.Find("barHPbg");
+        GlobalVariables.barHPbg = GlobalVariables.barHPbgGO.GetComponent<Image>();
+        GlobalVariables.barHPGO = GameObject.Find("barHP");
+        GlobalVariables.barHP = GlobalVariables.barHPGO.GetComponent<Image>();
+        // - STA
+        GlobalVariables.barSTAbgGO = GameObject.Find("barSTAbg");
+        GlobalVariables.barSTAbg = GlobalVariables.barSTAbgGO.GetComponent<Image>();
+        GlobalVariables.barSTAGO = GameObject.Find("barSTA");
+        GlobalVariables.barSTA = GlobalVariables.barSTAGO.GetComponent<Image>();
+        // - BAL
+        GlobalVariables.barBALbgGO = GameObject.Find("barBALbg");
+        GlobalVariables.barBALbg = GlobalVariables.barBALbgGO.GetComponent<Image>();
+        GlobalVariables.barBALGO = GameObject.Find("barBAL");
+        GlobalVariables.barBAL = GlobalVariables.barBALGO.GetComponent<Image>();
         // - info panel terrain header
         GlobalVariables.infoPanelTerrainHeaderGO = GameObject.Find("InfoPanelTerrainHeader");
         GlobalVariables.infoPanelTerrainHeader = GlobalVariables.infoPanelTerrainHeaderGO.GetComponent<Text>();
@@ -870,6 +890,7 @@ public class GlobalFunctions : MonoBehaviour {
 		GlobalVariables.infoPanelUnitHeader.text = "";
 		GlobalVariables.infoPanelUnitText.text = "";
         GlobalVariables.infoPanelUnitText2.text = "";
+        GlobalVariables.infoPanelUnitText3.text = "";
         // clean up HUD icon
         if(GameObject.Find("unitIcon")){
             GameObject goUnitIcon = GameObject.Find("unitIcon");
@@ -877,6 +898,12 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // hide the Unit Panel
         GlobalVariables.infoPanelUnitGO.SetActive(false);
+        GlobalVariables.barHPGO.SetActive(false);
+        GlobalVariables.barHPbgGO.SetActive(false);
+        GlobalVariables.barSTAGO.SetActive(false);
+        GlobalVariables.barSTAbgGO.SetActive(false);
+        GlobalVariables.barBALGO.SetActive(false);
+        GlobalVariables.barBALbgGO.SetActive(false);
 	}
 
 	public static void CleanUpTerrainInfoPanel(bool panel = false){
@@ -977,6 +1004,12 @@ public class GlobalFunctions : MonoBehaviour {
 		if(GlobalVariables.unitsMatrix[ posX,posY ] != null && units){
             // show the Unit Panel
             GlobalVariables.infoPanelUnitGO.SetActive(true);
+            GlobalVariables.barHPGO.SetActive(true);
+            GlobalVariables.barHPbgGO.SetActive(true);
+            GlobalVariables.barSTAGO.SetActive(true);
+            GlobalVariables.barSTAbgGO.SetActive(true);
+            GlobalVariables.barBALGO.SetActive(true);
+            GlobalVariables.barBALbgGO.SetActive(true);
             CleanUpHUDIcons();
 			// header
             // GlobalVariables.infoPanelUnitHeader.text = GlobalVariables.unitsMatrix[ posX,posY ].unitType.ToString();
@@ -984,12 +1017,10 @@ public class GlobalFunctions : MonoBehaviour {
             GlobalVariables.infoPanelUnitHeader.text += " (" + GlobalVariables.unitsMatrix[ posX,posY ].unitID + ")";
             // col 1
 			GlobalVariables.infoPanelUnitText.text = "HP: " + GlobalVariables.unitsMatrix[ posX,posY ].hitPoints + " / " + GlobalVariables.unitsMatrix[ posX,posY ].hitPointMax;
-            GlobalVariables.infoPanelUnitText.text += "\n";
-            GlobalVariables.infoPanelUnitText.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].movementPoints;
 			GlobalVariables.infoPanelUnitText.text += "\n";
-			GlobalVariables.infoPanelUnitText.text += "STA: " + GlobalVariables.unitsMatrix[ posX,posY ].stamina;
+			GlobalVariables.infoPanelUnitText.text += "STA: " + GlobalVariables.unitsMatrix[ posX,posY ].stamina + " %";
 			GlobalVariables.infoPanelUnitText.text += "\n";
-			GlobalVariables.infoPanelUnitText.text += "BAL: " + GlobalVariables.unitsMatrix[ posX,posY ].balance;
+			GlobalVariables.infoPanelUnitText.text += "BAL: " + GlobalVariables.unitsMatrix[ posX,posY ].balance + " %";
             // col 2
             GlobalVariables.infoPanelUnitText2.text = "ACC: " + GlobalVariables.unitsMatrix[ posX,posY ].accuracy;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
@@ -997,12 +1028,12 @@ public class GlobalFunctions : MonoBehaviour {
 			GlobalVariables.infoPanelUnitText2.text += "\n";
             GlobalVariables.infoPanelUnitText2.text += "SPD: " + GlobalVariables.unitsMatrix[ posX,posY ].speed;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
-            GlobalVariables.infoPanelUnitText2.text += "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
-			GlobalVariables.infoPanelUnitText2.text += "\n";
-            // GlobalVariables.infoPanelUnitText2.text += "ACT: " + GlobalVariables.unitsMatrix[ posX,posY ].canAct;
-			// GlobalVariables.infoPanelUnitText2.text += "\n";
-            // GlobalVariables.infoPanelUnitText2.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].canMove;
-			// GlobalVariables.infoPanelUnitText2.text += "\n";
+            // col 3
+            GlobalVariables.infoPanelUnitText3.text = "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
+			GlobalVariables.infoPanelUnitText3.text += "\n";
+            GlobalVariables.infoPanelUnitText3.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].movementPoints;
+            // status bars
+            UpdateStatusBars ( posX,posY );
             if(GlobalVariables.unitsMatrix[ posX,posY ].canAct){
                 GameObject.Find("torch_flame_ACT").GetComponent<IconAnimations>().PlayLit();
             }else{
@@ -1093,7 +1124,22 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // GlobalVariables.freezeIconHUD = false;
     }
-
+    
+    public static void UpdateStatusBars( int posX, int posY ){
+        // establish current values
+        int HP = GlobalVariables.unitsMatrix [ posX,posY ].hitPoints;
+        int maxHP = GlobalVariables.unitsMatrix [ posX,posY ].hitPointMax;
+        int STA = GlobalVariables.unitsMatrix [ posX,posY ].stamina;
+        int BAL = GlobalVariables.unitsMatrix [ posX,posY ].balance;
+        // convert to percentages
+        float HPpercent = (float)HP / (float)maxHP;
+        float STApercent = (float)STA / 100f;
+        float BALpercent = (float)BAL / 100f;
+        // update display
+        GlobalVariables.barHP.fillAmount = HPpercent;
+        GlobalVariables.barSTA.fillAmount = STApercent;
+        GlobalVariables.barBAL.fillAmount = BALpercent;
+    }
 
 
 

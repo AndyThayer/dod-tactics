@@ -13,6 +13,7 @@ TagManager:
   - HUD_unit_panel
   - HUD_battle_option
   - HUD_cursor_threat
+  - barHPbg
   layers:
   - Default
   - TransparentFX

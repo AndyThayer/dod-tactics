@@ -61,6 +61,25 @@ public class GlobalVariables : MonoBehaviour {
         // - info panel unit text column 2
         public static GameObject infoPanelUnitText2GO;
         public static Text infoPanelUnitText2;
+        // - info panel unit text column 3
+        public static GameObject infoPanelUnitText3GO;
+        public static Text infoPanelUnitText3;
+        // info panel HP, STA, BAL bars
+        // - HP
+        public static GameObject barHPbgGO;
+        public static Image barHPbg;
+        public static GameObject barHPGO;
+        public static Image barHP;
+        // - BAL
+        public static GameObject barBALbgGO;
+        public static Image barBALbg;
+        public static GameObject barBALGO;
+        public static Image barBAL;     
+        // - STA
+        public static GameObject barSTAbgGO;
+        public static Image barSTAbg;
+        public static GameObject barSTAGO;
+        public static Image barSTA;
         // - info panel terrain header
         public static GameObject infoPanelTerrainHeaderGO;
         public static Text infoPanelTerrainHeader;
