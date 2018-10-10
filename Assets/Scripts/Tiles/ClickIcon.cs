@@ -47,7 +47,7 @@ public class ClickIcon : MonoBehaviour {
 			GlobalVariables.freezeIconHUD = false;
 		}
 		
-		if( GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){
+		if( GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct && !GlobalVariables.freezeHUD ){
 
 			// clean up available cells
 			GlobalFunctions.RemoveAvailableCellsFromAllUnits();
