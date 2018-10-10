@@ -9,8 +9,8 @@ public class TileType {
 	// for each public variable here
 
 	public Enums.TileType tileType;
-	public float movementCost;
-    public float staminaCost;
+	public int movementCost;
+    public int staminaCost;
 	public int defenseBonus;
     public string name;
 

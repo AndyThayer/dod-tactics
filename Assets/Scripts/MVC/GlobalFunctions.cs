@@ -396,17 +396,6 @@ public class GlobalFunctions : MonoBehaviour {
     } // end FindAvailableCells()
 
     private AvailableCells CheckForDirectionalAvailablity(AvailableCells acIn, int sourceC, int sourceR, int dirC, int dirR, UnitType thisUnit){
-        
-        // Debug.Log("\n"+sourceC+" "+sourceR);
-        // Debug.Log(dirC+" "+dirR);
-
-        // if(sourceC == 6 && sourceR == 6 && thisUnit.unitType == Enums.UnitType.SaberToothWolf){
-        //     Debug.Log("\ndirCR: "+dirC+" "+dirR);
-        //     Debug.Log("availableSTA for dirCR "+acIn.availableSTA[dirC,dirR]);
-        //     Debug.Log("sourceCR: "+sourceC+" "+sourceR);
-        //     Debug.Log("availableSTA for sourceCR "+acIn.availableSTA[sourceC,sourceR]);
-        // }
-        
 
         // determine MV and STA costs
         float MVcost = GlobalVariables.tilesMatrix[ dirC,dirR ].movementCost;
@@ -437,17 +426,7 @@ public class GlobalFunctions : MonoBehaviour {
                 acIn.availableSTA[ dirC,dirR ] = (thisSTA - STAcost).ToString();
             }
         }
-        // if( STAcost <= thisSTA ){
-        //     // update availableSTA
-        //     if( ((acIn.availableSTA[ dirC,dirR ] == null) || ( (thisSTA - STAcost) > Int32.Parse(acIn.availableSTA[ dirC,dirR ]) )) && 
-        //     GlobalVariables.unitsMatrix[ dirC,dirR ] == null ){
-        //         // acIn.available[ dirC,dirR ] = (thisMV - MVcost).ToString();
-        //         acIn.availableSTA[ dirC,dirR ] = (thisSTA - STAcost).ToString();
-        //         // if(sourceC == 6 && sourceR == 6 && thisUnit.unitType == Enums.UnitType.SaberToothWolf){
-        //         //     Debug.Log("<----- GOBBLED a STA spot: "+(thisSTA - STAcost).ToString());
-        //         // }
-        //     }
-        // }
+
         return acIn;
     }
 
@@ -936,6 +915,7 @@ public class GlobalFunctions : MonoBehaviour {
     public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption){
         int posX = GlobalVariables.selectedUnit.x;
         int posY = GlobalVariables.selectedUnit.y;
+        // do these cases need null checks?
         switch(battleOption){
             case Enums.BattleOption.LightAttack:
                 GlobalVariables.infoPanelTerrainHeader.text = "Light Attack";
@@ -1432,6 +1412,9 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.unitsMatrix[ posX,posY ].stamina = thisSTA;
         GlobalVariables.unitsMatrix[ posX,posY ].balance = thisBAL;
         GlobalVariables.unitsMatrix[ posX,posY ].rally = true;
+
+        // update available cells for this unit
+        RefreshUnitAvailabileCells( posX,posY );
 
         // reflect updates in HUD
 		GlobalFunctions.DisplayTileInfo( posX,posY, true, false); 
