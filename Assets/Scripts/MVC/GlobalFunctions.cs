@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-// using System.Random;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
@@ -1416,11 +1415,11 @@ public class GlobalFunctions : MonoBehaviour {
         // update available cells for this unit
         RefreshUnitAvailabileCells( posX,posY );
 
-        // reflect updates in HUD
-		GlobalFunctions.DisplayTileInfo( posX,posY, true, false); 
-
         // consumer unit's movement
         GlobalVariables.unitsMatrix[ posX,posY ].canAct = false;
+
+        // reflect updates in HUD
+		GlobalFunctions.DisplayTileInfo( posX,posY, true, false); 
 
         // clean up
         CheckForEndOfTurn(posX,posY);
