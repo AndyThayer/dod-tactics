@@ -17,8 +17,6 @@ public class TileType {
     public GameObject tilePrefab;
 
 	public TileType(Enums.TileType type){
-        // GlobalVariables.CharacterID++;
-        // characterID = GlobalVariables.CharacterID;
         tileType = type;
         switch(type){
             case Enums.TileType.Castle:

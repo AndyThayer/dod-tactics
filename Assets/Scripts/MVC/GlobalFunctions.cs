@@ -396,33 +396,18 @@ public class GlobalFunctions : MonoBehaviour {
 
     private AvailableCells CheckForDirectionalAvailablity(AvailableCells acIn, int sourceC, int sourceR, int dirC, int dirR, UnitType thisUnit){
 
-        // determine MV and STA costs
-        float MVcost = GlobalVariables.tilesMatrix[ dirC,dirR ].movementCost;
-        float STAcost = GlobalVariables.tilesMatrix[ dirC,dirR ].staminaCost;
-        switch(GlobalVariables.tilesMatrix[ dirC,dirR ].tileType){
-            case Enums.TileType.GrassRough:
-                if(thisUnit.passThroughGrassRough){
-                    MVcost = 1;
-                    STAcost = 1;
-                }
-                break;
-            case Enums.TileType.WaterShallow:
-                if(thisUnit.passThroughWaterShallow){
-                    MVcost = 1;
-                    STAcost = 1;
-                }
-                break;
-        }
+        // determine MOV and STA costs
+        TileCostType tc = DetermineTileCosts(thisUnit, dirC, dirR);
 
-        int thisMV = Int32.Parse(acIn.available[ sourceC,sourceR ]);
+        int thisMOV = Int32.Parse(acIn.available[ sourceC,sourceR ]);
         int thisSTA = Int32.Parse(acIn.availableSTA[ sourceC,sourceR ]);
-        if( MVcost <= thisMV ){
+        if( tc.MOVcost <= thisMOV ){
             // if the new cell is empty OR the new cell's value is greater than the new value AND the new cell isn't occupied...
                 // update availableMV 
-            if( ((acIn.available[ dirC,dirR ] == null) || ( (thisMV - MVcost) > Int32.Parse(acIn.available[ dirC,dirR ]) )) && 
+            if( ((acIn.available[ dirC,dirR ] == null) || ( (thisMOV - tc.MOVcost) > Int32.Parse(acIn.available[ dirC,dirR ]) )) && 
             GlobalVariables.unitsMatrix[ dirC,dirR ] == null ){
-                acIn.available[ dirC,dirR ] = (thisMV - MVcost).ToString();
-                acIn.availableSTA[ dirC,dirR ] = (thisSTA - STAcost).ToString();
+                acIn.available[ dirC,dirR ] = (thisMOV - tc.MOVcost).ToString();
+                acIn.availableSTA[ dirC,dirR ] = (thisSTA - tc.STAcost).ToString();
             }
         }
 
@@ -445,11 +430,6 @@ public class GlobalFunctions : MonoBehaviour {
         int bestMV = Int32.Parse(availableIn[ c,r ]);
         bool processing = true;
         int inc = 0;
-
-        // if(c == 6 && r == 6){
-        //     Debug.Log("best move "+bestMV);
-        // }
-
 
         // unless we're starting where we're ending...
         // stamp the first vector
@@ -533,12 +513,38 @@ public class GlobalFunctions : MonoBehaviour {
                 Debug.Log("Whoa! We hit the infinite loop safety net in FindBestPath()");
             }
 
-
         } // end while processing
 
-        // Debug.Log(source.ToString() + ": " + inc + " times through FindBestPath()");
-
     } // FindBestPath
+
+    /*
+        params:
+        UnitType thisUnit       unit we're referencing
+        int posX                x coord of tile we're considering
+        int poxY                y coord of tile we're considering
+     */    
+    public static TileCostType DetermineTileCosts(UnitType thisUnit, int posX, int posY){
+        TileCostType tc = new TileCostType();
+        int MOVcost = GlobalVariables.tilesMatrix[ posX,posY ].movementCost;
+        int STAcost = GlobalVariables.tilesMatrix[ posX,posY ].staminaCost;
+        switch(GlobalVariables.tilesMatrix[ posX,posY ].tileType){
+            case Enums.TileType.GrassRough:
+                if(thisUnit.passThroughGrassRough){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;
+            case Enums.TileType.WaterShallow:
+                if(thisUnit.passThroughWaterShallow){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;
+        }
+        tc.STAcost = STAcost;
+        tc.MOVcost = MOVcost;
+        return tc;
+    }
 
     public static void RefreshUnitAvailabileCells(int posX = 0, int posY = 0){
         // all units
@@ -977,7 +983,15 @@ public class GlobalFunctions : MonoBehaviour {
         }
     }
 
-    public static void DisplayTileInfo(int posX, int posY, bool units = true, bool terrain = true){
+    /*
+        params:
+        int posX            x coord for cursor cell   
+        int posY            y coord for cursor cell
+        bool units          whether or not to update display for units (defaults to YES)
+        bool terrain        whether or not to update display for terrain (defaults to YES)
+        UnitType thisUnit   include terrrain info specific to this unit (defaults to NULL)
+     */
+    public static void DisplayTileInfo(int posX, int posY, bool units = true, bool terrain = true, UnitType thisUnit = null){
 
 		// UNITS
 		if(GlobalVariables.unitsMatrix[ posX,posY ] != null && units){
@@ -1026,26 +1040,35 @@ public class GlobalFunctions : MonoBehaviour {
             // unit icon
             DisplayUnitIcon(posX, posY);
 		}
-        // else{
-		// 	GlobalFunctions.CleanUpUnitInfoPanel();
-		// }
 		// TERRAIN
         if(GlobalVariables.tilesMatrix[ posX,posY ] != null && terrain){
+            
+            // specific unit addendums
+            string thisMOV = "";
+            string thisSTA = "";
+            if(thisUnit != null){
+                TileCostType tc = DetermineTileCosts(thisUnit, posX, posY);
+                if(GlobalVariables.tilesMatrix[ posX,posY ].movementCost != tc.MOVcost){
+                    thisMOV = " ("+tc.MOVcost+")" ;
+                }
+                if(GlobalVariables.tilesMatrix[ posX,posY ].staminaCost != tc.STAcost){
+                    thisSTA = " ("+tc.STAcost+")" ;
+                }
+            }
+
             // show the Terrain Panel
             GlobalVariables.infoPanelTerrainGO.SetActive(true);
             // header
-            // GlobalVariables.infoPanelTerrainHeader.text = GlobalVariables.tilesMatrix[ posX,posY ].tileType.ToString();
             GlobalVariables.infoPanelTerrainHeader.text = GlobalVariables.tilesMatrix[ posX,posY ].name;
             GlobalVariables.infoPanelTerrainHeader.text += " (" + posX + "-" + posY + ")";
             // col 1
-            GlobalVariables.infoPanelTerrainText.text = "MOV Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].movementCost;
+            GlobalVariables.infoPanelTerrainText.text = "MOV Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].movementCost + thisMOV;
             GlobalVariables.infoPanelTerrainText.text += "\n";
-            GlobalVariables.infoPanelTerrainText.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost;	
+            GlobalVariables.infoPanelTerrainText.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost + thisSTA;	
             // col 2
             GlobalVariables.infoPanelTerrainText2.text = "DEF Bonus: " + GlobalVariables.tilesMatrix[ posX,posY ].defenseBonus;
             // terrain icon
             DisplayTileIcon(posX, posY);
-            // UpdateTileIcon(posX,posY,0.005f);
             // track which tile we're displaying
             GlobalVariables.selectedTile.x = posX;
             GlobalVariables.selectedTile.y = posY;
