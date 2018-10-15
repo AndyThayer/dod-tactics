@@ -16,12 +16,6 @@ public class GlobalController : MonoBehaviour {
 		// start off by not displaying HUD unit panel
 		GlobalFunctions.CleanUpUnitInfoPanel();
 
-		// GlobalVariables.UnitsWrapper = GameObject.Find("Units");
-
-		// pathfinding setup
-		// GlobalFunctions.InitializePathfinding();
-		// GlobalFunctions.GeneratePathfindingGraph();
-
 		// we don't need to see the original tilemap because we've instantiated prefab tiles instead
 		GlobalVariables.tilemapGO.SetActive(false);
 

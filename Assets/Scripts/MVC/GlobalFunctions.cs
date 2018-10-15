@@ -1442,7 +1442,7 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.unitsMatrix[ posX,posY ].canAct = false;
 
         // reflect updates in HUD
-		GlobalFunctions.DisplayTileInfo( posX,posY, true, false); 
+		GlobalFunctions.DisplayTileInfo( posX,posY, true, true); 
 
         // clean up
         CheckForEndOfTurn(posX,posY);
