@@ -17,6 +17,7 @@ public class HoverIcon : MonoBehaviour {
 	bool rally;
 	bool castSpell;
 	bool specialAbility;
+	bool endTurn;
 
 	Animator anim;
 
@@ -32,6 +33,7 @@ public class HoverIcon : MonoBehaviour {
 		useItem = this.gameObject.GetComponent<IconProperties>().useItem;
 		castSpell = this.gameObject.GetComponent<IconProperties>().castSpell;
 		specialAbility = this.gameObject.GetComponent<IconProperties>().specialAbility;
+		endTurn = this.gameObject.GetComponent<IconProperties>().endTurn;
 
 	}
 
@@ -58,6 +60,8 @@ public class HoverIcon : MonoBehaviour {
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.CastSpell);
 			}else if(specialAbility){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.SpecialAbility);
+			}else if(endTurn){
+				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.EndTurn);
 			}
 		}
 

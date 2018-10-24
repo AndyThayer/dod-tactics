@@ -56,7 +56,8 @@ public class Enums : MonoBehaviour {
         Rally,
         UseItem,
         CastSpell,
-        SpecialAbility
+        SpecialAbility,
+        EndTurn
     }
 
 }

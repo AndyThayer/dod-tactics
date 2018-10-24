@@ -35,8 +35,7 @@ public class GlobalController : MonoBehaviour {
 		// {
 
 		GlobalFunctions.UpdateInitiative();
-		// Debug.Log("\nunit 4,6 availableSTA at 7,6: "+GlobalVariables.unitsMatrix[ 4,6 ].availableCellsSTA[ 7,6]);
-		// Debug.Log("unit 4,6 availableSTA at 6,6: "+GlobalVariables.unitsMatrix[ 4,6 ].availableCellsSTA[ 6,7]);
+		GlobalVariables.infoPanelTopHeader.text = "Woods of Thaden";
 
 
 	}

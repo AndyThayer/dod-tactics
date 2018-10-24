@@ -980,6 +980,9 @@ public class GlobalFunctions : MonoBehaviour {
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
+            case Enums.BattleOption.EndTurn:
+                GlobalVariables.infoPanelTerrainHeader.text = "End Turn";
+                break;
         }
     }
 
@@ -1444,6 +1447,17 @@ public class GlobalFunctions : MonoBehaviour {
         // reflect updates in HUD
 		GlobalFunctions.DisplayTileInfo( posX,posY, true, true); 
 
+        // clean up
+        CheckForEndOfTurn(posX,posY);
+    }
+
+    public static void CombatEndTurn(int posX, int posY){
+        // consumer unit's action and movement
+        GlobalVariables.unitsMatrix [ posX,posY ].canAct = false;
+        GlobalVariables.unitsMatrix [ posX,posY ].canMove = false;
+        // reflect updates in HUD
+		GlobalFunctions.DisplayTileInfo( posX,posY, true, true); 
+        GlobalVariables.HUDCursor.SetActive(false);
         // clean up
         CheckForEndOfTurn(posX,posY);
     }
