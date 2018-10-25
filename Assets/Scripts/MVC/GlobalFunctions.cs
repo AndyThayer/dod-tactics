@@ -1388,11 +1388,23 @@ public class GlobalFunctions : MonoBehaviour {
             }
 
             // generate attack and defense scores
+            // - consider attacker's accuracy
             attackRoll += (int)attacker.accuracy;
+            // - consider heavy attack penalty to accuracy
             if(battleOption == Enums.BattleOption.HeavyAttack){
-                attackRoll = attackRoll - 5;
+                attackRoll = attackRoll - GlobalVariables.heavyAttackValue;
             }
             defendRoll += (int)defender.defense;
+            // - consider rallying bonus
+            if(defender.rally){
+                defendRoll += GlobalVariables.rallyValue;
+                Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
+            }
+            // - consider terrain bonus to DEF
+            if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
+                defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
+                Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
+            }
 
             Debug.Log("attack roll: "+attackRoll);
             Debug.Log("defend roll: "+defendRoll);

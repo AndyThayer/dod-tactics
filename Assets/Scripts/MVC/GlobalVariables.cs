@@ -98,6 +98,8 @@ public class GlobalVariables : MonoBehaviour {
     // COMBAT
         public static List<Initiative> initRoster = new List<Initiative>();
         
-        // public static List<Node> currentPath;
+        // base DEF bonus for rallying
+        public static int rallyValue = 5; 
+        public static int heavyAttackValue = 5;
 
 }
