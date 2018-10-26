@@ -960,21 +960,27 @@ public class GlobalFunctions : MonoBehaviour {
                 }
                 break;
             case Enums.BattleOption.UseItem:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Use Item";
+                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONUseItem, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
             case Enums.BattleOption.CastSpell:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Cast Spell";
+                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONCastSpell, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
             case Enums.BattleOption.SpecialAbility:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Special Ability";
+                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONSpecialAbility, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
