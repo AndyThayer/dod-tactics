@@ -1378,8 +1378,8 @@ public class GlobalFunctions : MonoBehaviour {
 
             // variable bank
             Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
-            int attackRoll = UnityEngine.Random.Range(1, 21);
-            int defendRoll = UnityEngine.Random.Range(1, 21);
+            float attackRoll = UnityEngine.Random.Range(1, 21);
+            float defendRoll = UnityEngine.Random.Range(1, 21);
             int damageRoll = 0; // initialize
             if(battleOption == Enums.BattleOption.LightAttack){
                 damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
@@ -1411,6 +1411,35 @@ public class GlobalFunctions : MonoBehaviour {
                 defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
                 Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
             }
+
+            Debug.Log("BAL: "+attacker.balance+" attack roll before: "+attackRoll);
+            Debug.Log("BAL: "+defender.balance+" defend roll before: "+defendRoll);
+
+            // factor BAL
+            float attFactor = ((float)attacker.balance / 100f);
+            float defFactor = ((float)defender.balance / 100f);
+            if(attFactor < 1){
+                Debug.Log("AT: "+attFactor);
+                float attFactorMod = 1 - attFactor;
+                // Debug.Log("ATM: "+attFactorMod);
+                attFactorMod = attFactorMod / GlobalVariables.BALmod;
+                // Debug.Log("ATM: "+attFactorMod);
+                attFactor = 1 - attFactorMod;
+                Debug.Log("AT: "+attFactor);
+            }
+            if(defFactor < 1){
+                Debug.Log("DF: "+defFactor);
+                float defFactorMod = 1 - defFactor;
+                // Debug.Log("DFM: "+defFactorMod);
+                defFactorMod = defFactorMod / GlobalVariables.BALmod;
+                // Debug.Log("DFM: "+defFactorMod);
+                defFactor = 1 - defFactorMod;
+                Debug.Log("DT: "+defFactor);
+            }
+            // Debug.Log("attackfactor: "+attFactor);
+            // Debug.Log("defend factor: "+defFactor);
+            attackRoll = attackRoll * attFactor;
+            defendRoll = defendRoll * defFactor;
 
             Debug.Log("attack roll: "+attackRoll);
             Debug.Log("defend roll: "+defendRoll);
@@ -1527,7 +1556,7 @@ public class GlobalFunctions : MonoBehaviour {
         if( !thisUnit.canAct && !thisUnit.canMove ){
 
             GlobalVariables.initRoster.RemoveAt(0);
-            Debug.Log("removing (0) from initRoster. Count is now: "+GlobalVariables.initRoster.Count);
+            // Debug.Log("removing (0) from initRoster. Count is now: "+GlobalVariables.initRoster.Count);
             if(GlobalVariables.initRoster.Count <= 0){
                 UpdateInitiative();
             }else{

@@ -101,5 +101,10 @@ public class GlobalVariables : MonoBehaviour {
         // base DEF bonus for rallying
         public static int rallyValue = 5; 
         public static int heavyAttackValue = 5;
+        /*
+         what we divide the percentage that BAL impacts attack and defend rolls
+         70 BAL would be: attack/defend roll * (1 - (.3 / BAL mod))
+         */
+        public static float BALmod = 2; 
 
 }
