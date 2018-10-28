@@ -166,7 +166,7 @@ public class UnitType {
                 balRecovery = 10;
                 staRecovery = 10;
                 accuracy = 6; // 1
-                critical = 2;
+                critical = 2; // 2
                 speed = 4;
                 defense = 5;
                 lowDamage = 1;

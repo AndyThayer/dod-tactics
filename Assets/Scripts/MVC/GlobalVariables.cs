@@ -100,11 +100,22 @@ public class GlobalVariables : MonoBehaviour {
         
         // base DEF bonus for rallying
         public static int rallyValue = 5; 
-        public static int heavyAttackValue = 5;
+
+        // penalty to accuracy when making a heavy attack
+        public static int heavyAttackAccPen = 5;
+
+        // bonus to damage roll when making a heavy attack (only if unit.highDamage * heavyAttackMod < heavyAttackBonus)
+        public static int heavyAttackBonus = 5;
+
+        // bonus to damage roll when making a heavy attack (minimum should be = heavyAttackBonus)
+        public static float heavyAttackMod = 1.2f;
+
         /*
          what we divide the percentage that BAL impacts attack and defend rolls
          70 BAL would be: attack/defend roll * (1 - (.3 / BAL mod))
          */
-        public static float BALmod = 2; 
+        public static float BALmod = 2f; 
+
+        public static float critMultiplier = 2f;
 
 }

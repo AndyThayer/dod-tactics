@@ -1381,24 +1381,34 @@ public class GlobalFunctions : MonoBehaviour {
             float attackRoll = UnityEngine.Random.Range(1, 21);
             float defendRoll = UnityEngine.Random.Range(1, 21);
             int damageRoll = 0; // initialize
+            // LIGHT ATTACK damage
             if(battleOption == Enums.BattleOption.LightAttack){
                 damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
+            // HEAVY ATTACK damage
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
-                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((attacker.highDamage+1)*2) );
+                float highDamageTemp = attacker.highDamage;
+                highDamageTemp = highDamageTemp * GlobalVariables.heavyAttackMod;
+                float heavyDamageDiff = highDamageTemp - attacker.highDamage;
+                if(heavyDamageDiff < GlobalVariables.heavyAttackBonus){
+                    highDamageTemp = attacker.highDamage + GlobalVariables.heavyAttackBonus;
+                }
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)highDamageTemp+1) );  
             }
+            // set up BAL value 
             int BALvalue = 10; // initialize
             if(battleOption == Enums.BattleOption.LightAttack){
                 BALvalue = 10;
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
                 BALvalue = 30; 
             }
+            bool critHit = false;
 
             // generate attack and defense scores
             // - consider attacker's accuracy
             attackRoll += (int)attacker.accuracy;
             // - consider heavy attack penalty to accuracy
             if(battleOption == Enums.BattleOption.HeavyAttack){
-                attackRoll = attackRoll - GlobalVariables.heavyAttackValue;
+                attackRoll = attackRoll - GlobalVariables.heavyAttackAccPen;
             }
             defendRoll += (int)defender.defense;
             // - consider rallying bonus
@@ -1410,6 +1420,14 @@ public class GlobalFunctions : MonoBehaviour {
             if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
                 defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
                 Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
+            }
+
+            // consider critical hit (use critHit to remember locally)
+            int critRoll = UnityEngine.Random.Range( 1,101 );
+            if(critRoll <= attacker.critical){
+                critHit = true;
+                float damageRollTemp = damageRoll * GlobalVariables.critMultiplier;
+                damageRoll = (int)damageRollTemp;
             }
 
             Debug.Log("BAL: "+attacker.balance+" attack roll before: "+attackRoll);
@@ -1449,6 +1467,9 @@ public class GlobalFunctions : MonoBehaviour {
             if(attackRoll >= defendRoll){ 
                 defender.hitPoints = LessThanZero(defender.hitPoints - damageRoll);
                 defender.balance = LessThanZero(defender.balance - BALvalue);
+                if(critHit){
+                    Debug.Log("critical hit!");
+                }
                 Debug.Log("attacker deals "+damageRoll+" damage with "+battleOption.ToString());
                 // MISS!
             }else{ 
