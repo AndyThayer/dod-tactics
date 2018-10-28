@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: ae76a747c77bc9b4f9f897e8b9a38d00
+timeCreated: 1539448305
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Brandi Alexander
+  fontNames:
+  - Brandi Alexander
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -13,6 +13,7 @@ public class ClickIcon : MonoBehaviour {
 	bool rally;
 	bool castSpell;
 	bool specialAbility;
+	bool endTurn;
 
 	void Awake() {
         Instance = this;
@@ -26,6 +27,7 @@ public class ClickIcon : MonoBehaviour {
 		useItem = this.gameObject.GetComponent<IconProperties>().useItem;
 		castSpell = this.gameObject.GetComponent<IconProperties>().castSpell;
 		specialAbility = this.gameObject.GetComponent<IconProperties>().specialAbility;
+		endTurn = this.gameObject.GetComponent<IconProperties>().endTurn;
 		
 	}
 
@@ -40,20 +42,21 @@ public class ClickIcon : MonoBehaviour {
 			GlobalFunctions.CleanUpHUDIcons();
 		}
 		// light up this icon
-		if( !GlobalVariables.freezeIconHUD ){
+		if( !GlobalVariables.freezeIconHUD && GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){
 			this.GetComponent<HoverIcon>().PlayLit();
 			GlobalVariables.freezeIconHUD = true;
 		}else{
 			GlobalVariables.freezeIconHUD = false;
 		}
 		
-		if( GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){
+		if( !GlobalVariables.freezeHUD ){
 
 			// clean up available cells
 			GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 			GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
+			bool thisUnitCanAct =  GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct;
 
-			if(lightAttack){
+			if( thisUnitCanAct && lightAttack ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].lightAttackRange,posX,posY );
@@ -62,7 +65,7 @@ public class ClickIcon : MonoBehaviour {
 					GlobalFunctions.DisplayThreatCells( posX,posY );
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.LightAttack;
 				}
-			}else if(heavyAttack){
+			}else if( thisUnitCanAct && heavyAttack ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.HeavyAttack);
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].heavyAttckRange,posX,posY );
@@ -71,10 +74,10 @@ public class ClickIcon : MonoBehaviour {
 					GlobalFunctions.DisplayThreatCells( posX,posY );
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.HeavyAttack;
 				}
-			}else if(useItem){
+			}else if( thisUnitCanAct && useItem ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.UseItem);
 				Debug.Log("Use Item clicked!");
-			}else if(rally){
+			}else if( thisUnitCanAct && rally ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.Rally);
 				// perform Rally
 				GlobalFunctions.CombatRally( posX,posY );
@@ -82,13 +85,20 @@ public class ClickIcon : MonoBehaviour {
 				if( GlobalVariables.freezeIconHUD ){
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.Rally;
 				}
-			}else if(castSpell){
+			}else if( thisUnitCanAct && castSpell ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.CastSpell);
 				Debug.Log("Cast Spell clicked!");
-			}else if(specialAbility){
+			}else if( thisUnitCanAct && specialAbility ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.SpecialAbility);
 				Debug.Log("Special Ability clicked!");
-
+			}else if( endTurn ){
+				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.EndTurn);
+				GlobalFunctions.CombatEndTurn( posX,posY );
+				// CombatEndTurn > CheckForEndOfTurn wipes selectedUnit values, but we still need them in this scenario
+				GlobalVariables.selectedUnit.x = posX;
+            	GlobalVariables.selectedUnit.y = posY;
+				// lift the freeze, we're done here
+				GlobalVariables.freezeIconHUD = false;
 			}
 
 		} // if canAct

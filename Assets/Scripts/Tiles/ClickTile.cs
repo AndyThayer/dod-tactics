@@ -19,7 +19,7 @@ public class ClickTile : MonoBehaviour {
 
 			if( GlobalVariables.unitsMatrix[ posX,posY ] != null ){
 
-				// if *THERE IS* a unit on this tile
+				// if *THERE IS* a selected unit on this tile
 				if(GlobalVariables.selectedUnit.x == posX && GlobalVariables.selectedUnit.y == posY){
 					// un-SELECT this unit
 					GlobalVariables.selectedUnit = new Vector3Int(0,0,0);
@@ -32,7 +32,7 @@ public class ClickTile : MonoBehaviour {
 					GlobalFunctions.CleanUpUnitInfoPanel();
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
-				// else, if *THERE IS NOT* a unit on this tile	
+				// else, if *THERE IS NOT* a selected unit on this tile	
 				// if it's their TURN as per INITIATIVE
 				}else if ( 
 					(GlobalVariables.unitsMatrix[ posX,posY ].unitID == GlobalVariables.initRoster[0].unitID) && 
@@ -67,9 +67,10 @@ public class ClickTile : MonoBehaviour {
 					GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 					GlobalVariables.selectedUnit = new Vector3Int(0,0,0);
 					GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
-					// restore ready unit cursor
-					// GlobalFunctions.UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
-			
+					
+					// udpate unit info panel
+					GlobalFunctions.CleanUpUnitInfoPanel();
+					GlobalFunctions.DisplayUnitIcon(posX, posY);
 				}	
 
 			}else{

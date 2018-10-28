@@ -61,6 +61,25 @@ public class GlobalVariables : MonoBehaviour {
         // - info panel unit text column 2
         public static GameObject infoPanelUnitText2GO;
         public static Text infoPanelUnitText2;
+        // - info panel unit text column 3
+        public static GameObject infoPanelUnitText3GO;
+        public static Text infoPanelUnitText3;
+        // info panel HP, STA, BAL bars
+        // - HP
+        public static GameObject barHPbgGO;
+        public static Image barHPbg;
+        public static GameObject barHPGO;
+        public static Image barHP;
+        // - BAL
+        public static GameObject barBALbgGO;
+        public static Image barBALbg;
+        public static GameObject barBALGO;
+        public static Image barBAL;     
+        // - STA
+        public static GameObject barSTAbgGO;
+        public static Image barSTAbg;
+        public static GameObject barSTAGO;
+        public static Image barSTA;
         // - info panel terrain header
         public static GameObject infoPanelTerrainHeaderGO;
         public static Text infoPanelTerrainHeader;
@@ -79,6 +98,24 @@ public class GlobalVariables : MonoBehaviour {
     // COMBAT
         public static List<Initiative> initRoster = new List<Initiative>();
         
-        // public static List<Node> currentPath;
+        // base DEF bonus for rallying
+        public static int rallyValue = 5; 
+
+        // penalty to accuracy when making a heavy attack
+        public static int heavyAttackAccPen = 5;
+
+        // bonus to damage roll when making a heavy attack (only if unit.highDamage * heavyAttackMod < heavyAttackBonus)
+        public static int heavyAttackBonus = 5;
+
+        // bonus to damage roll when making a heavy attack (minimum should be = heavyAttackBonus)
+        public static float heavyAttackMod = 1.2f;
+
+        /*
+         what we divide the percentage that BAL impacts attack and defend rolls
+         70 BAL would be: attack/defend roll * (1 - (.3 / BAL mod))
+         */
+        public static float BALmod = 2f; 
+
+        public static float critMultiplier = 2f;
 
 }

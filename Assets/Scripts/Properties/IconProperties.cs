@@ -11,5 +11,6 @@ public class IconProperties : MonoBehaviour {
 	public bool useItem;
 	public bool castSpell;
 	public bool specialAbility;
+	public bool endTurn;
 
 }

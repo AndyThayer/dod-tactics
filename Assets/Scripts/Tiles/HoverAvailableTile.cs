@@ -14,13 +14,15 @@ public class HoverAvailableTile : MonoBehaviour {
 
 	void OnMouseEnter(){
 
-		GlobalFunctions.DisplayTileInfo(posX,posY,false,true);
+		int parentID = this.gameObject.GetComponent<HUDProperties>().parentID;
+		int parentX = this.gameObject.GetComponent<HUDProperties>().parentX;
+		int parentY = this.gameObject.GetComponent<HUDProperties>().parentY;
+		
+		UnitType thisUnit = GlobalVariables.unitsMatrix [ parentX,parentY ];
+		GlobalFunctions.DisplayTileInfo(posX,posY,false,true,thisUnit);
 		StartCoroutine(GlobalFunctions.UpdateTileIcon(posX,posY,0.005f));
 		
 		if( !GlobalVariables.freezeHUD ){
-			int parentID = this.gameObject.GetComponent<HUDProperties>().parentID;
-			int parentX = this.gameObject.GetComponent<HUDProperties>().parentX;
-			int parentY = this.gameObject.GetComponent<HUDProperties>().parentY;
 
 			if( (GlobalVariables.selectedUnit.x == parentX && GlobalVariables.selectedUnit.y == parentY) ){
 				

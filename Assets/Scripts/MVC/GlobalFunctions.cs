@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-// using System.Random;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Tilemaps;
@@ -396,58 +395,22 @@ public class GlobalFunctions : MonoBehaviour {
     } // end FindAvailableCells()
 
     private AvailableCells CheckForDirectionalAvailablity(AvailableCells acIn, int sourceC, int sourceR, int dirC, int dirR, UnitType thisUnit){
-        
-        // Debug.Log("\n"+sourceC+" "+sourceR);
-        // Debug.Log(dirC+" "+dirR);
 
-        // if(sourceC == 6 && sourceR == 6 && thisUnit.unitType == Enums.UnitType.SaberToothWolf){
-        //     Debug.Log("\ndirCR: "+dirC+" "+dirR);
-        //     Debug.Log("availableSTA for dirCR "+acIn.availableSTA[dirC,dirR]);
-        //     Debug.Log("sourceCR: "+sourceC+" "+sourceR);
-        //     Debug.Log("availableSTA for sourceCR "+acIn.availableSTA[sourceC,sourceR]);
-        // }
-        
+        // determine MOV and STA costs
+        TileCostType tc = DetermineTileCosts(thisUnit, dirC, dirR);
 
-        // determine MV and STA costs
-        float MVcost = GlobalVariables.tilesMatrix[ dirC,dirR ].movementCost;
-        float STAcost = GlobalVariables.tilesMatrix[ dirC,dirR ].staminaCost;
-        switch(GlobalVariables.tilesMatrix[ dirC,dirR ].tileType){
-            case Enums.TileType.GrassRough:
-                if(thisUnit.passThroughGrassRough){
-                    MVcost = 1;
-                    STAcost = 1;
-                }
-                break;
-            case Enums.TileType.WaterShallow:
-                if(thisUnit.passThroughWaterShallow){
-                    MVcost = 1;
-                    STAcost = 1;
-                }
-                break;
-        }
-
-        int thisMV = Int32.Parse(acIn.available[ sourceC,sourceR ]);
+        int thisMOV = Int32.Parse(acIn.available[ sourceC,sourceR ]);
         int thisSTA = Int32.Parse(acIn.availableSTA[ sourceC,sourceR ]);
-        if( MVcost <= thisMV ){
+        if( tc.MOVcost <= thisMOV ){
             // if the new cell is empty OR the new cell's value is greater than the new value AND the new cell isn't occupied...
                 // update availableMV 
-            if( ((acIn.available[ dirC,dirR ] == null) || ( (thisMV - MVcost) > Int32.Parse(acIn.available[ dirC,dirR ]) )) && 
+            if( ((acIn.available[ dirC,dirR ] == null) || ( (thisMOV - tc.MOVcost) > Int32.Parse(acIn.available[ dirC,dirR ]) )) && 
             GlobalVariables.unitsMatrix[ dirC,dirR ] == null ){
-                acIn.available[ dirC,dirR ] = (thisMV - MVcost).ToString();
-                acIn.availableSTA[ dirC,dirR ] = (thisSTA - STAcost).ToString();
+                acIn.available[ dirC,dirR ] = (thisMOV - tc.MOVcost).ToString();
+                acIn.availableSTA[ dirC,dirR ] = (thisSTA - tc.STAcost).ToString();
             }
         }
-        // if( STAcost <= thisSTA ){
-        //     // update availableSTA
-        //     if( ((acIn.availableSTA[ dirC,dirR ] == null) || ( (thisSTA - STAcost) > Int32.Parse(acIn.availableSTA[ dirC,dirR ]) )) && 
-        //     GlobalVariables.unitsMatrix[ dirC,dirR ] == null ){
-        //         // acIn.available[ dirC,dirR ] = (thisMV - MVcost).ToString();
-        //         acIn.availableSTA[ dirC,dirR ] = (thisSTA - STAcost).ToString();
-        //         // if(sourceC == 6 && sourceR == 6 && thisUnit.unitType == Enums.UnitType.SaberToothWolf){
-        //         //     Debug.Log("<----- GOBBLED a STA spot: "+(thisSTA - STAcost).ToString());
-        //         // }
-        //     }
-        // }
+
         return acIn;
     }
 
@@ -467,11 +430,6 @@ public class GlobalFunctions : MonoBehaviour {
         int bestMV = Int32.Parse(availableIn[ c,r ]);
         bool processing = true;
         int inc = 0;
-
-        // if(c == 6 && r == 6){
-        //     Debug.Log("best move "+bestMV);
-        // }
-
 
         // unless we're starting where we're ending...
         // stamp the first vector
@@ -555,12 +513,38 @@ public class GlobalFunctions : MonoBehaviour {
                 Debug.Log("Whoa! We hit the infinite loop safety net in FindBestPath()");
             }
 
-
         } // end while processing
 
-        // Debug.Log(source.ToString() + ": " + inc + " times through FindBestPath()");
-
     } // FindBestPath
+
+    /*
+        params:
+        UnitType thisUnit       unit we're referencing
+        int posX                x coord of tile we're considering
+        int poxY                y coord of tile we're considering
+     */    
+    public static TileCostType DetermineTileCosts(UnitType thisUnit, int posX, int posY){
+        TileCostType tc = new TileCostType();
+        int MOVcost = GlobalVariables.tilesMatrix[ posX,posY ].movementCost;
+        int STAcost = GlobalVariables.tilesMatrix[ posX,posY ].staminaCost;
+        switch(GlobalVariables.tilesMatrix[ posX,posY ].tileType){
+            case Enums.TileType.GrassRough:
+                if(thisUnit.passThroughGrassRough){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;
+            case Enums.TileType.WaterShallow:
+                if(thisUnit.passThroughWaterShallow){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;
+        }
+        tc.STAcost = STAcost;
+        tc.MOVcost = MOVcost;
+        return tc;
+    }
 
     public static void RefreshUnitAvailabileCells(int posX = 0, int posY = 0){
         // all units
@@ -687,6 +671,26 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelUnitText2GO = GameObject.Find("InfoPanelUnitText2");
         GlobalVariables.infoPanelUnitText2 = GlobalVariables.infoPanelUnitText2GO.GetComponent<Text>();
         GlobalVariables.infoPanelUnitText2.text = "";
+        // - info panel unit text column 3
+        GlobalVariables.infoPanelUnitText3GO = GameObject.Find("InfoPanelUnitText3");
+        GlobalVariables.infoPanelUnitText3 = GlobalVariables.infoPanelUnitText3GO.GetComponent<Text>();
+        GlobalVariables.infoPanelUnitText3.text = "";
+        // - info panel HP, STA, BAL bars
+        // - HP
+        GlobalVariables.barHPbgGO = GameObject.Find("barHPbg");
+        GlobalVariables.barHPbg = GlobalVariables.barHPbgGO.GetComponent<Image>();
+        GlobalVariables.barHPGO = GameObject.Find("barHP");
+        GlobalVariables.barHP = GlobalVariables.barHPGO.GetComponent<Image>();
+        // - STA
+        GlobalVariables.barSTAbgGO = GameObject.Find("barSTAbg");
+        GlobalVariables.barSTAbg = GlobalVariables.barSTAbgGO.GetComponent<Image>();
+        GlobalVariables.barSTAGO = GameObject.Find("barSTA");
+        GlobalVariables.barSTA = GlobalVariables.barSTAGO.GetComponent<Image>();
+        // - BAL
+        GlobalVariables.barBALbgGO = GameObject.Find("barBALbg");
+        GlobalVariables.barBALbg = GlobalVariables.barBALbgGO.GetComponent<Image>();
+        GlobalVariables.barBALGO = GameObject.Find("barBAL");
+        GlobalVariables.barBAL = GlobalVariables.barBALGO.GetComponent<Image>();
         // - info panel terrain header
         GlobalVariables.infoPanelTerrainHeaderGO = GameObject.Find("InfoPanelTerrainHeader");
         GlobalVariables.infoPanelTerrainHeader = GlobalVariables.infoPanelTerrainHeaderGO.GetComponent<Text>();
@@ -870,6 +874,7 @@ public class GlobalFunctions : MonoBehaviour {
 		GlobalVariables.infoPanelUnitHeader.text = "";
 		GlobalVariables.infoPanelUnitText.text = "";
         GlobalVariables.infoPanelUnitText2.text = "";
+        GlobalVariables.infoPanelUnitText3.text = "";
         // clean up HUD icon
         if(GameObject.Find("unitIcon")){
             GameObject goUnitIcon = GameObject.Find("unitIcon");
@@ -877,6 +882,12 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // hide the Unit Panel
         GlobalVariables.infoPanelUnitGO.SetActive(false);
+        GlobalVariables.barHPGO.SetActive(false);
+        GlobalVariables.barHPbgGO.SetActive(false);
+        GlobalVariables.barSTAGO.SetActive(false);
+        GlobalVariables.barSTAbgGO.SetActive(false);
+        GlobalVariables.barBALGO.SetActive(false);
+        GlobalVariables.barBALbgGO.SetActive(false);
 	}
 
 	public static void CleanUpTerrainInfoPanel(bool panel = false){
@@ -909,6 +920,7 @@ public class GlobalFunctions : MonoBehaviour {
     public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption){
         int posX = GlobalVariables.selectedUnit.x;
         int posY = GlobalVariables.selectedUnit.y;
+        // do these cases need null checks?
         switch(battleOption){
             case Enums.BattleOption.LightAttack:
                 GlobalVariables.infoPanelTerrainHeader.text = "Light Attack";
@@ -948,35 +960,58 @@ public class GlobalFunctions : MonoBehaviour {
                 }
                 break;
             case Enums.BattleOption.UseItem:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Use Item";
+                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONUseItem, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
             case Enums.BattleOption.CastSpell:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Cast Spell";
+                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONCastSpell, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
             case Enums.BattleOption.SpecialAbility:
+                // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Special Ability";
+                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONSpecialAbility, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                 }
                 break;
+            case Enums.BattleOption.EndTurn:
+                GlobalVariables.infoPanelTerrainHeader.text = "End Turn";
+                break;
         }
     }
 
-    public static void DisplayTileInfo(int posX, int posY, bool units = true, bool terrain = true){
+    /*
+        params:
+        int posX            x coord for cursor cell   
+        int posY            y coord for cursor cell
+        bool units          whether or not to update display for units (defaults to YES)
+        bool terrain        whether or not to update display for terrain (defaults to YES)
+        UnitType thisUnit   include terrrain info specific to this unit (defaults to NULL)
+     */
+    public static void DisplayTileInfo(int posX, int posY, bool units = true, bool terrain = true, UnitType thisUnit = null){
 
 		// UNITS
 		if(GlobalVariables.unitsMatrix[ posX,posY ] != null && units){
             // show the Unit Panel
             GlobalVariables.infoPanelUnitGO.SetActive(true);
+            GlobalVariables.barHPGO.SetActive(true);
+            GlobalVariables.barHPbgGO.SetActive(true);
+            GlobalVariables.barSTAGO.SetActive(true);
+            GlobalVariables.barSTAbgGO.SetActive(true);
+            GlobalVariables.barBALGO.SetActive(true);
+            GlobalVariables.barBALbgGO.SetActive(true);
             CleanUpHUDIcons();
 			// header
             // GlobalVariables.infoPanelUnitHeader.text = GlobalVariables.unitsMatrix[ posX,posY ].unitType.ToString();
@@ -984,12 +1019,10 @@ public class GlobalFunctions : MonoBehaviour {
             GlobalVariables.infoPanelUnitHeader.text += " (" + GlobalVariables.unitsMatrix[ posX,posY ].unitID + ")";
             // col 1
 			GlobalVariables.infoPanelUnitText.text = "HP: " + GlobalVariables.unitsMatrix[ posX,posY ].hitPoints + " / " + GlobalVariables.unitsMatrix[ posX,posY ].hitPointMax;
-            GlobalVariables.infoPanelUnitText.text += "\n";
-            GlobalVariables.infoPanelUnitText.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].movementPoints;
 			GlobalVariables.infoPanelUnitText.text += "\n";
-			GlobalVariables.infoPanelUnitText.text += "STA: " + GlobalVariables.unitsMatrix[ posX,posY ].stamina;
+			GlobalVariables.infoPanelUnitText.text += "STA: " + GlobalVariables.unitsMatrix[ posX,posY ].stamina + " %";
 			GlobalVariables.infoPanelUnitText.text += "\n";
-			GlobalVariables.infoPanelUnitText.text += "BAL: " + GlobalVariables.unitsMatrix[ posX,posY ].balance;
+			GlobalVariables.infoPanelUnitText.text += "BAL: " + GlobalVariables.unitsMatrix[ posX,posY ].balance + " %";
             // col 2
             GlobalVariables.infoPanelUnitText2.text = "ACC: " + GlobalVariables.unitsMatrix[ posX,posY ].accuracy;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
@@ -997,12 +1030,12 @@ public class GlobalFunctions : MonoBehaviour {
 			GlobalVariables.infoPanelUnitText2.text += "\n";
             GlobalVariables.infoPanelUnitText2.text += "SPD: " + GlobalVariables.unitsMatrix[ posX,posY ].speed;
 			GlobalVariables.infoPanelUnitText2.text += "\n";
-            GlobalVariables.infoPanelUnitText2.text += "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
-			GlobalVariables.infoPanelUnitText2.text += "\n";
-            // GlobalVariables.infoPanelUnitText2.text += "ACT: " + GlobalVariables.unitsMatrix[ posX,posY ].canAct;
-			// GlobalVariables.infoPanelUnitText2.text += "\n";
-            // GlobalVariables.infoPanelUnitText2.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].canMove;
-			// GlobalVariables.infoPanelUnitText2.text += "\n";
+            // col 3
+            GlobalVariables.infoPanelUnitText3.text = "DEF: " + GlobalVariables.unitsMatrix[ posX,posY ].defense;
+			GlobalVariables.infoPanelUnitText3.text += "\n";
+            GlobalVariables.infoPanelUnitText3.text += "MOV: " + GlobalVariables.unitsMatrix[ posX,posY ].movementPoints;
+            // status bars
+            UpdateStatusBars ( posX,posY );
             if(GlobalVariables.unitsMatrix[ posX,posY ].canAct){
                 GameObject.Find("torch_flame_ACT").GetComponent<IconAnimations>().PlayLit();
             }else{
@@ -1016,26 +1049,35 @@ public class GlobalFunctions : MonoBehaviour {
             // unit icon
             DisplayUnitIcon(posX, posY);
 		}
-        // else{
-		// 	GlobalFunctions.CleanUpUnitInfoPanel();
-		// }
 		// TERRAIN
         if(GlobalVariables.tilesMatrix[ posX,posY ] != null && terrain){
+            
+            // specific unit addendums
+            string thisMOV = "";
+            string thisSTA = "";
+            if(thisUnit != null){
+                TileCostType tc = DetermineTileCosts(thisUnit, posX, posY);
+                if(GlobalVariables.tilesMatrix[ posX,posY ].movementCost != tc.MOVcost){
+                    thisMOV = " ("+tc.MOVcost+")" ;
+                }
+                if(GlobalVariables.tilesMatrix[ posX,posY ].staminaCost != tc.STAcost){
+                    thisSTA = " ("+tc.STAcost+")" ;
+                }
+            }
+
             // show the Terrain Panel
             GlobalVariables.infoPanelTerrainGO.SetActive(true);
             // header
-            // GlobalVariables.infoPanelTerrainHeader.text = GlobalVariables.tilesMatrix[ posX,posY ].tileType.ToString();
             GlobalVariables.infoPanelTerrainHeader.text = GlobalVariables.tilesMatrix[ posX,posY ].name;
             GlobalVariables.infoPanelTerrainHeader.text += " (" + posX + "-" + posY + ")";
             // col 1
-            GlobalVariables.infoPanelTerrainText.text = "MOV Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].movementCost;
+            GlobalVariables.infoPanelTerrainText.text = "MOV Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].movementCost + thisMOV;
             GlobalVariables.infoPanelTerrainText.text += "\n";
-            GlobalVariables.infoPanelTerrainText.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost;	
+            GlobalVariables.infoPanelTerrainText.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost + thisSTA;	
             // col 2
             GlobalVariables.infoPanelTerrainText2.text = "DEF Bonus: " + GlobalVariables.tilesMatrix[ posX,posY ].defenseBonus;
             // terrain icon
             DisplayTileIcon(posX, posY);
-            // UpdateTileIcon(posX,posY,0.005f);
             // track which tile we're displaying
             GlobalVariables.selectedTile.x = posX;
             GlobalVariables.selectedTile.y = posY;
@@ -1093,7 +1135,22 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // GlobalVariables.freezeIconHUD = false;
     }
-
+    
+    public static void UpdateStatusBars( int posX, int posY ){
+        // establish current values
+        int HP = GlobalVariables.unitsMatrix [ posX,posY ].hitPoints;
+        int maxHP = GlobalVariables.unitsMatrix [ posX,posY ].hitPointMax;
+        int STA = GlobalVariables.unitsMatrix [ posX,posY ].stamina;
+        int BAL = GlobalVariables.unitsMatrix [ posX,posY ].balance;
+        // convert to percentages
+        float HPpercent = (float)HP / (float)maxHP;
+        float STApercent = (float)STA / 100f;
+        float BALpercent = (float)BAL / 100f;
+        // update display
+        GlobalVariables.barHP.fillAmount = HPpercent;
+        GlobalVariables.barSTA.fillAmount = STApercent;
+        GlobalVariables.barBAL.fillAmount = BALpercent;
+    }
 
 
 
@@ -1321,27 +1378,86 @@ public class GlobalFunctions : MonoBehaviour {
 
             // variable bank
             Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
-            int attackRoll = UnityEngine.Random.Range(1, 21);
-            int defendRoll = UnityEngine.Random.Range(1, 21);
+            float attackRoll = UnityEngine.Random.Range(1, 21);
+            float defendRoll = UnityEngine.Random.Range(1, 21);
             int damageRoll = 0; // initialize
+            // LIGHT ATTACK damage
             if(battleOption == Enums.BattleOption.LightAttack){
                 damageRoll = UnityEngine.Random.Range( attacker.lowDamage,(attacker.highDamage+1) );
+            // HEAVY ATTACK damage
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
-                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((attacker.highDamage+1)*2) );
+                float highDamageTemp = attacker.highDamage;
+                highDamageTemp = highDamageTemp * GlobalVariables.heavyAttackMod;
+                float heavyDamageDiff = highDamageTemp - attacker.highDamage;
+                if(heavyDamageDiff < GlobalVariables.heavyAttackBonus){
+                    highDamageTemp = attacker.highDamage + GlobalVariables.heavyAttackBonus;
+                }
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)highDamageTemp+1) );  
             }
+            // set up BAL value 
             int BALvalue = 10; // initialize
             if(battleOption == Enums.BattleOption.LightAttack){
                 BALvalue = 10;
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
                 BALvalue = 30; 
             }
+            bool critHit = false;
 
             // generate attack and defense scores
+            // - consider attacker's accuracy
             attackRoll += (int)attacker.accuracy;
+            // - consider heavy attack penalty to accuracy
             if(battleOption == Enums.BattleOption.HeavyAttack){
-                attackRoll = attackRoll - 5;
+                attackRoll = attackRoll - GlobalVariables.heavyAttackAccPen;
             }
             defendRoll += (int)defender.defense;
+            // - consider rallying bonus
+            if(defender.rally){
+                defendRoll += GlobalVariables.rallyValue;
+                Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
+            }
+            // - consider terrain bonus to DEF
+            if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
+                defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
+                Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
+            }
+
+            // consider critical hit (use critHit to remember locally)
+            int critRoll = UnityEngine.Random.Range( 1,101 );
+            if(critRoll <= attacker.critical){
+                critHit = true;
+                float damageRollTemp = damageRoll * GlobalVariables.critMultiplier;
+                damageRoll = (int)damageRollTemp;
+            }
+
+            Debug.Log("BAL: "+attacker.balance+" attack roll before: "+attackRoll);
+            Debug.Log("BAL: "+defender.balance+" defend roll before: "+defendRoll);
+
+            // factor BAL
+            float attFactor = ((float)attacker.balance / 100f);
+            float defFactor = ((float)defender.balance / 100f);
+            if(attFactor < 1){
+                Debug.Log("AT: "+attFactor);
+                float attFactorMod = 1 - attFactor;
+                // Debug.Log("ATM: "+attFactorMod);
+                attFactorMod = attFactorMod / GlobalVariables.BALmod;
+                // Debug.Log("ATM: "+attFactorMod);
+                attFactor = 1 - attFactorMod;
+                Debug.Log("AT: "+attFactor);
+            }
+            if(defFactor < 1){
+                Debug.Log("DF: "+defFactor);
+                float defFactorMod = 1 - defFactor;
+                // Debug.Log("DFM: "+defFactorMod);
+                defFactorMod = defFactorMod / GlobalVariables.BALmod;
+                // Debug.Log("DFM: "+defFactorMod);
+                defFactor = 1 - defFactorMod;
+                Debug.Log("DT: "+defFactor);
+            }
+            // Debug.Log("attackfactor: "+attFactor);
+            // Debug.Log("defend factor: "+defFactor);
+            attackRoll = attackRoll * attFactor;
+            defendRoll = defendRoll * defFactor;
 
             Debug.Log("attack roll: "+attackRoll);
             Debug.Log("defend roll: "+defendRoll);
@@ -1351,6 +1467,9 @@ public class GlobalFunctions : MonoBehaviour {
             if(attackRoll >= defendRoll){ 
                 defender.hitPoints = LessThanZero(defender.hitPoints - damageRoll);
                 defender.balance = LessThanZero(defender.balance - BALvalue);
+                if(critHit){
+                    Debug.Log("critical hit!");
+                }
                 Debug.Log("attacker deals "+damageRoll+" damage with "+battleOption.ToString());
                 // MISS!
             }else{ 
@@ -1387,12 +1506,26 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.unitsMatrix[ posX,posY ].balance = thisBAL;
         GlobalVariables.unitsMatrix[ posX,posY ].rally = true;
 
-        // reflect updates in HUD
-		GlobalFunctions.DisplayTileInfo( posX,posY, true, false); 
+        // update available cells for this unit
+        RefreshUnitAvailabileCells( posX,posY );
 
         // consumer unit's movement
         GlobalVariables.unitsMatrix[ posX,posY ].canAct = false;
 
+        // reflect updates in HUD
+		GlobalFunctions.DisplayTileInfo( posX,posY, true, true); 
+
+        // clean up
+        CheckForEndOfTurn(posX,posY);
+    }
+
+    public static void CombatEndTurn(int posX, int posY){
+        // consumer unit's action and movement
+        GlobalVariables.unitsMatrix [ posX,posY ].canAct = false;
+        GlobalVariables.unitsMatrix [ posX,posY ].canMove = false;
+        // reflect updates in HUD
+		GlobalFunctions.DisplayTileInfo( posX,posY, true, true); 
+        GlobalVariables.HUDCursor.SetActive(false);
         // clean up
         CheckForEndOfTurn(posX,posY);
     }
@@ -1444,7 +1577,7 @@ public class GlobalFunctions : MonoBehaviour {
         if( !thisUnit.canAct && !thisUnit.canMove ){
 
             GlobalVariables.initRoster.RemoveAt(0);
-            Debug.Log("removing (0) from initRoster. Count is now: "+GlobalVariables.initRoster.Count);
+            // Debug.Log("removing (0) from initRoster. Count is now: "+GlobalVariables.initRoster.Count);
             if(GlobalVariables.initRoster.Count <= 0){
                 UpdateInitiative();
             }else{

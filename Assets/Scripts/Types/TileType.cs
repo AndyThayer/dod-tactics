@@ -9,16 +9,14 @@ public class TileType {
 	// for each public variable here
 
 	public Enums.TileType tileType;
-	public float movementCost;
-    public float staminaCost;
+	public int movementCost;
+    public int staminaCost;
 	public int defenseBonus;
     public string name;
 
     public GameObject tilePrefab;
 
 	public TileType(Enums.TileType type){
-        // GlobalVariables.CharacterID++;
-        // characterID = GlobalVariables.CharacterID;
         tileType = type;
         switch(type){
             case Enums.TileType.Castle:

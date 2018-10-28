@@ -20,7 +20,6 @@ public class ClickThreat : MonoBehaviour {
 		GlobalVariables.freezeIconHUD = false;
 		GlobalFunctions.CleanUpBattleOptionIcons();
 
-		// Debug.Log("\nthreat cell clicked!");
 		GlobalFunctions.SpawnSwordSwoosh(parentX,parentY,posX,posY);
 		if(GlobalVariables.unitsMatrix[ posX,posY ] != null){
 			GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<UnitAnimations>().PlayBleed();
@@ -32,8 +31,6 @@ public class ClickThreat : MonoBehaviour {
 		GlobalFunctions.UpdateStamina(parentX,parentY);
 		// reflect updated STA	
 		GlobalFunctions.DisplayTileInfo(parentX, parentY, true, false); 
-
-		// Debug.Log("\n"+posX+" "+posY+" is my target!");
 
 		// since STA might have changed, update availableCells
 		GlobalFunctions.RefreshUnitAvailabileCells(parentX,parentY);
