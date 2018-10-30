@@ -35,7 +35,7 @@ public class GlobalController : MonoBehaviour {
 		// {
 
 		GlobalFunctions.UpdateInitiative();
-		GlobalVariables.infoPanelTopHeader.text = "Woods of Thaden";
+		// GlobalVariables.infoPanelTopHeader.text = "Round 1";
 
 
 	}

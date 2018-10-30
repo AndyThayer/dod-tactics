@@ -39,6 +39,9 @@ public class ClickTile : MonoBehaviour {
 					(GlobalVariables.unitsMatrix[ posX,posY ].canMove || GlobalVariables.unitsMatrix[ posX,posY ].canAct) 
 					){
 
+					// wipe battle log in upper panel
+					GlobalFunctions.CleanUpBattleLog();
+
 					// SELECT this unit
 					GlobalVariables.selectedUnit = new Vector3Int(posX,posY,0);
 					GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();

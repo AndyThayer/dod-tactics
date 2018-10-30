@@ -55,6 +55,8 @@ public class ClickIcon : MonoBehaviour {
 			GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 			GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
 			bool thisUnitCanAct =  GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct;
+			// wipe upper panel battle log
+			GlobalFunctions.CleanUpBattleLog();
 
 			if( thisUnitCanAct && lightAttack ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
@@ -93,7 +95,8 @@ public class ClickIcon : MonoBehaviour {
 				Debug.Log("Special Ability clicked!");
 			}else if( endTurn ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.EndTurn);
-				GlobalFunctions.CombatEndTurn( posX,posY );
+				// GlobalFunctions.CombatEndTurn( posX,posY );
+				GlobalFunctions.CombatEndTurn( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
 				// CombatEndTurn > CheckForEndOfTurn wipes selectedUnit values, but we still need them in this scenario
 				GlobalVariables.selectedUnit.x = posX;
             	GlobalVariables.selectedUnit.y = posY;

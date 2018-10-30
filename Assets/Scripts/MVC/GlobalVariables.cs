@@ -97,6 +97,9 @@ public class GlobalVariables : MonoBehaviour {
 
     // COMBAT
         public static List<Initiative> initRoster = new List<Initiative>();
+        public static int round = 0;
+        public static int lastRound = 0;
+        public static int lastUnitID = 0;
         
         // base DEF bonus for rallying
         public static int rallyValue = 5; 

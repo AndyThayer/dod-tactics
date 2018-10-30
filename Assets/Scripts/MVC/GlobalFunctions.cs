@@ -942,7 +942,8 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.infoPanelTerrainText.text += "\n";
                 GlobalVariables.infoPanelTerrainText.text += "Costs 30 STA";
                 // col 2
-                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+(GlobalVariables.unitsMatrix[ posX,posY ].highDamage * 2);
+                float highDamageTemp = GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttack(highDamageTemp);
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONHeavyAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
@@ -1152,6 +1153,16 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.barBAL.fillAmount = BALpercent;
     }
 
+    public static void CleanUpBattleLog(){
+        if( 
+            (GlobalVariables.unitsMatrix[ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].unitID != GlobalVariables.lastUnitID)  
+        ){
+            GlobalVariables.infoPanelTopText.text = "";
+            GlobalVariables.lastRound = GlobalVariables.round; // you'll probably need to add this to the conditional logic
+            GlobalVariables.lastUnitID = GlobalVariables.initRoster[0].unitID;
+        }
+    }
+
 
 
     // ****************************************************************************************************************************************************
@@ -1209,6 +1220,12 @@ public class GlobalFunctions : MonoBehaviour {
         {
             Debug.Log("Inititive: "+init.initiative+" UnitID: "+init.unitID);
         }
+
+        GlobalVariables.round++;
+        GlobalVariables.infoPanelTopHeader.text = "Round "+GlobalVariables.round;
+        GlobalVariables.infoPanelTopText.text += "Round "+GlobalVariables.round+". ";
+        GlobalVariables.infoPanelTopText.text += GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].name+" goes first.";
+    
     }
 
     public static string[,] FindThreatCells(int attackRange, int posX, int posY){
@@ -1387,12 +1404,7 @@ public class GlobalFunctions : MonoBehaviour {
             // HEAVY ATTACK damage
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
                 float highDamageTemp = attacker.highDamage;
-                highDamageTemp = highDamageTemp * GlobalVariables.heavyAttackMod;
-                float heavyDamageDiff = highDamageTemp - attacker.highDamage;
-                if(heavyDamageDiff < GlobalVariables.heavyAttackBonus){
-                    highDamageTemp = attacker.highDamage + GlobalVariables.heavyAttackBonus;
-                }
-                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)highDamageTemp+1) );  
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)CombatCalculateHeavyAttack(highDamageTemp)+1) );  
             }
             // set up BAL value 
             int BALvalue = 10; // initialize
@@ -1469,12 +1481,15 @@ public class GlobalFunctions : MonoBehaviour {
                 defender.balance = LessThanZero(defender.balance - BALvalue);
                 if(critHit){
                     Debug.Log("critical hit!");
+                    GlobalVariables.infoPanelTopText.text += "Critical hit! ";
                 }
                 Debug.Log("attacker deals "+damageRoll+" damage with "+battleOption.ToString());
+                GlobalVariables.infoPanelTopText.text += attacker.name+" deals "+damageRoll+" damage to "+defender.name+" with "+battleOption.ToString()+".\n\n";
                 // MISS!
             }else{ 
                 attacker.balance = LessThanZero(attacker.balance - BALvalue);
                 Debug.Log("attacker missed!");
+                GlobalVariables.infoPanelTopText.text = attacker.name+" attacked "+defender.name+" but missed!\n\n";
             }
 
             // update units
@@ -1487,6 +1502,16 @@ public class GlobalFunctions : MonoBehaviour {
         // consume attacker's ability to act again this turn
         GlobalVariables.unitsMatrix[ parentX,parentY ].canAct = false;
 
+    }
+
+    public static float CombatCalculateHeavyAttack(float highDamageTemp){
+        float highDamage = highDamageTemp;
+        highDamageTemp = highDamageTemp * GlobalVariables.heavyAttackMod;
+        float heavyDamageDiff = highDamageTemp - highDamage;
+        if(heavyDamageDiff < GlobalVariables.heavyAttackBonus){
+            highDamageTemp = highDamage + GlobalVariables.heavyAttackBonus;
+        }
+        return highDamageTemp;
     }
 
     public static void CombatRally(int posX, int posY){
@@ -1514,6 +1539,8 @@ public class GlobalFunctions : MonoBehaviour {
 
         // reflect updates in HUD
 		GlobalFunctions.DisplayTileInfo( posX,posY, true, true); 
+
+        GlobalVariables.infoPanelTopText.text = GlobalVariables.unitsMatrix[ posX,posY ].name+" uses Rally. +50 BAL and STA.\n\n";
 
         // clean up
         CheckForEndOfTurn(posX,posY);
@@ -1578,6 +1605,12 @@ public class GlobalFunctions : MonoBehaviour {
 
             GlobalVariables.initRoster.RemoveAt(0);
             // Debug.Log("removing (0) from initRoster. Count is now: "+GlobalVariables.initRoster.Count);
+
+            // un-SELECT this unit
+			GlobalVariables.selectedUnit = new Vector3Int(0,0,0); // this doesn't seem to work?
+            Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
+            GlobalVariables.infoPanelTopText.text += thisUnit.name+" finished it's turn.\n\n";
+
             if(GlobalVariables.initRoster.Count <= 0){
                 UpdateInitiative();
             }else{
@@ -1585,9 +1618,6 @@ public class GlobalFunctions : MonoBehaviour {
                 PrepForTurn();
             }
             UpdateWhoIsNext();
-            // un-SELECT this unit
-			GlobalVariables.selectedUnit = new Vector3Int(0,0,0); // this doesn't seem to work?
-            Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
 
             GlobalVariables.selectedUnit.x = 0;
             GlobalVariables.selectedUnit.y = 0;
@@ -1640,8 +1670,7 @@ public class GlobalFunctions : MonoBehaviour {
         if (GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ] != null){
             UnitType thisChar = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
             // display first current unit in TOP PANEL
-            GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
-            // UpdateHUDreadyUnit( (int)thisChar.unitPrefab.transform.position.x,(int)thisChar.unitPrefab.transform.position.y );
+            // GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
             UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
         }
     }
