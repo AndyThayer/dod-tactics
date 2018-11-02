@@ -19,6 +19,8 @@ public class ClickThreat : MonoBehaviour {
 		// reset ICON state
 		GlobalVariables.freezeIconHUD = false;
 		GlobalFunctions.CleanUpBattleOptionIcons();
+		GlobalFunctions.CleanUpUnitIcons("compareUnitIconAtt");
+		GlobalFunctions.CleanUpUnitIcons("compareUnitIconDef");
 
 		GlobalFunctions.SpawnSwordSwoosh(parentX,parentY,posX,posY);
 		if(GlobalVariables.unitsMatrix[ posX,posY ] != null){

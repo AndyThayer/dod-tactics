@@ -15,6 +15,7 @@ public class GlobalController : MonoBehaviour {
 		GlobalFunctions.InitializeHUDObjects();
 		// start off by not displaying HUD unit panel
 		GlobalFunctions.CleanUpUnitInfoPanel();
+		GlobalFunctions.CleanUpUnitIcons("unitIcon");
 
 		// we don't need to see the original tilemap because we've instantiated prefab tiles instead
 		GlobalVariables.tilemapGO.SetActive(false);

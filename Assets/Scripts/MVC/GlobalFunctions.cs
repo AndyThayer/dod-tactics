@@ -630,10 +630,6 @@ public class GlobalFunctions : MonoBehaviour {
 
 
     public static void InitializeHUDObjects(){
-        // GlobalVariables.HUDinfoPanel = HUDinfoPanel;
-        // GlobalVariables.HUDInfoPanel = Instantiate(Instance.HUDInfoPanel, new Vector3(-5, -5, 0), Quaternion.identity);
-        // GlobalVariables.HUDInfoPanel.SetActive(false);
-        // GlobalVariables.HUDInfoPanel.name = "HUD_info_panel";
 
         // HUD cursor
         GlobalVariables.HUDCursor = Instantiate(Instance.HUDCursor, new Vector3(-1, -1, 0), Quaternion.identity);
@@ -659,6 +655,14 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTopTextGO = GameObject.Find("InfoPanelTopText");
         GlobalVariables.infoPanelTopText = GlobalVariables.infoPanelTopTextGO.GetComponent<Text>();
         GlobalVariables.infoPanelTopText.text = "";
+        // - top panel unit text ACC
+        GlobalVariables.infoPanelTopTextACCGO = GameObject.Find("InfoPanelTopTextACC");
+        GlobalVariables.infoPanelTopTextACC = GlobalVariables.infoPanelTopTextACCGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextACC.text = "";
+        // - top panel unit text DEF
+        GlobalVariables.infoPanelTopTextDEFGO = GameObject.Find("InfoPanelTopTextDEF");
+        GlobalVariables.infoPanelTopTextDEF = GlobalVariables.infoPanelTopTextDEFGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextDEF.text = "";
         // - info panel unit header
         GlobalVariables.infoPanelUnitHeaderGO = GameObject.Find("InfoPanelUnitHeader");
         GlobalVariables.infoPanelUnitHeader = GlobalVariables.infoPanelUnitHeaderGO.GetComponent<Text>();
@@ -708,12 +712,6 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTerrainGO.SetActive(false);
         GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_middle");
 
-
-        // GlobalVariables.infoPanelTerrainGO = Instantiate(Instance.HUDPanelTerrain, new Vector3(19.175f, 2, 0), Quaternion.identity);
-        // GlobalVariables.infoPanelTerrainGO.name = "HUD_info_panel_terrain";
-        // GlobalVariables.infoPanelUnitGO = Instantiate(Instance.HUDPanelUnit, new Vector3(19.175f, 6.5f, 0), Quaternion.identity);
-        // GlobalVariables.infoPanelUnitGO.name = "HUD_info_panel_units";
-        // GlobalVariables.battleOptionHeavyAttack = GameObject.Find("icon_heavy_attack");
     }
 
     // used to pass the prefab HUDAvailableCell
@@ -743,8 +741,6 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.unitsMatrix [ posX,posY ].unitPrefab.GetComponent<Renderer>().enabled = true;
         // update unit and tile HUD boxes
         if(updateInfo){
-            // GlobalFunctions.CleanUpTerrainInfoPanel();
-		    // GlobalFunctions.CleanUpUnitInfoPanel();
 		    GlobalFunctions.DisplayTileInfo(posX,posY);
         }
     }
@@ -876,10 +872,10 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelUnitText2.text = "";
         GlobalVariables.infoPanelUnitText3.text = "";
         // clean up HUD icon
-        if(GameObject.Find("unitIcon")){
-            GameObject goUnitIcon = GameObject.Find("unitIcon");
-            Destroy(goUnitIcon);
-        }
+        // if(GameObject.Find("unitIcon")){
+        //     GameObject goUnitIcon = GameObject.Find("unitIcon");
+        //     Destroy(goUnitIcon);
+        // }
         // hide the Unit Panel
         GlobalVariables.infoPanelUnitGO.SetActive(false);
         GlobalVariables.barHPGO.SetActive(false);
@@ -889,6 +885,14 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.barBALGO.SetActive(false);
         GlobalVariables.barBALbgGO.SetActive(false);
 	}
+
+    public static void CleanUpUnitIcons(string unitIcon){
+        if(GameObject.Find(unitIcon)){
+            GameObject goUnitIcon = GameObject.Find(unitIcon);
+            Destroy(goUnitIcon);
+        }
+    }
+    
 
 	public static void CleanUpTerrainInfoPanel(bool panel = false){
 		GlobalVariables.infoPanelTerrainHeader.text = "";
@@ -933,6 +937,8 @@ public class GlobalFunctions : MonoBehaviour {
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONLightAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.HeavyAttack:
@@ -947,6 +953,8 @@ public class GlobalFunctions : MonoBehaviour {
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONHeavyAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.Rally:
@@ -958,6 +966,8 @@ public class GlobalFunctions : MonoBehaviour {
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONRally, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.UseItem:
@@ -967,6 +977,8 @@ public class GlobalFunctions : MonoBehaviour {
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONUseItem, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.CastSpell:
@@ -976,6 +988,8 @@ public class GlobalFunctions : MonoBehaviour {
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONCastSpell, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.SpecialAbility:
@@ -985,6 +999,8 @@ public class GlobalFunctions : MonoBehaviour {
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONSpecialAbility, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.EndTurn:
@@ -992,6 +1008,18 @@ public class GlobalFunctions : MonoBehaviour {
                 break;
         }
     }
+
+    /*
+        params:
+        int attX            x coord of attacking unit
+        int attY            y coord of attacking unit
+        int defX            x coord of defending unit
+        int defY            y coord of defending unit
+     */
+     public static void DisplayCompareUnits(int attX, int attY, int defX, int defY){
+        DisplayUnitIcon( attX, attY, 17.575f, 11.2f, "compareUnitIconAtt", GlobalFunctions.FindDirection(Enums.Direction.Right) );
+        DisplayUnitIcon( defX, defY, 20.7f, 11.2f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );
+     }
 
     /*
         params:
@@ -1048,7 +1076,14 @@ public class GlobalFunctions : MonoBehaviour {
                 GameObject.Find("torch_flame_MOV").GetComponent<IconAnimations>().PlayIdle();
             }
             // unit icon
-            DisplayUnitIcon(posX, posY);
+            DisplayUnitIcon(
+                posX, 
+                posY, 
+                GlobalVariables.unitIconMiddlePanelX, 
+                GlobalVariables.unitIconMiddlePanelY, 
+                "unitIcon", 
+                GlobalFunctions.FindDirection(Enums.Direction.Down)
+            );
 		}
 		// TERRAIN
         if(GlobalVariables.tilesMatrix[ posX,posY ] != null && terrain){
@@ -1086,12 +1121,20 @@ public class GlobalFunctions : MonoBehaviour {
         
 	}
 
-    public static void DisplayUnitIcon(int posX, int posY){
-        if( !GameObject.Find("unitIcon") ){
+    /*
+        params:
+        int posX                x coord of unit whose icon we want to display 
+        int posY                y coord of unit whose icon we want to display 
+        float iconPosX          x coord of where we want the icon to display
+        float iconPosY          y coord of where we want the icon to display
+        string iconName         handle for the icon (to manage it's cleanup)
+        Quaternion direction    facing of icon
+     */
+    public static void DisplayUnitIcon(int posX, int posY, float iconPosX, float iconPosY, string iconName, Quaternion direction ){
+        if( !GameObject.Find(iconName) ){
             GameObject unitPrefab = GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab;
-            // GameObject unitIcon = Instantiate(unitPrefab, new Vector3(17.575f, 8.05f, 0), unitPrefab.transform.localRotation);
-            GameObject unitIcon = Instantiate(unitPrefab, new Vector3(17.575f, 8.05f, 0), Quaternion.Euler (0, 0, 180));
-            unitIcon.name = "unitIcon";
+            GameObject unitIcon = Instantiate(unitPrefab, new Vector3(iconPosX, iconPosY, 0), direction);
+            unitIcon.name = iconName;
         }
     }
 

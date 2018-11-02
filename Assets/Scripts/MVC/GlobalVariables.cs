@@ -45,6 +45,9 @@ public class GlobalVariables : MonoBehaviour {
         public static bool freezeHUD;
         public static bool freezeIconHUD;
 
+        public static float unitIconMiddlePanelX = 17.575f;
+        public static float unitIconMiddlePanelY = 8.05f;
+
     // HUD elements
         // - top panel unit header
         public static Text infoPanelTopHeader;
@@ -52,6 +55,12 @@ public class GlobalVariables : MonoBehaviour {
         // - top panel unit text
         public static GameObject infoPanelTopTextGO;
         public static Text infoPanelTopText;
+        // - top panel unit text ACC
+        public static GameObject infoPanelTopTextACCGO;
+        public static Text infoPanelTopTextACC;
+        // - top panel unit text DEF
+        public static GameObject infoPanelTopTextDEFGO;
+        public static Text infoPanelTopTextDEF;
         // - info panel unit header
         public static GameObject infoPanelUnitHeaderGO;
         public static Text infoPanelUnitHeader;

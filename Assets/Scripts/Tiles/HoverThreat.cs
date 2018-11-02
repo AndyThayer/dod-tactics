@@ -21,13 +21,21 @@ public class HoverThreat : MonoBehaviour {
 
 	void OnMouseOver() {
 
+		int parentX = this.GetComponent<HUDProperties>().parentX;
+		int parentY = this.GetComponent<HUDProperties>().parentY;
+
 		GlobalFunctions.UpdateHUDcursorThreat(posX, posY);
+		if( GlobalVariables.unitsMatrix [ posX,posY ] != null ){
+			GlobalFunctions.DisplayCompareUnits( parentX,parentY,posX,posY );
+		}
 
     }
 
 	void OnMouseExit(){
 		
 		GlobalFunctions.CleanUpOldHUDcursorThreat();
+		GlobalFunctions.CleanUpUnitIcons("compareUnitIconAtt");
+		GlobalFunctions.CleanUpUnitIcons("compareUnitIconDef");
 
 	}
 

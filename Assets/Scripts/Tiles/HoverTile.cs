@@ -57,6 +57,7 @@ public class HoverTile : MonoBehaviour {
 			GlobalFunctions.CleanUpOldHUDcursor();
 			// CleanUpHUDinfoPanel();
 			GlobalFunctions.CleanUpUnitInfoPanel();
+			GlobalFunctions.CleanUpUnitIcons("unitIcon");
 			GlobalFunctions.CleanUpTerrainInfoPanel();
 			GlobalFunctions.CleanUpHUDavailable(posX,posY);
 			// restore ready unit cursor

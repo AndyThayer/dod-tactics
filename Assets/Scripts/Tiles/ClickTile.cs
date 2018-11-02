@@ -30,6 +30,7 @@ public class ClickTile : MonoBehaviour {
 					// update HUD info boxes
 					GlobalFunctions.CleanUpTerrainInfoPanel();
 					GlobalFunctions.CleanUpUnitInfoPanel();
+					GlobalFunctions.CleanUpUnitIcons("unitIcon");
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
 				// else, if *THERE IS NOT* a selected unit on this tile	
@@ -60,6 +61,7 @@ public class ClickTile : MonoBehaviour {
 					// update HUD info boxes
 					GlobalFunctions.CleanUpTerrainInfoPanel();
 					GlobalFunctions.CleanUpUnitInfoPanel();
+					GlobalFunctions.CleanUpUnitIcons("unitIcon");
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
 					// hide ready unit cursor
@@ -73,7 +75,15 @@ public class ClickTile : MonoBehaviour {
 					
 					// udpate unit info panel
 					GlobalFunctions.CleanUpUnitInfoPanel();
-					GlobalFunctions.DisplayUnitIcon(posX, posY);
+					GlobalFunctions.CleanUpUnitIcons("unitIcon");
+					GlobalFunctions.DisplayUnitIcon(
+						posX, 
+						posY, 
+						GlobalVariables.unitIconMiddlePanelX, 
+						GlobalVariables.unitIconMiddlePanelY, 
+						"unitIcon", 
+						GlobalFunctions.FindDirection(Enums.Direction.Down)
+					);
 				}	
 
 			}else{
