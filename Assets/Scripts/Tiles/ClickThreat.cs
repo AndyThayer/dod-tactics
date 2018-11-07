@@ -19,8 +19,11 @@ public class ClickThreat : MonoBehaviour {
 		// reset ICON state
 		GlobalVariables.freezeIconHUD = false;
 		GlobalFunctions.CleanUpBattleOptionIcons();
-		GlobalFunctions.CleanUpUnitIcons("compareUnitIconAtt");
-		GlobalFunctions.CleanUpUnitIcons("compareUnitIconDef");
+		GlobalFunctions.CleanUpCompareUnits();
+		// GlobalFunctions.CleanUpUnitIcons("compareUnitIconAtt");
+		// GlobalFunctions.CleanUpUnitIcons("compareUnitIconDef");
+		// GlobalVariables.infoPanelTopTextACC.text = "";
+		// GlobalVariables.infoPanelTopTextDEF.text = "";
 
 		GlobalFunctions.SpawnSwordSwoosh(parentX,parentY,posX,posY);
 		if(GlobalVariables.unitsMatrix[ posX,posY ] != null){

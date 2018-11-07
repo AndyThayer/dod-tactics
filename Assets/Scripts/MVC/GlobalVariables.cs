@@ -46,7 +46,7 @@ public class GlobalVariables : MonoBehaviour {
         public static bool freezeIconHUD;
 
         public static float unitIconMiddlePanelX = 17.575f;
-        public static float unitIconMiddlePanelY = 8.05f;
+        public static float unitIconMiddlePanelY = 8.15f; // 8.05f
 
     // HUD elements
         // - top panel unit header
@@ -61,6 +61,9 @@ public class GlobalVariables : MonoBehaviour {
         // - top panel unit text DEF
         public static GameObject infoPanelTopTextDEFGO;
         public static Text infoPanelTopTextDEF;
+        // - top panel unit text DEF
+        public static GameObject infoPanelTopTextACCvsDEFGO;
+        public static Text infoPanelTopTextACCvsDEF;
         // - info panel unit header
         public static GameObject infoPanelUnitHeaderGO;
         public static Text infoPanelUnitHeader;
@@ -114,7 +117,7 @@ public class GlobalVariables : MonoBehaviour {
         public static int rallyValue = 5; 
 
         // penalty to accuracy when making a heavy attack
-        public static int heavyAttackAccPen = 5;
+        public static int heavyAttackAccMod = -5;
 
         // bonus to damage roll when making a heavy attack (only if unit.highDamage * heavyAttackMod < heavyAttackBonus)
         public static int heavyAttackBonus = 5;
@@ -124,9 +127,9 @@ public class GlobalVariables : MonoBehaviour {
 
         /*
          what we divide the percentage that BAL impacts attack and defend rolls
-         70 BAL would be: attack/defend roll * (1 - (.3 / BAL mod))
+         70 BAL would be: attack/defend roll * (1 - (.3 * BAL mod))
          */
-        public static float BALmod = 2f; 
+        public static float BALmod = .5f; 
 
         public static float critMultiplier = 2f;
 

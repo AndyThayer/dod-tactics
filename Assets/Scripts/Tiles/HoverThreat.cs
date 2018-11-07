@@ -25,8 +25,9 @@ public class HoverThreat : MonoBehaviour {
 		int parentY = this.GetComponent<HUDProperties>().parentY;
 
 		GlobalFunctions.UpdateHUDcursorThreat(posX, posY);
-		if( GlobalVariables.unitsMatrix [ posX,posY ] != null ){
+		if( GlobalVariables.unitsMatrix [ posX,posY ] != null && !GlobalVariables.freezeHUD){
 			GlobalFunctions.DisplayCompareUnits( parentX,parentY,posX,posY );
+			GlobalVariables.freezeHUD = true;
 		}
 
     }
@@ -34,8 +35,13 @@ public class HoverThreat : MonoBehaviour {
 	void OnMouseExit(){
 		
 		GlobalFunctions.CleanUpOldHUDcursorThreat();
-		GlobalFunctions.CleanUpUnitIcons("compareUnitIconAtt");
-		GlobalFunctions.CleanUpUnitIcons("compareUnitIconDef");
+		GlobalFunctions.CleanUpCompareUnits();
+		// GlobalFunctions.CleanUpUnitIcons("compareUnitIconAtt");
+		// GlobalFunctions.CleanUpUnitIcons("compareUnitIconDef");
+		// GlobalVariables.infoPanelTopTextACC.text = "";
+		// GlobalVariables.infoPanelTopTextDEF.text = "";
+
+		GlobalVariables.freezeHUD = false;
 
 	}
 

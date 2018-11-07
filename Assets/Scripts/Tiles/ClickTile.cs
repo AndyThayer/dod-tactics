@@ -10,6 +10,7 @@ public class ClickTile : MonoBehaviour {
 
 		int posX = (int)this.transform.position.x;
 		int posY = (int)this.transform.position.y;
+		GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
 
 		if( !GlobalVariables.freezeHUD ){
 
@@ -31,6 +32,7 @@ public class ClickTile : MonoBehaviour {
 					GlobalFunctions.CleanUpTerrainInfoPanel();
 					GlobalFunctions.CleanUpUnitInfoPanel();
 					GlobalFunctions.CleanUpUnitIcons("unitIcon");
+					GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
 				// else, if *THERE IS NOT* a selected unit on this tile	
@@ -62,6 +64,7 @@ public class ClickTile : MonoBehaviour {
 					GlobalFunctions.CleanUpTerrainInfoPanel();
 					GlobalFunctions.CleanUpUnitInfoPanel();
 					GlobalFunctions.CleanUpUnitIcons("unitIcon");
+					GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
 					// hide ready unit cursor
@@ -76,6 +79,7 @@ public class ClickTile : MonoBehaviour {
 					// udpate unit info panel
 					GlobalFunctions.CleanUpUnitInfoPanel();
 					GlobalFunctions.CleanUpUnitIcons("unitIcon");
+					GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
 					GlobalFunctions.DisplayUnitIcon(
 						posX, 
 						posY, 

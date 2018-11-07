@@ -13,8 +13,6 @@ public class GlobalFunctions : MonoBehaviour {
    
 
     // HUD objects
-    // public GameObject HUDPanelTerrain;
-    // public GameObject HUDPanelUnit;
     public GameObject HUDCursor;
     public GameObject HUDCursorThreat;
     public GameObject HUDReadyUnit;
@@ -28,6 +26,10 @@ public class GlobalFunctions : MonoBehaviour {
     public GameObject ICONUseItem;
     public GameObject ICONCastSpell;
     public GameObject ICONSpecialAbility;
+    public GameObject STATUSICONTerrain;
+    public GameObject STATUSICONBal;
+    public GameObject STATUSICONRally;
+    public GameObject STATUSICONHeavyAttack;
 
     // HUD misc
     public GameObject swordSwoosh;
@@ -663,6 +665,10 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTopTextDEFGO = GameObject.Find("InfoPanelTopTextDEF");
         GlobalVariables.infoPanelTopTextDEF = GlobalVariables.infoPanelTopTextDEFGO.GetComponent<Text>();
         GlobalVariables.infoPanelTopTextDEF.text = "";
+        // - top panel unit text DEF
+        GlobalVariables.infoPanelTopTextACCvsDEFGO = GameObject.Find("InfoPanelTopTextACCvsDEF");
+        GlobalVariables.infoPanelTopTextACCvsDEF = GlobalVariables.infoPanelTopTextACCvsDEFGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextACCvsDEF.text = "";
         // - info panel unit header
         GlobalVariables.infoPanelUnitHeaderGO = GameObject.Find("InfoPanelUnitHeader");
         GlobalVariables.infoPanelUnitHeader = GlobalVariables.infoPanelUnitHeaderGO.GetComponent<Text>();
@@ -933,7 +939,10 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.infoPanelTerrainText.text += "\n";
                 GlobalVariables.infoPanelTerrainText.text += "Costs 10 STA";
                 // col 2
-                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
+                GlobalVariables.infoPanelTerrainText2.text = "ACC Mod: 0";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                
+                GlobalVariables.infoPanelTerrainText2.text += "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONLightAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
@@ -948,14 +957,26 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.infoPanelTerrainText.text += "\n";
                 GlobalVariables.infoPanelTerrainText.text += "Costs 30 STA";
                 // col 2
+                GlobalVariables.infoPanelTerrainText2.text = "ACC Mod: "+GlobalVariables.heavyAttackAccMod;
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                                
                 float highDamageTemp = GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
-                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttack(highDamageTemp);
+                GlobalVariables.infoPanelTerrainText2.text += "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttackDmg(highDamageTemp);
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONHeavyAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
                     // bind to lower panel
                     tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
+                // heavyAttack STATUS ICON
+
+                if( !GameObject.Find("heavyAttackStatusIconLOWER") ){
+                    GameObject statusIcon = Instantiate(Instance.STATUSICONHeavyAttack, new Vector3(21.15f, 1.45f, 0), Quaternion.identity);
+                    statusIcon.name = "heavyAttackStatusIconLOWER";
+                    // bind to lower panel
+                    statusIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
+                }
+                               
                 break;
             case Enums.BattleOption.Rally:
                 // col 1
@@ -963,6 +984,7 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.infoPanelTerrainText.text = "+ 5 DEF";
                 GlobalVariables.infoPanelTerrainText.text += "\n";
                 GlobalVariables.infoPanelTerrainText.text += "+ 50 STA & BAL";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONRally, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
@@ -974,6 +996,7 @@ public class GlobalFunctions : MonoBehaviour {
                 // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Use Item";
                 GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONUseItem, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
@@ -985,6 +1008,7 @@ public class GlobalFunctions : MonoBehaviour {
                 // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Cast Spell";
                 GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONCastSpell, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
@@ -996,6 +1020,7 @@ public class GlobalFunctions : MonoBehaviour {
                 // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Special Ability";
                 GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONSpecialAbility, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
@@ -1018,7 +1043,18 @@ public class GlobalFunctions : MonoBehaviour {
      */
      public static void DisplayCompareUnits(int attX, int attY, int defX, int defY){
         DisplayUnitIcon( attX, attY, 17.575f, 11.2f, "compareUnitIconAtt", GlobalFunctions.FindDirection(Enums.Direction.Right) );
-        DisplayUnitIcon( defX, defY, 20.7f, 11.2f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );
+        DisplayUnitIcon( defX, defY, 20.775f, 11.2f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );
+        GlobalVariables.infoPanelTopTextACCvsDEF.text = "ACC  vs  DEF";
+        GlobalVariables.infoPanelTopTextACC.text = CombatCalculateAttackAcc(attX,attY).ToString();
+        GlobalVariables.infoPanelTopTextDEF.text = CombatCalculateDefense(defX,defY).ToString();
+     }
+
+     public static void CleanUpCompareUnits(){
+        GlobalFunctions.CleanUpUnitIcons("compareUnitIconAtt");
+		GlobalFunctions.CleanUpUnitIcons("compareUnitIconDef"); 
+        GlobalVariables.infoPanelTopTextACCvsDEF.text = "";
+        GlobalVariables.infoPanelTopTextACC.text = "";
+        GlobalVariables.infoPanelTopTextDEF.text = "";
      }
 
     /*
@@ -1111,7 +1147,23 @@ public class GlobalFunctions : MonoBehaviour {
             GlobalVariables.infoPanelTerrainText.text += "\n";
             GlobalVariables.infoPanelTerrainText.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost + thisSTA;	
             // col 2
-            GlobalVariables.infoPanelTerrainText2.text = "DEF Bonus: " + GlobalVariables.tilesMatrix[ posX,posY ].defenseBonus;
+            int defMod = GlobalVariables.tilesMatrix[ posX,posY ].defenseMod;
+            string defModSymbol = "+";
+            if(GlobalVariables.tilesMatrix[ posX,posY ].defenseMod <= 0){
+                defModSymbol = "";
+            }
+            GlobalVariables.infoPanelTerrainText2.text = "DEF Mod: " + defModSymbol + GlobalVariables.tilesMatrix[ posX,posY ].defenseMod;
+
+            // terrain STATUS ICON
+            if(defMod != 0){
+                if( !GameObject.Find("terrainStatusIconLOWER") ){
+                    GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, new Vector3(21.15f, 1.45f, 0), Quaternion.identity);
+                    statusIcon.name = "terrainStatusIconLOWER";
+                    // bind to lower panel
+                    statusIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
+                }
+            }           
+
             // terrain icon
             DisplayTileIcon(posX, posY);
             // track which tile we're displaying
@@ -1437,9 +1489,11 @@ public class GlobalFunctions : MonoBehaviour {
             UnitType defender = GlobalVariables.unitsMatrix[ targetX,targetY ];
 
             // variable bank
-            Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
+            Enums.BattleOption battleOption = attacker.battleOption;
             float attackRoll = UnityEngine.Random.Range(1, 21);
+            attackRoll += CombatCalculateAttackAcc(parentX,parentY);
             float defendRoll = UnityEngine.Random.Range(1, 21);
+            defendRoll += CombatCalculateDefense(targetX, targetY);
             int damageRoll = 0; // initialize
             // LIGHT ATTACK damage
             if(battleOption == Enums.BattleOption.LightAttack){
@@ -1447,7 +1501,7 @@ public class GlobalFunctions : MonoBehaviour {
             // HEAVY ATTACK damage
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
                 float highDamageTemp = attacker.highDamage;
-                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)CombatCalculateHeavyAttack(highDamageTemp)+1) );  
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)CombatCalculateHeavyAttackDmg(highDamageTemp)+1) );  
             }
             // set up BAL value 
             int BALvalue = 10; // initialize
@@ -1460,22 +1514,22 @@ public class GlobalFunctions : MonoBehaviour {
 
             // generate attack and defense scores
             // - consider attacker's accuracy
-            attackRoll += (int)attacker.accuracy;
-            // - consider heavy attack penalty to accuracy
-            if(battleOption == Enums.BattleOption.HeavyAttack){
-                attackRoll = attackRoll - GlobalVariables.heavyAttackAccPen;
-            }
-            defendRoll += (int)defender.defense;
-            // - consider rallying bonus
-            if(defender.rally){
-                defendRoll += GlobalVariables.rallyValue;
-                Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
-            }
-            // - consider terrain bonus to DEF
-            if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
-                defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
-                Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
-            }
+            // attackRoll += (int)attacker.accuracy;
+            // // - consider heavy attack penalty to accuracy
+            // if(battleOption == Enums.BattleOption.HeavyAttack){
+            //     attackRoll = attackRoll - GlobalVariables.heavyAttackAccPen;
+            // }
+            // defendRoll += (int)defender.defense;
+            // // - consider rallying bonus
+            // if(defender.rally){
+            //     defendRoll += GlobalVariables.rallyValue;
+            //     Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
+            // }
+            // // - consider terrain bonus to DEF
+            // if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
+            //     defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
+            //     Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
+            // }
 
             // consider critical hit (use critHit to remember locally)
             int critRoll = UnityEngine.Random.Range( 1,101 );
@@ -1489,30 +1543,30 @@ public class GlobalFunctions : MonoBehaviour {
             Debug.Log("BAL: "+defender.balance+" defend roll before: "+defendRoll);
 
             // factor BAL
-            float attFactor = ((float)attacker.balance / 100f);
-            float defFactor = ((float)defender.balance / 100f);
-            if(attFactor < 1){
-                Debug.Log("AT: "+attFactor);
-                float attFactorMod = 1 - attFactor;
-                // Debug.Log("ATM: "+attFactorMod);
-                attFactorMod = attFactorMod / GlobalVariables.BALmod;
-                // Debug.Log("ATM: "+attFactorMod);
-                attFactor = 1 - attFactorMod;
-                Debug.Log("AT: "+attFactor);
-            }
-            if(defFactor < 1){
-                Debug.Log("DF: "+defFactor);
-                float defFactorMod = 1 - defFactor;
-                // Debug.Log("DFM: "+defFactorMod);
-                defFactorMod = defFactorMod / GlobalVariables.BALmod;
-                // Debug.Log("DFM: "+defFactorMod);
-                defFactor = 1 - defFactorMod;
-                Debug.Log("DT: "+defFactor);
-            }
+            // float attFactor = ((float)attacker.balance / 100f);
+            // float defFactor = ((float)defender.balance / 100f);
+            // if(attFactor < 1){
+            //     Debug.Log("AT: "+attFactor);
+            //     float attFactorMod = 1 - attFactor;
+            //     // Debug.Log("ATM: "+attFactorMod);
+            //     attFactorMod = attFactorMod * GlobalVariables.BALmod;
+            //     // Debug.Log("ATM: "+attFactorMod);
+            //     attFactor = 1 - attFactorMod;
+            //     Debug.Log("AT: "+attFactor);
+            // }
+            // if(defFactor < 1){
+            //     Debug.Log("DF: "+defFactor);
+            //     float defFactorMod = 1 - defFactor;
+            //     // Debug.Log("DFM: "+defFactorMod);
+            //     defFactorMod = defFactorMod * GlobalVariables.BALmod;
+            //     // Debug.Log("DFM: "+defFactorMod);
+            //     defFactor = 1 - defFactorMod;
+            //     Debug.Log("DT: "+defFactor);
+            // }
             // Debug.Log("attackfactor: "+attFactor);
             // Debug.Log("defend factor: "+defFactor);
-            attackRoll = attackRoll * attFactor;
-            defendRoll = defendRoll * defFactor;
+            // attackRoll = attackRoll * attFactor;
+            // defendRoll = defendRoll * defFactor;
 
             Debug.Log("attack roll: "+attackRoll);
             Debug.Log("defend roll: "+defendRoll);
@@ -1547,7 +1601,66 @@ public class GlobalFunctions : MonoBehaviour {
 
     }
 
-    public static float CombatCalculateHeavyAttack(float highDamageTemp){
+    public static float CombatCalculateAttackAcc(int attX, int attY){
+        UnitType attacker = GlobalVariables.unitsMatrix[ attX,attY ];
+        // float attackRoll = UnityEngine.Random.Range(1, 21);
+        float attackRoll = 0;
+        // consider accuracy
+        attackRoll += (int)attacker.accuracy;
+        // consider heavy attack penalty to accuracy
+        if(attacker.battleOption == Enums.BattleOption.HeavyAttack){
+            attackRoll = attackRoll + GlobalVariables.heavyAttackAccMod;
+        }
+        // factor BAL
+        float attFactor = ((float)attacker.balance / 100f);
+        if(attFactor < 1){
+            Debug.Log("AT: "+attFactor);
+            float attFactorMod = 1 - attFactor;
+            // Debug.Log("ATM: "+attFactorMod);
+            attFactorMod = attFactorMod * GlobalVariables.BALmod;
+            // Debug.Log("ATM: "+attFactorMod);
+            attFactor = 1 - attFactorMod;
+            Debug.Log("AT: "+attFactor);
+        }
+        // Debug.Log("attackfactor: "+attFactor);
+        attackRoll = attackRoll * attFactor;
+
+        return attackRoll;
+    }
+
+    public static float CombatCalculateDefense(int posX, int posY){
+        UnitType defender = GlobalVariables.unitsMatrix[ posX,posY ];
+        float defendRoll = 0;
+        // consider defense
+        defendRoll += (int)defender.defense;
+        // - consider rallying bonus
+        if(defender.rally){
+            defendRoll += GlobalVariables.rallyValue;
+            Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
+        }
+        // - consider terrain bonus to DEF
+        if(GlobalVariables.tilesMatrix [ posX,posY ].defenseMod > 0){
+            defendRoll += GlobalVariables.tilesMatrix [ posX,posY ].defenseMod;
+            Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ posX,posY ].defenseMod+" DEF!");
+        }
+        // factor BAL
+        float defFactor = ((float)defender.balance / 100f);
+        if(defFactor < 1){
+            Debug.Log("DF: "+defFactor);
+            float defFactorMod = 1 - defFactor;
+            // Debug.Log("DFM: "+defFactorMod);
+            defFactorMod = defFactorMod * GlobalVariables.BALmod;
+            // Debug.Log("DFM: "+defFactorMod);
+            defFactor = 1 - defFactorMod;
+            Debug.Log("DT: "+defFactor);
+        }
+        // Debug.Log("defend factor: "+defFactor);
+        defendRoll = defendRoll * defFactor;
+
+        return defendRoll;
+    }
+
+    public static float CombatCalculateHeavyAttackDmg(float highDamageTemp){
         float highDamage = highDamageTemp;
         highDamageTemp = highDamageTemp * GlobalVariables.heavyAttackMod;
         float heavyDamageDiff = highDamageTemp - highDamage;

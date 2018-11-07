@@ -43,6 +43,8 @@ public class HoverIcon : MonoBehaviour {
 
 	void OnMouseOver() {
 
+		GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
+
 		if( !GlobalVariables.freezeIconHUD ){
 			// for all icons
 			anim.Play("lit");
@@ -76,6 +78,7 @@ public class HoverIcon : MonoBehaviour {
 			GlobalFunctions.DisplayTileInfo(GlobalVariables.selectedUnit.x, GlobalVariables.selectedUnit.y);
 			anim.Play("idle");
 		}
+		GlobalFunctions.CleanUpUnitIcons("heavyAttackStatusIconLOWER");
 
 	}
 
