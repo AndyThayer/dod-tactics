@@ -892,10 +892,10 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.barBALbgGO.SetActive(false);
 	}
 
-    public static void CleanUpUnitIcons(string unitIcon){
-        if(GameObject.Find(unitIcon)){
-            GameObject goUnitIcon = GameObject.Find(unitIcon);
-            Destroy(goUnitIcon);
+    public static void DestroyGameObject(string name){
+        if(GameObject.Find(name)){
+            GameObject goName = GameObject.Find(name);
+            Destroy(goName);
         }
     }
     
@@ -920,12 +920,12 @@ public class GlobalFunctions : MonoBehaviour {
         DisplayTileIcon(posX,posY);
     }
 
-    public static void CleanUpBattleOptionIcons(){
-        if(GameObject.Find("battleOptionIcon")){
-            GameObject gotileIcon = GameObject.Find("battleOptionIcon");
-            Destroy(gotileIcon);
-        }
-    }
+    // public static void CleanUpBattleOptionIcons(){
+    //     if(GameObject.Find("battleOptionIcon")){
+    //         GameObject gotileIcon = GameObject.Find("battleOptionIcon");
+    //         Destroy(gotileIcon);
+    //     }
+    // }
 
     public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption){
         int posX = GlobalVariables.selectedUnit.x;
@@ -969,10 +969,10 @@ public class GlobalFunctions : MonoBehaviour {
                     tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 // heavyAttack STATUS ICON
-
-                if( !GameObject.Find("heavyAttackStatusIconLOWER") ){
-                    GameObject statusIcon = Instantiate(Instance.STATUSICONHeavyAttack, new Vector3(21.15f, 1.45f, 0), Quaternion.identity);
-                    statusIcon.name = "heavyAttackStatusIconLOWER";
+                if( !GameObject.Find("statusIconLOWER") ){
+                    GameObject statusIcon = Instantiate(Instance.STATUSICONHeavyAttack, 
+                     new Vector3(GlobalVariables.statusIconLowerPanelX, GlobalVariables.statusIconLowerPanelY, 0), Quaternion.identity);
+                    statusIcon.name = "statusIconLOWER";
                     // bind to lower panel
                     statusIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
@@ -981,9 +981,10 @@ public class GlobalFunctions : MonoBehaviour {
             case Enums.BattleOption.Rally:
                 // col 1
                 GlobalVariables.infoPanelTerrainHeader.text = "Rally";
-                GlobalVariables.infoPanelTerrainText.text = "+ 5 DEF";
+                GlobalVariables.infoPanelTerrainText.text = "+ 50 STA";
                 GlobalVariables.infoPanelTerrainText.text += "\n";
-                GlobalVariables.infoPanelTerrainText.text += "+ 50 STA & BAL";
+                GlobalVariables.infoPanelTerrainText.text += "+ 50 BAL";
+                GlobalVariables.infoPanelTerrainText2.text = "DEF Mod: +"+GlobalVariables.rallyValue; 
                 // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONRally, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
@@ -991,6 +992,14 @@ public class GlobalFunctions : MonoBehaviour {
                     // bind to lower panel
                     tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
+                // rally STATUS ICON
+                if( !GameObject.Find("statusIconLOWER") ){
+                    GameObject statusIcon = Instantiate(Instance.STATUSICONRally, 
+                     new Vector3(GlobalVariables.statusIconLowerPanelX, GlobalVariables.statusIconLowerPanelY, 0), Quaternion.identity);
+                    statusIcon.name = "statusIconLOWER";
+                    // bind to lower panel
+                    statusIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
+                }                
                 break;
             case Enums.BattleOption.UseItem:
                 // col 1
@@ -1050,8 +1059,8 @@ public class GlobalFunctions : MonoBehaviour {
      }
 
      public static void CleanUpCompareUnits(){
-        GlobalFunctions.CleanUpUnitIcons("compareUnitIconAtt");
-		GlobalFunctions.CleanUpUnitIcons("compareUnitIconDef"); 
+        GlobalFunctions.DestroyGameObject("compareUnitIconAtt");
+		GlobalFunctions.DestroyGameObject("compareUnitIconDef"); 
         GlobalVariables.infoPanelTopTextACCvsDEF.text = "";
         GlobalVariables.infoPanelTopTextACC.text = "";
         GlobalVariables.infoPanelTopTextDEF.text = "";
@@ -1120,6 +1129,13 @@ public class GlobalFunctions : MonoBehaviour {
                 "unitIcon", 
                 GlobalFunctions.FindDirection(Enums.Direction.Down)
             );
+            // status icons
+            // if( GlobalVariables.displayUnit.x != posX || GlobalVariables.displayUnit.y != posY ){
+                DisplayStatusIcons(posX,posY);
+            // }
+            GlobalVariables.displayUnit.x = posX;
+            GlobalVariables.displayUnit.y = posY;
+            GlobalVariables.infoPanelTopText.text =  "\n"+GlobalVariables.displayUnit.x  +" "+  GlobalVariables.displayUnit.y ;
 		}
 		// TERRAIN
         if(GlobalVariables.tilesMatrix[ posX,posY ] != null && terrain){
@@ -1157,7 +1173,8 @@ public class GlobalFunctions : MonoBehaviour {
             // terrain STATUS ICON
             if(defMod != 0){
                 if( !GameObject.Find("terrainStatusIconLOWER") ){
-                    GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, new Vector3(21.15f, 1.45f, 0), Quaternion.identity);
+                    GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, 
+                     new Vector3(GlobalVariables.statusIconLowerPanelX, GlobalVariables.statusIconLowerPanelY, 0), Quaternion.identity);
                     statusIcon.name = "terrainStatusIconLOWER";
                     // bind to lower panel
                     statusIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
@@ -1172,6 +1189,44 @@ public class GlobalFunctions : MonoBehaviour {
         }
         
 	}
+
+    public static void DisplayStatusIcons(int posX, int posY){
+        // This destroys all of the icons (even the ones in TOP and BOTTOM!)
+        foreach(GameObject go in GameObject.FindGameObjectsWithTag("Status_Icon_Middle")){
+            Destroy(go);
+        }
+        Debug.Log("hello1");
+        UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        TileType thisTile = GlobalVariables.tilesMatrix[ posX,posY ];
+        Debug.Log(thisTile.defenseMod);
+        float statusIconX = 17.2f;
+        float statusIconY = 6.15f;
+        // BAL mod
+        if(thisUnit.balance < 100){
+            if( !GameObject.Find("balStatusIconMIDDLE") ){
+                GameObject statusIcon = Instantiate(Instance.STATUSICONBal, 
+                    new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                statusIcon.name = "balStatusIconMIDDLE";
+                statusIcon.tag = "Status_Icon_Middle";
+                // bind to lower panel
+                statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+                statusIconX = statusIconX + .4f;
+            }    
+        }
+        // terrain
+        if(thisTile.defenseMod != 0){
+            if( !GameObject.Find("terrainStatusIconMIDDLE") ){
+                GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, 
+                    new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                statusIcon.name = "terrainStatusIconMIDDLE";
+                statusIcon.tag = "Status_Icon_Middle";
+                // bind to lower panel
+                statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+            }    
+        }        
+        // rally
+        // heavy attack
+    }
 
     /*
         params:
@@ -1672,7 +1727,8 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void CombatRally(int posX, int posY){
         // reset ICON state
-		GlobalFunctions.CleanUpBattleOptionIcons();
+		// GlobalFunctions.CleanUpBattleOptionIcons();
+        GlobalFunctions.DestroyGameObject("battleOptionIcon");
 
         // gather existing values
         int thisSTA = GlobalVariables.unitsMatrix[ posX,posY ].stamina;
@@ -1780,7 +1836,8 @@ public class GlobalFunctions : MonoBehaviour {
         // if this unit is done attacking, but can still move
         }else if( !thisUnit.canAct && thisUnit.canMove ){
             DisplayAvailableCells(posX,posY);
-            CleanUpBattleOptionIcons(); // should it remove this HERE?
+            // CleanUpBattleOptionIcons(); // should it remove this HERE?
+            GlobalFunctions.DestroyGameObject("battleOptionIcon");
         }
 
     }

@@ -10,13 +10,14 @@ public class ClickTile : MonoBehaviour {
 
 		int posX = (int)this.transform.position.x;
 		int posY = (int)this.transform.position.y;
-		GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
+		GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 
 		if( !GlobalVariables.freezeHUD ){
 
 			// reset ICON state
 			GlobalVariables.freezeIconHUD = false;
-			GlobalFunctions.CleanUpBattleOptionIcons();
+			// GlobalFunctions.CleanUpBattleOptionIcons();
+			GlobalFunctions.DestroyGameObject("battleOptionIcon");
 
 			if( GlobalVariables.unitsMatrix[ posX,posY ] != null ){
 
@@ -31,8 +32,8 @@ public class ClickTile : MonoBehaviour {
 					// update HUD info boxes
 					GlobalFunctions.CleanUpTerrainInfoPanel();
 					GlobalFunctions.CleanUpUnitInfoPanel();
-					GlobalFunctions.CleanUpUnitIcons("unitIcon");
-					GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
+					GlobalFunctions.DestroyGameObject("unitIcon");
+					GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
 				// else, if *THERE IS NOT* a selected unit on this tile	
@@ -63,8 +64,8 @@ public class ClickTile : MonoBehaviour {
 					// update HUD info boxes
 					GlobalFunctions.CleanUpTerrainInfoPanel();
 					GlobalFunctions.CleanUpUnitInfoPanel();
-					GlobalFunctions.CleanUpUnitIcons("unitIcon");
-					GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
+					GlobalFunctions.DestroyGameObject("unitIcon");
+					GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
 					// hide ready unit cursor
@@ -78,8 +79,8 @@ public class ClickTile : MonoBehaviour {
 					
 					// udpate unit info panel
 					GlobalFunctions.CleanUpUnitInfoPanel();
-					GlobalFunctions.CleanUpUnitIcons("unitIcon");
-					GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
+					GlobalFunctions.DestroyGameObject("unitIcon");
+					GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 					GlobalFunctions.DisplayUnitIcon(
 						posX, 
 						posY, 

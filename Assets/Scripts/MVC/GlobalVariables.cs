@@ -27,12 +27,14 @@ public class GlobalVariables : MonoBehaviour {
         public static GameObject tilemapGO;
 	    public static GameObject grid;
         public static Vector3Int selectedTile = new Vector3Int(0,0,0);
+        // public static Vector3Int hoverTile = new Vector3Int(0,0,0);
 
     // UNITS
 
         public static UnitType[,] unitsMatrix;
         public static int unitID;
         public static Vector3Int selectedUnit = new Vector3Int(0,0,0);
+        public static Vector3Int displayUnit = new Vector3Int(0,0,0);
         public static Vector3Int selectedPath = new Vector3Int(0,0,0);
 
 
@@ -47,6 +49,8 @@ public class GlobalVariables : MonoBehaviour {
 
         public static float unitIconMiddlePanelX = 17.575f;
         public static float unitIconMiddlePanelY = 8.15f; // 8.05f
+        public static float statusIconLowerPanelX = 21.15f;
+        public static float statusIconLowerPanelY = 1.45f;
 
     // HUD elements
         // - top panel unit header

@@ -18,7 +18,7 @@ public class HoverAvailableTile : MonoBehaviour {
 		int parentX = this.gameObject.GetComponent<HUDProperties>().parentX;
 		int parentY = this.gameObject.GetComponent<HUDProperties>().parentY;
 		if(GlobalVariables.tilesMatrix[ posX,posY ].defenseMod == 0){
-			GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
+			GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 		}
 		UnitType thisUnit = GlobalVariables.unitsMatrix [ parentX,parentY ];
 		GlobalFunctions.DisplayTileInfo(posX,posY,false,true,thisUnit);

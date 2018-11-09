@@ -43,7 +43,7 @@ public class HoverIcon : MonoBehaviour {
 
 	void OnMouseOver() {
 
-		GlobalFunctions.CleanUpUnitIcons("terrainStatusIconLOWER");
+		GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 
 		if( !GlobalVariables.freezeIconHUD ){
 			// for all icons
@@ -73,12 +73,14 @@ public class HoverIcon : MonoBehaviour {
 		
 		if( !GlobalVariables.freezeIconHUD ){
 			// clean up battle option HUD icon
-			GlobalFunctions.CleanUpBattleOptionIcons();
+			// GlobalFunctions.CleanUpBattleOptionIcons();
+			GlobalFunctions.DestroyGameObject("battleOptionIcon");
 			// display terrian info again
 			GlobalFunctions.DisplayTileInfo(GlobalVariables.selectedUnit.x, GlobalVariables.selectedUnit.y);
 			anim.Play("idle");
 		}
-		GlobalFunctions.CleanUpUnitIcons("heavyAttackStatusIconLOWER");
+		GlobalFunctions.DestroyGameObject("statusIconLOWER");
+		// GlobalFunctions.DestroyGameObject("heavyAttackStatusIconLOWER");
 
 	}
 
