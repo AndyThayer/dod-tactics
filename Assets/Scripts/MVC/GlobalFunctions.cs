@@ -1051,11 +1051,23 @@ public class GlobalFunctions : MonoBehaviour {
         int defY            y coord of defending unit
      */
      public static void DisplayCompareUnits(int attX, int attY, int defX, int defY){
+        // clean up infoPanelTopText
+        GlobalVariables.infoPanelTopText.text = "";
+
+        // display attacker's unit icon and ACC score
         DisplayUnitIcon( attX, attY, 17.575f, 11.2f, "compareUnitIconAtt", GlobalFunctions.FindDirection(Enums.Direction.Right) );
-        DisplayUnitIcon( defX, defY, 20.775f, 11.2f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );
-        GlobalVariables.infoPanelTopTextACCvsDEF.text = "ACC  vs  DEF";
         GlobalVariables.infoPanelTopTextACC.text = CombatCalculateAttackAcc(attX,attY).ToString();
+        // display attacker's status icons
+        DisplayStatusIcons( attX,attY,Enums.StatusIconLocation.UpperLeft );
+
+        // display defender's unit icon and DEF score
+        DisplayUnitIcon( defX, defY, 20.775f, 11.2f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );      
         GlobalVariables.infoPanelTopTextDEF.text = CombatCalculateDefense(defX,defY).ToString();
+        // display defender's status icons
+        DisplayStatusIcons( defX,defY,Enums.StatusIconLocation.UpperRight );          
+
+        // generic compare HUD
+        GlobalVariables.infoPanelTopTextACCvsDEF.text = "ACC  vs  DEF";      
      }
 
      public static void CleanUpCompareUnits(){
@@ -1209,92 +1221,149 @@ public class GlobalFunctions : MonoBehaviour {
         bool heavyAttackTrigger = false;
         if(thisUnit.battleOption == Enums.BattleOption.HeavyAttack){
             heavyAttackTrigger = true;
-        }                        
+        }     
+
+        // determine which names and tags are relevant
+        // determine which base location is relevant
+        string statusIconName = "";
+        string statusIconTag = "";
+        float statusIconX = 0;
+        float statusIconY = 0;        
+        if (location == Enums.StatusIconLocation.Middle) {
+            statusIconName = "statusIconMIDDLE";
+            statusIconTag = "Status_Icon_Middle";
+            statusIconX = 17.2f;
+            statusIconY = 6.15f;            
+        }else if (location == Enums.StatusIconLocation.UpperLeft){
+            statusIconName = "statusIconUPPERLEFT";
+            statusIconTag = "Status_Icon_Top";
+            statusIconX = 17.2f;
+            statusIconY = 10.375f;             
+        }else if (location == Enums.StatusIconLocation.UpperRight){
+            statusIconName = "statusIconUPPERRIGHT";
+            statusIconTag = "Status_Icon_Top";
+            statusIconX = 21.15f;
+            statusIconY = 10.375f;  
+        }
 
         if( GlobalVariables.unitStatusIcons.posX != posX || 
             GlobalVariables.unitStatusIcons.posY != posY || 
             balTrigger != GlobalVariables.unitStatusIcons.BAL || 
             terrainTrigger != GlobalVariables.unitStatusIcons.terrain || 
             rallyTrigger != GlobalVariables.unitStatusIcons.rally || 
-            heavyAttackTrigger != GlobalVariables.unitStatusIcons.heavyAttack 
+            heavyAttackTrigger != GlobalVariables.unitStatusIcons.heavyAttack ||
+            location != Enums.StatusIconLocation.Middle
         ){
             
             // update GlobalVariables.unitStatusIcons 
-            GlobalVariables.unitStatusIcons.posX = posX;
-            GlobalVariables.unitStatusIcons.posY = posY;
-
-            // destroy all of the status icons in the MIDDLE (wipe slate in order to update with currently relevant status icons)
-            foreach(GameObject statusIconMiddle in GameObject.FindGameObjectsWithTag("Status_Icon_Middle")){
-                Destroy(statusIconMiddle);
+            if(location == Enums.StatusIconLocation.Middle){
+                GlobalVariables.unitStatusIcons.posX = posX;
+                GlobalVariables.unitStatusIcons.posY = posY;
             }
 
-            // establish base location for status icons
-            float statusIconX = 17.2f;
-            float statusIconY = 6.15f;
+            // wipe slate in order to update with currently relevant status icons
+            if(location == Enums.StatusIconLocation.Middle){
+                foreach(GameObject statusIcon in GameObject.FindGameObjectsWithTag(statusIconTag)){
+                    Destroy(statusIcon);
+                }
+            }
+
 
             // BAL mod
             if(balTrigger){
                 GameObject statusIcon = Instantiate(Instance.STATUSICONBal, 
                     new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
                 // tag and name
-                statusIcon.name = "balStatusIconMIDDLE";
-                statusIcon.tag = "Status_Icon_Middle";
+                statusIcon.name = statusIconName;
+                statusIcon.tag = statusIconTag;
                 // bind to lower panel
                 statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
                 // update GlobalVariables.unitStatusIcons
-                GlobalVariables.unitStatusIcons.BAL = true;
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.BAL = true;
+                }                
                 // increment location
-                statusIconX = statusIconX + .4f;
-            }else{
-                GlobalVariables.unitStatusIcons.BAL = false;
+                if (location != Enums.StatusIconLocation.UpperRight){
+                    statusIconX = statusIconX + .4f;
+                }else{
+                    statusIconX = statusIconX - .4f;
+                }  
+            }else{            
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.BAL = false;
+                }
             }
             // terrain
-            if(terrainTrigger){
+            if(terrainTrigger && location != Enums.StatusIconLocation.UpperLeft){
                 GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, 
                     new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
                 // tag and name                    
-                statusIcon.name = "terrainStatusIconMIDDLE";
-                statusIcon.tag = "Status_Icon_Middle";
+                statusIcon.name = statusIconName;
+                statusIcon.tag = statusIconTag;
                 // bind to lower panel
                 statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
-                // update GlobalVariables.unitStatusIcons
-                GlobalVariables.unitStatusIcons.terrain = true;
+                // update GlobalVariables.unitStatusIcons                
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.terrain = true;
+                }
                 // increment location
-                statusIconX = statusIconX + .4f;
+                if (location != Enums.StatusIconLocation.UpperRight){
+                    statusIconX = statusIconX + .4f;
+                }else{
+                    statusIconX = statusIconX - .4f;
+                }
             }else{
-                GlobalVariables.unitStatusIcons.terrain = false;
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.terrain = false;
+                }                
             }        
             // rally
-            if(rallyTrigger){
+            if(rallyTrigger && location != Enums.StatusIconLocation.UpperLeft){
                 GameObject statusIcon = Instantiate(Instance.STATUSICONRally, 
                     new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
                 // tag and name
-                statusIcon.name = "rallyStatusIconMIDDLE";
-                statusIcon.tag = "Status_Icon_Middle";
+                statusIcon.name = statusIconName;
+                statusIcon.tag = statusIconTag;
                 // bind to lower panel
                 statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
-                // update GlobalVariables.unitStatusIcons
-                GlobalVariables.unitStatusIcons.rally = true;
+                // update GlobalVariables.unitStatusIcons                
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.rally = true;
+                }
                 // increment location
-                statusIconX = statusIconX + .4f;
+                if (location != Enums.StatusIconLocation.UpperRight){
+                    statusIconX = statusIconX + .4f;
+                }else{
+                    statusIconX = statusIconX - .4f;
+                }
             }else{
-                GlobalVariables.unitStatusIcons.rally = false;
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.rally = false;
+                }                
             }                
             // heavy attack
-            if(heavyAttackTrigger){
+            if(heavyAttackTrigger && location != Enums.StatusIconLocation.UpperRight){
                 GameObject statusIcon = Instantiate(Instance.STATUSICONHeavyAttack, 
                     new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
                 // tag and name
-                statusIcon.name = "heavyAttackStatusIconMIDDLE";
-                statusIcon.tag = "Status_Icon_Middle";
+                statusIcon.name = statusIconName;
+                statusIcon.tag = statusIconTag;
                 // bind to lower panel
                 statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
                 // update GlobalVariables.unitStatusIcons
-                GlobalVariables.unitStatusIcons.heavyAttack = true;
-                // increment locatino
-                statusIconX = statusIconX + .4f;
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.heavyAttack = true;
+                }
+                // increment location
+                if (location != Enums.StatusIconLocation.UpperRight){
+                    statusIconX = statusIconX + .4f;
+                }else{
+                    statusIconX = statusIconX - .4f;
+                }
             }else{
-                GlobalVariables.unitStatusIcons.heavyAttack = false;
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.heavyAttack = false;
+                }
             }              
         } // end checks
 
@@ -1726,6 +1795,10 @@ public class GlobalFunctions : MonoBehaviour {
         // consume attacker's ability to act again this turn
         GlobalVariables.unitsMatrix[ parentX,parentY ].canAct = false;
         GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption = Enums.BattleOption.None;
+		// clean up TOP status icons
+		foreach(GameObject statusIcon in GameObject.FindGameObjectsWithTag("Status_Icon_Top")){
+			Destroy(statusIcon);
+		}        
 
     }
 

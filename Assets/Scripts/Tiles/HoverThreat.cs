@@ -36,10 +36,10 @@ public class HoverThreat : MonoBehaviour {
 		
 		GlobalFunctions.CleanUpOldHUDcursorThreat();
 		GlobalFunctions.CleanUpCompareUnits();
-		// GlobalFunctions.DestroyGameObject("compareUnitIconAtt");
-		// GlobalFunctions.DestroyGameObject("compareUnitIconDef");
-		// GlobalVariables.infoPanelTopTextACC.text = "";
-		// GlobalVariables.infoPanelTopTextDEF.text = "";
+		// clean up TOP status icons
+		foreach(GameObject statusIcon in GameObject.FindGameObjectsWithTag("Status_Icon_Top")){
+			Destroy(statusIcon);
+		}
 
 		GlobalVariables.freezeHUD = false;
 
