@@ -1129,13 +1129,10 @@ public class GlobalFunctions : MonoBehaviour {
                 "unitIcon", 
                 GlobalFunctions.FindDirection(Enums.Direction.Down)
             );
+
             // status icons
-            // if( GlobalVariables.displayUnit.x != posX || GlobalVariables.displayUnit.y != posY ){
-                DisplayStatusIcons(posX,posY);
-            // }
-            GlobalVariables.displayUnit.x = posX;
-            GlobalVariables.displayUnit.y = posY;
-            GlobalVariables.infoPanelTopText.text =  "\n"+GlobalVariables.displayUnit.x  +" "+  GlobalVariables.displayUnit.y ;
+            DisplayStatusIcons( posX,posY,Enums.StatusIconLocation.Middle );
+
 		}
 		// TERRAIN
         if(GlobalVariables.tilesMatrix[ posX,posY ] != null && terrain){
@@ -1190,42 +1187,117 @@ public class GlobalFunctions : MonoBehaviour {
         
 	}
 
-    public static void DisplayStatusIcons(int posX, int posY){
-        // This destroys all of the icons (even the ones in TOP and BOTTOM!)
-        foreach(GameObject go in GameObject.FindGameObjectsWithTag("Status_Icon_Middle")){
-            Destroy(go);
-        }
-        Debug.Log("hello1");
+    public static void DisplayStatusIcons(int posX, int posY, Enums.StatusIconLocation location){
+
+        // instantiate relevant unit and map tile
         UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
         TileType thisTile = GlobalVariables.tilesMatrix[ posX,posY ];
-        Debug.Log(thisTile.defenseMod);
-        float statusIconX = 17.2f;
-        float statusIconY = 6.15f;
-        // BAL mod
+
+        // determine which triggers are active
+        bool balTrigger = false;
         if(thisUnit.balance < 100){
-            if( !GameObject.Find("balStatusIconMIDDLE") ){
+            balTrigger = true;
+        }
+        bool terrainTrigger = false;
+        if(thisTile.defenseMod != 0){
+            terrainTrigger = true;
+        }
+        bool rallyTrigger = false;
+        if(thisUnit.rally){
+            rallyTrigger = true;
+        }
+        bool heavyAttackTrigger = false;
+        if(thisUnit.battleOption == Enums.BattleOption.HeavyAttack){
+            heavyAttackTrigger = true;
+        }                        
+
+        if( GlobalVariables.unitStatusIcons.posX != posX || 
+            GlobalVariables.unitStatusIcons.posY != posY || 
+            balTrigger != GlobalVariables.unitStatusIcons.BAL || 
+            terrainTrigger != GlobalVariables.unitStatusIcons.terrain || 
+            rallyTrigger != GlobalVariables.unitStatusIcons.rally || 
+            heavyAttackTrigger != GlobalVariables.unitStatusIcons.heavyAttack 
+        ){
+            
+            // update GlobalVariables.unitStatusIcons 
+            GlobalVariables.unitStatusIcons.posX = posX;
+            GlobalVariables.unitStatusIcons.posY = posY;
+
+            // destroy all of the status icons in the MIDDLE (wipe slate in order to update with currently relevant status icons)
+            foreach(GameObject statusIconMiddle in GameObject.FindGameObjectsWithTag("Status_Icon_Middle")){
+                Destroy(statusIconMiddle);
+            }
+
+            // establish base location for status icons
+            float statusIconX = 17.2f;
+            float statusIconY = 6.15f;
+
+            // BAL mod
+            if(balTrigger){
                 GameObject statusIcon = Instantiate(Instance.STATUSICONBal, 
                     new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                // tag and name
                 statusIcon.name = "balStatusIconMIDDLE";
                 statusIcon.tag = "Status_Icon_Middle";
                 // bind to lower panel
                 statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+                // update GlobalVariables.unitStatusIcons
+                GlobalVariables.unitStatusIcons.BAL = true;
+                // increment location
                 statusIconX = statusIconX + .4f;
-            }    
-        }
-        // terrain
-        if(thisTile.defenseMod != 0){
-            if( !GameObject.Find("terrainStatusIconMIDDLE") ){
+            }else{
+                GlobalVariables.unitStatusIcons.BAL = false;
+            }
+            // terrain
+            if(terrainTrigger){
                 GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, 
                     new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                // tag and name                    
                 statusIcon.name = "terrainStatusIconMIDDLE";
                 statusIcon.tag = "Status_Icon_Middle";
                 // bind to lower panel
                 statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
-            }    
-        }        
-        // rally
-        // heavy attack
+                // update GlobalVariables.unitStatusIcons
+                GlobalVariables.unitStatusIcons.terrain = true;
+                // increment location
+                statusIconX = statusIconX + .4f;
+            }else{
+                GlobalVariables.unitStatusIcons.terrain = false;
+            }        
+            // rally
+            if(rallyTrigger){
+                GameObject statusIcon = Instantiate(Instance.STATUSICONRally, 
+                    new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                // tag and name
+                statusIcon.name = "rallyStatusIconMIDDLE";
+                statusIcon.tag = "Status_Icon_Middle";
+                // bind to lower panel
+                statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+                // update GlobalVariables.unitStatusIcons
+                GlobalVariables.unitStatusIcons.rally = true;
+                // increment location
+                statusIconX = statusIconX + .4f;
+            }else{
+                GlobalVariables.unitStatusIcons.rally = false;
+            }                
+            // heavy attack
+            if(heavyAttackTrigger){
+                GameObject statusIcon = Instantiate(Instance.STATUSICONHeavyAttack, 
+                    new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                // tag and name
+                statusIcon.name = "heavyAttackStatusIconMIDDLE";
+                statusIcon.tag = "Status_Icon_Middle";
+                // bind to lower panel
+                statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+                // update GlobalVariables.unitStatusIcons
+                GlobalVariables.unitStatusIcons.heavyAttack = true;
+                // increment locatino
+                statusIconX = statusIconX + .4f;
+            }else{
+                GlobalVariables.unitStatusIcons.heavyAttack = false;
+            }              
+        } // end checks
+
     }
 
     /*
@@ -1653,6 +1725,7 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // consume attacker's ability to act again this turn
         GlobalVariables.unitsMatrix[ parentX,parentY ].canAct = false;
+        GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption = Enums.BattleOption.None;
 
     }
 

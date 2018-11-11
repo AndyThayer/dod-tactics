@@ -36,6 +36,7 @@ public class GlobalVariables : MonoBehaviour {
         public static Vector3Int selectedUnit = new Vector3Int(0,0,0);
         public static Vector3Int displayUnit = new Vector3Int(0,0,0);
         public static Vector3Int selectedPath = new Vector3Int(0,0,0);
+        public static UnitTypeStatusIcons unitStatusIcons = new UnitTypeStatusIcons();
 
 
     // HUD
