@@ -51,7 +51,7 @@ public class GlobalVariables : MonoBehaviour {
         public static float unitIconMiddlePanelX = 17.575f;
         public static float unitIconMiddlePanelY = 8.15f; // 8.05f
         public static float statusIconLowerPanelX = 21.15f;
-        public static float statusIconLowerPanelY = 1.45f;
+        public static float statusIconLowerPanelY = 2.99275f;
 
     // HUD elements
         // - top panel unit header
@@ -145,5 +145,6 @@ public class GlobalVariables : MonoBehaviour {
         public static float BALmod = .5f; 
 
         public static float critMultiplier = 2f;
+        
 
 }

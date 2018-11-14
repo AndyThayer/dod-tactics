@@ -945,13 +945,15 @@ public class GlobalFunctions : MonoBehaviour {
             case Enums.BattleOption.LightAttack:
                 GlobalVariables.infoPanelTerrainHeader.text = "Light Attack";
                 // col 1
-                GlobalVariables.infoPanelTerrainText.text = "Worth 10 BAL";
-                GlobalVariables.infoPanelTerrainText.text += "\n";
-                GlobalVariables.infoPanelTerrainText.text += "Costs 10 STA";
-                // col 2
-                GlobalVariables.infoPanelTerrainText2.text = "ACC Mod: 0";
-                GlobalVariables.infoPanelTerrainText2.text += "\n";                
-                GlobalVariables.infoPanelTerrainText2.text += "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
+
+                // col 2                
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                                
+                GlobalVariables.infoPanelTerrainText2.text += "Worth 10 BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "Costs 10 STA";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: 0";
                 // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONLightAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
@@ -960,17 +962,21 @@ public class GlobalFunctions : MonoBehaviour {
                     tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
-            case Enums.BattleOption.HeavyAttack:
-                // col 1
+            case Enums.BattleOption.HeavyAttack:                
                 GlobalVariables.infoPanelTerrainHeader.text = "Heavy Attack";
-                GlobalVariables.infoPanelTerrainText.text = "Worth 30 BAL";
-                GlobalVariables.infoPanelTerrainText.text += "\n";
-                GlobalVariables.infoPanelTerrainText.text += "Costs 30 STA";
+                // col 1
+
                 // col 2
-                GlobalVariables.infoPanelTerrainText2.text = "ACC Mod: "+GlobalVariables.heavyAttackAccMod;
-                GlobalVariables.infoPanelTerrainText2.text += "\n";                                
                 float highDamageTemp = GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
-                GlobalVariables.infoPanelTerrainText2.text += "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttackDmg(highDamageTemp);
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttackDmg(highDamageTemp);                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                                
+                GlobalVariables.infoPanelTerrainText2.text += "Worth 30 BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "Costs 30 STA";                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                                                
+                GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: "+GlobalVariables.heavyAttackAccMod;                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";  
+                GlobalVariables.infoPanelTerrainText2.text += "CRI Mod: +"+GlobalVariables.heavyAttackBonus;  
                 // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONHeavyAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
@@ -988,13 +994,14 @@ public class GlobalFunctions : MonoBehaviour {
                 }
                                
                 break;
-            case Enums.BattleOption.Rally:
-                // col 1
+            case Enums.BattleOption.Rally:                
                 GlobalVariables.infoPanelTerrainHeader.text = "Rally";
-                GlobalVariables.infoPanelTerrainText.text = "+ 50 STA";
-                GlobalVariables.infoPanelTerrainText.text += "\n";
-                GlobalVariables.infoPanelTerrainText.text += "+ 50 BAL";
-                GlobalVariables.infoPanelTerrainText2.text = "DEF Mod: +"+GlobalVariables.rallyValue; 
+                // col 2
+                GlobalVariables.infoPanelTerrainText2.text = "DEF Mod: +"+GlobalVariables.rallyValue;                 
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "STA Mod: +50";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "BAL Mod: +50";
                 // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONRally, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
@@ -1012,9 +1019,9 @@ public class GlobalFunctions : MonoBehaviour {
                 }                
                 break;
             case Enums.BattleOption.UseItem:
-                // col 1
+                // col 2
                 GlobalVariables.infoPanelTerrainHeader.text = "Use Item";
-                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                GlobalVariables.infoPanelTerrainText2.text = "Coming soon...";
                 // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONUseItem, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
@@ -1024,9 +1031,9 @@ public class GlobalFunctions : MonoBehaviour {
                 }
                 break;
             case Enums.BattleOption.CastSpell:
-                // col 1
+                // col 2
                 GlobalVariables.infoPanelTerrainHeader.text = "Cast Spell";
-                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                GlobalVariables.infoPanelTerrainText2.text = "Coming soon...";
                 // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONCastSpell, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
@@ -1036,9 +1043,9 @@ public class GlobalFunctions : MonoBehaviour {
                 }
                 break;
             case Enums.BattleOption.SpecialAbility:
-                // col 1
+                // col 2
                 GlobalVariables.infoPanelTerrainHeader.text = "Special Ability";
-                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                GlobalVariables.infoPanelTerrainText2.text = "Coming soon...";
                 // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONSpecialAbility, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
@@ -1082,7 +1089,6 @@ public class GlobalFunctions : MonoBehaviour {
             GlobalVariables.infoPanelTopTextLeft.text += " "+attacker.lowDamage+"-"+(int)CombatCalculateHeavyAttackDmg(attacker.highDamage)+" dmg";
             GlobalVariables.infoPanelTopTextLeft.text += "\nCrit chance: "+CombatCalculateCriticalHitRate(attacker)+" %";
         }
-
 
         // display defender's unit icon and DEF score
         DisplayUnitIcon( defX, defY, 20.775f, 11.3f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );      
@@ -1195,16 +1201,18 @@ public class GlobalFunctions : MonoBehaviour {
             GlobalVariables.infoPanelTerrainHeader.text = GlobalVariables.tilesMatrix[ posX,posY ].name;
             GlobalVariables.infoPanelTerrainHeader.text += " (" + posX + "-" + posY + ")";
             // col 1
-            GlobalVariables.infoPanelTerrainText.text = "MOV Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].movementCost + thisMOV;
-            GlobalVariables.infoPanelTerrainText.text += "\n";
-            GlobalVariables.infoPanelTerrainText.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost + thisSTA;	
+
             // col 2
+            GlobalVariables.infoPanelTerrainText2.text = "MOV Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].movementCost + thisMOV;
+            GlobalVariables.infoPanelTerrainText2.text += "\n";
+            GlobalVariables.infoPanelTerrainText2.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost + thisSTA;	            
+            GlobalVariables.infoPanelTerrainText2.text += "\n";
             int defMod = GlobalVariables.tilesMatrix[ posX,posY ].defenseMod;
             string defModSymbol = "+";
             if(GlobalVariables.tilesMatrix[ posX,posY ].defenseMod <= 0){
                 defModSymbol = "";
             }
-            GlobalVariables.infoPanelTerrainText2.text = "DEF Mod: " + defModSymbol + GlobalVariables.tilesMatrix[ posX,posY ].defenseMod;
+            GlobalVariables.infoPanelTerrainText2.text += "DEF Mod: " + defModSymbol + GlobalVariables.tilesMatrix[ posX,posY ].defenseMod;
 
             // terrain STATUS ICON
             if(defMod != 0){
@@ -1902,7 +1910,7 @@ public class GlobalFunctions : MonoBehaviour {
     public static int CombatCalculateCriticalHitRate(UnitType thisUnit){
         int critRate = thisUnit.critical;
         if(thisUnit.battleOption == Enums.BattleOption.HeavyAttack){
-            critRate = critRate + 5;
+            critRate = critRate + GlobalVariables.heavyAttackBonus;
         }
         return critRate;
     }

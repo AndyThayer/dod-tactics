@@ -52,7 +52,9 @@ public class ClickIcon : MonoBehaviour {
 		if( !GlobalVariables.freezeHUD ){ // || true
 
 			// reset status icon LOWER
-			GlobalFunctions.DestroyGameObject("statusIconLOWER");
+			if( !GlobalVariables.freezeIconHUD ){
+				GlobalFunctions.DestroyGameObject("statusIconLOWER");
+			}
 
 			// clean up available cells
 			GlobalFunctions.RemoveAvailableCellsFromAllUnits();
@@ -66,11 +68,13 @@ public class ClickIcon : MonoBehaviour {
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].lightAttackRange,posX,posY );
 				// set battleOption and display threat cells
-				if( GlobalVariables.freezeIconHUD ){
+				if( GlobalVariables.freezeIconHUD ){				
 					GlobalFunctions.DisplayThreatCells( posX,posY );
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.LightAttack;
+				}else{
+					GlobalFunctions.DestroyGameObject("battleOptionIcon");
 				}
-			}else if( thisUnitCanAct && heavyAttack ){
+			}else if( thisUnitCanAct && heavyAttack ){				
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.HeavyAttack);
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].heavyAttckRange,posX,posY );
@@ -78,6 +82,8 @@ public class ClickIcon : MonoBehaviour {
 				if( GlobalVariables.freezeIconHUD ){
 					GlobalFunctions.DisplayThreatCells( posX,posY );
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.HeavyAttack;
+				}else{
+					GlobalFunctions.DestroyGameObject("battleOptionIcon");
 				}
 			}else if( thisUnitCanAct && useItem ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.UseItem);
