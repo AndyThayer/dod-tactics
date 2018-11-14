@@ -15,14 +15,15 @@ public class GlobalController : MonoBehaviour {
 		GlobalFunctions.InitializeHUDObjects();
 		// start off by not displaying HUD unit panel
 		GlobalFunctions.CleanUpUnitInfoPanel();
+		GlobalFunctions.DestroyGameObject("unitIcon");
 
 		// we don't need to see the original tilemap because we've instantiated prefab tiles instead
 		GlobalVariables.tilemapGO.SetActive(false);
 
 
-		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 11,10, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
+		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 12,11, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
 		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 13,11, GlobalFunctions.FindDirection(Enums.Direction.Down), 2);
-		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.SaberToothWolf, 15,10, GlobalFunctions.FindDirection(Enums.Direction.Left), 2);
+		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.SaberToothWolf, 14,11, GlobalFunctions.FindDirection(Enums.Direction.Left), 2);
 		// gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 8,4, GlobalFunctions.FindDirection(Enums.Direction.Down));
 		// gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 8,10, GlobalFunctions.FindDirection(Enums.Direction.Left));
 
@@ -35,7 +36,7 @@ public class GlobalController : MonoBehaviour {
 		// {
 
 		GlobalFunctions.UpdateInitiative();
-		GlobalVariables.infoPanelTopHeader.text = "Woods of Thaden";
+		// GlobalVariables.infoPanelTopHeader.text = "Round 1";
 
 
 	}

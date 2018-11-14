@@ -42,30 +42,39 @@ public class ClickIcon : MonoBehaviour {
 			GlobalFunctions.CleanUpHUDIcons();
 		}
 		// light up this icon
-		if( !GlobalVariables.freezeIconHUD && GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){
+		if( !GlobalVariables.freezeIconHUD && GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){ // || true
 			this.GetComponent<HoverIcon>().PlayLit();
 			GlobalVariables.freezeIconHUD = true;
 		}else{
 			GlobalVariables.freezeIconHUD = false;
 		}
 		
-		if( !GlobalVariables.freezeHUD ){
+		if( !GlobalVariables.freezeHUD ){ // || true
+
+			// reset status icon LOWER
+			if( !GlobalVariables.freezeIconHUD ){
+				GlobalFunctions.DestroyGameObject("statusIconLOWER");
+			}
 
 			// clean up available cells
 			GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 			GlobalFunctions.RemoveDisplayAvailableCellsFromAllUnits();
 			bool thisUnitCanAct =  GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct;
+			// wipe upper panel battle log
+			GlobalFunctions.CleanUpBattleLog();
 
 			if( thisUnitCanAct && lightAttack ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].lightAttackRange,posX,posY );
 				// set battleOption and display threat cells
-				if( GlobalVariables.freezeIconHUD ){
+				if( GlobalVariables.freezeIconHUD ){				
 					GlobalFunctions.DisplayThreatCells( posX,posY );
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.LightAttack;
+				}else{
+					GlobalFunctions.DestroyGameObject("battleOptionIcon");
 				}
-			}else if( thisUnitCanAct && heavyAttack ){
+			}else if( thisUnitCanAct && heavyAttack ){				
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.HeavyAttack);
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ posX,posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ posX,posY ].heavyAttckRange,posX,posY );
@@ -73,6 +82,8 @@ public class ClickIcon : MonoBehaviour {
 				if( GlobalVariables.freezeIconHUD ){
 					GlobalFunctions.DisplayThreatCells( posX,posY );
 					GlobalVariables.unitsMatrix[ posX,posY ].battleOption = Enums.BattleOption.HeavyAttack;
+				}else{
+					GlobalFunctions.DestroyGameObject("battleOptionIcon");
 				}
 			}else if( thisUnitCanAct && useItem ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.UseItem);
@@ -93,7 +104,8 @@ public class ClickIcon : MonoBehaviour {
 				Debug.Log("Special Ability clicked!");
 			}else if( endTurn ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.EndTurn);
-				GlobalFunctions.CombatEndTurn( posX,posY );
+				// GlobalFunctions.CombatEndTurn( posX,posY );
+				GlobalFunctions.CombatEndTurn( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
 				// CombatEndTurn > CheckForEndOfTurn wipes selectedUnit values, but we still need them in this scenario
 				GlobalVariables.selectedUnit.x = posX;
             	GlobalVariables.selectedUnit.y = posY;

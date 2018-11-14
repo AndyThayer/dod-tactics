@@ -143,6 +143,7 @@ public class MovementUnit : MonoBehaviour {
 		// update HUD info boxes
 		GlobalFunctions.CleanUpTerrainInfoPanel();
 		GlobalFunctions.CleanUpUnitInfoPanel();	
+		GlobalFunctions.DestroyGameObject("unitIcon");
 		// stop walking animation
 		// anim.Play("idle");
 		GlobalVariables.unitsMatrix[ parentX,parentY ].unitPrefab.GetComponent<UnitAnimations>().PlayIdle();

@@ -51,6 +51,7 @@ public class Enums : MonoBehaviour {
     }
 
     public enum BattleOption {
+        None,
         LightAttack,
         HeavyAttack,
         Rally,
@@ -58,6 +59,12 @@ public class Enums : MonoBehaviour {
         CastSpell,
         SpecialAbility,
         EndTurn
+    }
+
+    public enum StatusIconLocation {
+        UpperLeft,
+        UpperRight,
+        Middle
     }
 
 }

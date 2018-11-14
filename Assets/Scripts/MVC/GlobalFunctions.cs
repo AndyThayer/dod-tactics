@@ -13,8 +13,6 @@ public class GlobalFunctions : MonoBehaviour {
    
 
     // HUD objects
-    // public GameObject HUDPanelTerrain;
-    // public GameObject HUDPanelUnit;
     public GameObject HUDCursor;
     public GameObject HUDCursorThreat;
     public GameObject HUDReadyUnit;
@@ -28,6 +26,10 @@ public class GlobalFunctions : MonoBehaviour {
     public GameObject ICONUseItem;
     public GameObject ICONCastSpell;
     public GameObject ICONSpecialAbility;
+    public GameObject STATUSICONTerrain;
+    public GameObject STATUSICONBal;
+    public GameObject STATUSICONRally;
+    public GameObject STATUSICONHeavyAttack;
 
     // HUD misc
     public GameObject swordSwoosh;
@@ -630,10 +632,6 @@ public class GlobalFunctions : MonoBehaviour {
 
 
     public static void InitializeHUDObjects(){
-        // GlobalVariables.HUDinfoPanel = HUDinfoPanel;
-        // GlobalVariables.HUDInfoPanel = Instantiate(Instance.HUDInfoPanel, new Vector3(-5, -5, 0), Quaternion.identity);
-        // GlobalVariables.HUDInfoPanel.SetActive(false);
-        // GlobalVariables.HUDInfoPanel.name = "HUD_info_panel";
 
         // HUD cursor
         GlobalVariables.HUDCursor = Instantiate(Instance.HUDCursor, new Vector3(-1, -1, 0), Quaternion.identity);
@@ -659,6 +657,28 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTopTextGO = GameObject.Find("InfoPanelTopText");
         GlobalVariables.infoPanelTopText = GlobalVariables.infoPanelTopTextGO.GetComponent<Text>();
         GlobalVariables.infoPanelTopText.text = "";
+        // - top panel unit text ACC
+        GlobalVariables.infoPanelTopTextACCGO = GameObject.Find("InfoPanelTopTextACC");
+        GlobalVariables.infoPanelTopTextACC = GlobalVariables.infoPanelTopTextACCGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextACC.text = "";
+        // - top panel unit text DEF
+        GlobalVariables.infoPanelTopTextDEFGO = GameObject.Find("InfoPanelTopTextDEF");
+        GlobalVariables.infoPanelTopTextDEF = GlobalVariables.infoPanelTopTextDEFGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextDEF.text = "";
+        // - top panel unit text DEF
+        GlobalVariables.infoPanelTopTextACCvsDEFGO = GameObject.Find("InfoPanelTopTextACCvsDEF");
+        GlobalVariables.infoPanelTopTextACCvsDEF = GlobalVariables.infoPanelTopTextACCvsDEFGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextACCvsDEF.text = "";
+
+        // - top panel unit text Left
+        GlobalVariables.infoPanelTopTextLeftGO = GameObject.Find("InfoPanelTopTextLeft");
+        GlobalVariables.infoPanelTopTextLeft = GlobalVariables.infoPanelTopTextLeftGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextLeft.text = "";
+        // - top panel unit text Right
+        GlobalVariables.infoPanelTopTextRightGO = GameObject.Find("InfoPanelTopTextRight");
+        GlobalVariables.infoPanelTopTextRight = GlobalVariables.infoPanelTopTextRightGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextRight.text = "";
+
         // - info panel unit header
         GlobalVariables.infoPanelUnitHeaderGO = GameObject.Find("InfoPanelUnitHeader");
         GlobalVariables.infoPanelUnitHeader = GlobalVariables.infoPanelUnitHeaderGO.GetComponent<Text>();
@@ -708,12 +728,6 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTerrainGO.SetActive(false);
         GlobalVariables.infoPanelUnitGO = GameObject.Find("HUD_side_panel_middle");
 
-
-        // GlobalVariables.infoPanelTerrainGO = Instantiate(Instance.HUDPanelTerrain, new Vector3(19.175f, 2, 0), Quaternion.identity);
-        // GlobalVariables.infoPanelTerrainGO.name = "HUD_info_panel_terrain";
-        // GlobalVariables.infoPanelUnitGO = Instantiate(Instance.HUDPanelUnit, new Vector3(19.175f, 6.5f, 0), Quaternion.identity);
-        // GlobalVariables.infoPanelUnitGO.name = "HUD_info_panel_units";
-        // GlobalVariables.battleOptionHeavyAttack = GameObject.Find("icon_heavy_attack");
     }
 
     // used to pass the prefab HUDAvailableCell
@@ -743,8 +757,6 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.unitsMatrix [ posX,posY ].unitPrefab.GetComponent<Renderer>().enabled = true;
         // update unit and tile HUD boxes
         if(updateInfo){
-            // GlobalFunctions.CleanUpTerrainInfoPanel();
-		    // GlobalFunctions.CleanUpUnitInfoPanel();
 		    GlobalFunctions.DisplayTileInfo(posX,posY);
         }
     }
@@ -876,10 +888,10 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelUnitText2.text = "";
         GlobalVariables.infoPanelUnitText3.text = "";
         // clean up HUD icon
-        if(GameObject.Find("unitIcon")){
-            GameObject goUnitIcon = GameObject.Find("unitIcon");
-            Destroy(goUnitIcon);
-        }
+        // if(GameObject.Find("unitIcon")){
+        //     GameObject goUnitIcon = GameObject.Find("unitIcon");
+        //     Destroy(goUnitIcon);
+        // }
         // hide the Unit Panel
         GlobalVariables.infoPanelUnitGO.SetActive(false);
         GlobalVariables.barHPGO.SetActive(false);
@@ -889,6 +901,14 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.barBALGO.SetActive(false);
         GlobalVariables.barBALbgGO.SetActive(false);
 	}
+
+    public static void DestroyGameObject(string name){
+        if(GameObject.Find(name)){
+            GameObject goName = GameObject.Find(name);
+            Destroy(goName);
+        }
+    }
+    
 
 	public static void CleanUpTerrainInfoPanel(bool panel = false){
 		GlobalVariables.infoPanelTerrainHeader.text = "";
@@ -910,12 +930,12 @@ public class GlobalFunctions : MonoBehaviour {
         DisplayTileIcon(posX,posY);
     }
 
-    public static void CleanUpBattleOptionIcons(){
-        if(GameObject.Find("battleOptionIcon")){
-            GameObject gotileIcon = GameObject.Find("battleOptionIcon");
-            Destroy(gotileIcon);
-        }
-    }
+    // public static void CleanUpBattleOptionIcons(){
+    //     if(GameObject.Find("battleOptionIcon")){
+    //         GameObject gotileIcon = GameObject.Find("battleOptionIcon");
+    //         Destroy(gotileIcon);
+    //     }
+    // }
 
     public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption){
         int posX = GlobalVariables.selectedUnit.x;
@@ -925,65 +945,113 @@ public class GlobalFunctions : MonoBehaviour {
             case Enums.BattleOption.LightAttack:
                 GlobalVariables.infoPanelTerrainHeader.text = "Light Attack";
                 // col 1
-                GlobalVariables.infoPanelTerrainText.text = "Worth 10 BAL";
-                GlobalVariables.infoPanelTerrainText.text += "\n";
-                GlobalVariables.infoPanelTerrainText.text += "Costs 10 STA";
-                // col 2
-                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
+
+                // col 2                
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                                
+                GlobalVariables.infoPanelTerrainText2.text += "Worth 10 BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "Costs 10 STA";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: 0";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONLightAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
-            case Enums.BattleOption.HeavyAttack:
-                // col 1
+            case Enums.BattleOption.HeavyAttack:                
                 GlobalVariables.infoPanelTerrainHeader.text = "Heavy Attack";
-                GlobalVariables.infoPanelTerrainText.text = "Worth 30 BAL";
-                GlobalVariables.infoPanelTerrainText.text += "\n";
-                GlobalVariables.infoPanelTerrainText.text += "Costs 30 STA";
+                // col 1
+
                 // col 2
-                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+(GlobalVariables.unitsMatrix[ posX,posY ].highDamage * 2);
+                float highDamageTemp = GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttackDmg(highDamageTemp);                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                                
+                GlobalVariables.infoPanelTerrainText2.text += "Worth 30 BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "Costs 30 STA";                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                                                
+                GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: "+GlobalVariables.heavyAttackAccMod;                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";  
+                GlobalVariables.infoPanelTerrainText2.text += "CRI Mod: +"+GlobalVariables.heavyAttackBonus;  
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONHeavyAttack, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
+                // heavyAttack STATUS ICON
+                if( !GameObject.Find("statusIconLOWER") ){
+                    GameObject statusIcon = Instantiate(Instance.STATUSICONHeavyAttack, 
+                     new Vector3(GlobalVariables.statusIconLowerPanelX, GlobalVariables.statusIconLowerPanelY, 0), Quaternion.identity);
+                    statusIcon.name = "statusIconLOWER";
+                    // bind to lower panel
+                    statusIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
+                }
+                               
                 break;
-            case Enums.BattleOption.Rally:
-                // col 1
+            case Enums.BattleOption.Rally:                
                 GlobalVariables.infoPanelTerrainHeader.text = "Rally";
-                GlobalVariables.infoPanelTerrainText.text = "+ 5 DEF";
-                GlobalVariables.infoPanelTerrainText.text += "\n";
-                GlobalVariables.infoPanelTerrainText.text += "+ 50 STA & BAL";
+                // col 2
+                GlobalVariables.infoPanelTerrainText2.text = "DEF Mod: +"+GlobalVariables.rallyValue;                 
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "STA Mod: +50";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "BAL Mod: +50";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONRally, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
+                // rally STATUS ICON
+                if( !GameObject.Find("statusIconLOWER") ){
+                    GameObject statusIcon = Instantiate(Instance.STATUSICONRally, 
+                     new Vector3(GlobalVariables.statusIconLowerPanelX, GlobalVariables.statusIconLowerPanelY, 0), Quaternion.identity);
+                    statusIcon.name = "statusIconLOWER";
+                    // bind to lower panel
+                    statusIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
+                }                
                 break;
             case Enums.BattleOption.UseItem:
-                // col 1
+                // col 2
                 GlobalVariables.infoPanelTerrainHeader.text = "Use Item";
-                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                GlobalVariables.infoPanelTerrainText2.text = "Coming soon...";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONUseItem, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.CastSpell:
-                // col 1
+                // col 2
                 GlobalVariables.infoPanelTerrainHeader.text = "Cast Spell";
-                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                GlobalVariables.infoPanelTerrainText2.text = "Coming soon...";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONCastSpell, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.SpecialAbility:
-                // col 1
+                // col 2
                 GlobalVariables.infoPanelTerrainHeader.text = "Special Ability";
-                GlobalVariables.infoPanelTerrainText.text = "Coming soon...";
+                GlobalVariables.infoPanelTerrainText2.text = "Coming soon...";
+                // icon
                 if( !GameObject.Find("battleOptionIcon") ){
                     GameObject tileIcon = Instantiate(Instance.ICONSpecialAbility, new Vector3(17.575f, 2.2f, 0), Quaternion.identity);
                     tileIcon.name = "battleOptionIcon";
+                    // bind to lower panel
+                    tileIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
                 }
                 break;
             case Enums.BattleOption.EndTurn:
@@ -991,6 +1059,57 @@ public class GlobalFunctions : MonoBehaviour {
                 break;
         }
     }
+
+    /*
+        params:
+        int attX            x coord of attacking unit
+        int attY            y coord of attacking unit
+        int defX            x coord of defending unit
+        int defY            y coord of defending unit
+     */
+     public static void DisplayCompareUnits(int attX, int attY, int defX, int defY){
+        UnitType attacker = GlobalVariables.unitsMatrix [ attX,attY ];
+        UnitType defender = GlobalVariables.unitsMatrix [ defX,defY ];
+
+        // clean up infoPanelTopText
+        GlobalVariables.infoPanelTopText.text = "";
+
+        // display attacker's unit icon and ACC score
+        DisplayUnitIcon( attX, attY, 17.575f, 11.3f, "compareUnitIconAtt", GlobalFunctions.FindDirection(Enums.Direction.Right) );
+        GlobalVariables.infoPanelTopTextACC.text = CombatCalculateAttackAcc(attX,attY).ToString();
+        // display attacker's status icons
+        DisplayStatusIcons( attX,attY,Enums.StatusIconLocation.UpperLeft );
+        if(attacker.battleOption == Enums.BattleOption.LightAttack){
+            GlobalVariables.infoPanelTopTextLeft.text = attacker.battleOption.ToString();
+            GlobalVariables.infoPanelTopTextLeft.text += " "+attacker.lowDamage+"-"+attacker.highDamage+" dmg";
+            GlobalVariables.infoPanelTopTextLeft.text += "\nCrit chance: "+CombatCalculateCriticalHitRate(attacker)+" %";
+        }
+        if(attacker.battleOption == Enums.BattleOption.HeavyAttack){
+            GlobalVariables.infoPanelTopTextLeft.text = attacker.battleOption.ToString();
+            GlobalVariables.infoPanelTopTextLeft.text += " "+attacker.lowDamage+"-"+(int)CombatCalculateHeavyAttackDmg(attacker.highDamage)+" dmg";
+            GlobalVariables.infoPanelTopTextLeft.text += "\nCrit chance: "+CombatCalculateCriticalHitRate(attacker)+" %";
+        }
+
+        // display defender's unit icon and DEF score
+        DisplayUnitIcon( defX, defY, 20.775f, 11.3f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );      
+        GlobalVariables.infoPanelTopTextDEF.text = CombatCalculateDefense(defX,defY).ToString();
+        // display defender's status icons
+        DisplayStatusIcons( defX,defY,Enums.StatusIconLocation.UpperRight );   
+        GlobalVariables.infoPanelTopTextRight.text = defender.hitPoints+"/"+defender.hitPointMax+" HP";
+
+        // generic compare HUD
+        GlobalVariables.infoPanelTopTextACCvsDEF.text = "ACC  vs  DEF";      
+     }
+
+     public static void CleanUpCompareUnits(){
+        GlobalFunctions.DestroyGameObject("compareUnitIconAtt");
+		GlobalFunctions.DestroyGameObject("compareUnitIconDef"); 
+        GlobalVariables.infoPanelTopTextACCvsDEF.text = "";
+        GlobalVariables.infoPanelTopTextACC.text = "";
+        GlobalVariables.infoPanelTopTextDEF.text = "";
+        GlobalVariables.infoPanelTopTextLeft.text = "";
+        GlobalVariables.infoPanelTopTextRight.text = "";
+     }
 
     /*
         params:
@@ -1047,7 +1166,18 @@ public class GlobalFunctions : MonoBehaviour {
                 GameObject.Find("torch_flame_MOV").GetComponent<IconAnimations>().PlayIdle();
             }
             // unit icon
-            DisplayUnitIcon(posX, posY);
+            DisplayUnitIcon(
+                posX, 
+                posY, 
+                GlobalVariables.unitIconMiddlePanelX, 
+                GlobalVariables.unitIconMiddlePanelY, 
+                "unitIcon", 
+                GlobalFunctions.FindDirection(Enums.Direction.Down)
+            );
+
+            // status icons
+            DisplayStatusIcons( posX,posY,Enums.StatusIconLocation.Middle );
+
 		}
 		// TERRAIN
         if(GlobalVariables.tilesMatrix[ posX,posY ] != null && terrain){
@@ -1071,11 +1201,30 @@ public class GlobalFunctions : MonoBehaviour {
             GlobalVariables.infoPanelTerrainHeader.text = GlobalVariables.tilesMatrix[ posX,posY ].name;
             GlobalVariables.infoPanelTerrainHeader.text += " (" + posX + "-" + posY + ")";
             // col 1
-            GlobalVariables.infoPanelTerrainText.text = "MOV Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].movementCost + thisMOV;
-            GlobalVariables.infoPanelTerrainText.text += "\n";
-            GlobalVariables.infoPanelTerrainText.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost + thisSTA;	
+
             // col 2
-            GlobalVariables.infoPanelTerrainText2.text = "DEF Bonus: " + GlobalVariables.tilesMatrix[ posX,posY ].defenseBonus;
+            GlobalVariables.infoPanelTerrainText2.text = "MOV Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].movementCost + thisMOV;
+            GlobalVariables.infoPanelTerrainText2.text += "\n";
+            GlobalVariables.infoPanelTerrainText2.text += "STA Cost: " + GlobalVariables.tilesMatrix[ posX,posY ].staminaCost + thisSTA;	            
+            GlobalVariables.infoPanelTerrainText2.text += "\n";
+            int defMod = GlobalVariables.tilesMatrix[ posX,posY ].defenseMod;
+            string defModSymbol = "+";
+            if(GlobalVariables.tilesMatrix[ posX,posY ].defenseMod <= 0){
+                defModSymbol = "";
+            }
+            GlobalVariables.infoPanelTerrainText2.text += "DEF Mod: " + defModSymbol + GlobalVariables.tilesMatrix[ posX,posY ].defenseMod;
+
+            // terrain STATUS ICON
+            if(defMod != 0){
+                if( !GameObject.Find("terrainStatusIconLOWER") ){ // statusIconLOWER  terrainStatusIconLOWER
+                    GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, 
+                     new Vector3(GlobalVariables.statusIconLowerPanelX, GlobalVariables.statusIconLowerPanelY, 0), Quaternion.identity);
+                    statusIcon.name = "terrainStatusIconLOWER";
+                    // bind to lower panel
+                    statusIcon.transform.parent = GlobalVariables.infoPanelTerrainGO.transform;
+                }
+            }           
+
             // terrain icon
             DisplayTileIcon(posX, posY);
             // track which tile we're displaying
@@ -1085,12 +1234,190 @@ public class GlobalFunctions : MonoBehaviour {
         
 	}
 
-    public static void DisplayUnitIcon(int posX, int posY){
-        if( !GameObject.Find("unitIcon") ){
+    public static void DisplayStatusIcons(int posX, int posY, Enums.StatusIconLocation location){
+
+        // instantiate relevant unit and map tile
+        UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        TileType thisTile = GlobalVariables.tilesMatrix[ posX,posY ];
+
+        // determine which triggers are active
+        bool balTrigger = false;
+        if(thisUnit.balance < 100){
+            balTrigger = true;
+        }
+        bool terrainTrigger = false;
+        if(thisTile.defenseMod != 0){
+            terrainTrigger = true;
+        }
+        bool rallyTrigger = false;
+        if(thisUnit.rally){
+            rallyTrigger = true;
+        }
+        bool heavyAttackTrigger = false;
+        if(thisUnit.battleOption == Enums.BattleOption.HeavyAttack){
+            heavyAttackTrigger = true;
+        }     
+
+        // determine which names and tags are relevant
+        // determine which base location is relevant
+        string statusIconName = "";
+        string statusIconTag = "";
+        float statusIconX = 0;
+        float statusIconY = 0;        
+        if (location == Enums.StatusIconLocation.Middle) {
+            statusIconName = "statusIconMIDDLE";
+            statusIconTag = "Status_Icon_Middle";
+            statusIconX = 17.2f;
+            statusIconY = 6.15f;            
+        }else if (location == Enums.StatusIconLocation.UpperLeft){
+            statusIconName = "statusIconUPPERLEFT";
+            statusIconTag = "Status_Icon_Top";
+            statusIconX = 17.2f;
+            statusIconY = 10.445f;             
+        }else if (location == Enums.StatusIconLocation.UpperRight){
+            statusIconName = "statusIconUPPERRIGHT";
+            statusIconTag = "Status_Icon_Top";
+            statusIconX = 21.15f;
+            statusIconY = 10.445f;  
+        }
+
+        if( GlobalVariables.unitStatusIcons.posX != posX || 
+            GlobalVariables.unitStatusIcons.posY != posY || 
+            balTrigger != GlobalVariables.unitStatusIcons.BAL || 
+            terrainTrigger != GlobalVariables.unitStatusIcons.terrain || 
+            rallyTrigger != GlobalVariables.unitStatusIcons.rally || 
+            heavyAttackTrigger != GlobalVariables.unitStatusIcons.heavyAttack ||
+            location != Enums.StatusIconLocation.Middle
+        ){
+            
+            // update GlobalVariables.unitStatusIcons 
+            if(location == Enums.StatusIconLocation.Middle){
+                GlobalVariables.unitStatusIcons.posX = posX;
+                GlobalVariables.unitStatusIcons.posY = posY;
+            }
+
+            // wipe slate in order to update with currently relevant status icons
+            if(location == Enums.StatusIconLocation.Middle){
+                foreach(GameObject statusIcon in GameObject.FindGameObjectsWithTag(statusIconTag)){
+                    Destroy(statusIcon);
+                }
+            }
+
+
+            // BAL mod
+            if(balTrigger){
+                GameObject statusIcon = Instantiate(Instance.STATUSICONBal, 
+                    new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                // tag and name
+                statusIcon.name = statusIconName;
+                statusIcon.tag = statusIconTag;
+                // bind to lower panel
+                statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+                // update GlobalVariables.unitStatusIcons
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.BAL = true;
+                }                
+                // increment location
+                if (location != Enums.StatusIconLocation.UpperRight){
+                    statusIconX = statusIconX + .4f;
+                }else{
+                    statusIconX = statusIconX - .4f;
+                }  
+            }else{            
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.BAL = false;
+                }
+            }
+            // terrain
+            if(terrainTrigger && location != Enums.StatusIconLocation.UpperLeft){
+                GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, 
+                    new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                // tag and name                    
+                statusIcon.name = statusIconName;
+                statusIcon.tag = statusIconTag;
+                // bind to lower panel
+                statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+                // update GlobalVariables.unitStatusIcons                
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.terrain = true;
+                }
+                // increment location
+                if (location != Enums.StatusIconLocation.UpperRight){
+                    statusIconX = statusIconX + .4f;
+                }else{
+                    statusIconX = statusIconX - .4f;
+                }
+            }else{
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.terrain = false;
+                }                
+            }        
+            // rally
+            if(rallyTrigger && location != Enums.StatusIconLocation.UpperLeft){
+                GameObject statusIcon = Instantiate(Instance.STATUSICONRally, 
+                    new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                // tag and name
+                statusIcon.name = statusIconName;
+                statusIcon.tag = statusIconTag;
+                // bind to lower panel
+                statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+                // update GlobalVariables.unitStatusIcons                
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.rally = true;
+                }
+                // increment location
+                if (location != Enums.StatusIconLocation.UpperRight){
+                    statusIconX = statusIconX + .4f;
+                }else{
+                    statusIconX = statusIconX - .4f;
+                }
+            }else{
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.rally = false;
+                }                
+            }                
+            // heavy attack
+            if(heavyAttackTrigger && location != Enums.StatusIconLocation.UpperRight && location != Enums.StatusIconLocation.Middle){
+                GameObject statusIcon = Instantiate(Instance.STATUSICONHeavyAttack, 
+                    new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
+                // tag and name
+                statusIcon.name = statusIconName;
+                statusIcon.tag = statusIconTag;
+                // bind to lower panel
+                statusIcon.transform.parent = GlobalVariables.infoPanelUnitGO.transform;
+                // update GlobalVariables.unitStatusIcons
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.heavyAttack = true;
+                }
+                // increment location
+                if (location != Enums.StatusIconLocation.UpperRight){
+                    statusIconX = statusIconX + .4f;
+                }else{
+                    statusIconX = statusIconX - .4f;
+                }
+            }else{
+                if(location == Enums.StatusIconLocation.Middle){
+                    GlobalVariables.unitStatusIcons.heavyAttack = false;
+                }
+            }              
+        } // end checks
+
+    }
+
+    /*
+        params:
+        int posX                x coord of unit whose icon we want to display 
+        int posY                y coord of unit whose icon we want to display 
+        float iconPosX          x coord of where we want the icon to display
+        float iconPosY          y coord of where we want the icon to display
+        string iconName         handle for the icon (to manage it's cleanup)
+        Quaternion direction    facing of icon
+     */
+    public static void DisplayUnitIcon(int posX, int posY, float iconPosX, float iconPosY, string iconName, Quaternion direction ){
+        if( !GameObject.Find(iconName) ){
             GameObject unitPrefab = GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab;
-            // GameObject unitIcon = Instantiate(unitPrefab, new Vector3(17.575f, 8.05f, 0), unitPrefab.transform.localRotation);
-            GameObject unitIcon = Instantiate(unitPrefab, new Vector3(17.575f, 8.05f, 0), Quaternion.Euler (0, 0, 180));
-            unitIcon.name = "unitIcon";
+            GameObject unitIcon = Instantiate(unitPrefab, new Vector3(iconPosX, iconPosY, 0), direction);
+            unitIcon.name = iconName;
         }
     }
 
@@ -1152,6 +1479,16 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.barBAL.fillAmount = BALpercent;
     }
 
+    public static void CleanUpBattleLog(){
+        if( 
+            (GlobalVariables.unitsMatrix[ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].unitID != GlobalVariables.lastUnitID)  
+        ){
+            GlobalVariables.infoPanelTopText.text = "";
+            GlobalVariables.lastRound = GlobalVariables.round; // you'll probably need to add this to the conditional logic
+            GlobalVariables.lastUnitID = GlobalVariables.initRoster[0].unitID;
+        }
+    }
+
 
 
     // ****************************************************************************************************************************************************
@@ -1209,6 +1546,12 @@ public class GlobalFunctions : MonoBehaviour {
         {
             Debug.Log("Inititive: "+init.initiative+" UnitID: "+init.unitID);
         }
+
+        GlobalVariables.round++;
+        GlobalVariables.infoPanelTopHeader.text = "Round "+GlobalVariables.round;
+        GlobalVariables.infoPanelTopText.text += "Round "+GlobalVariables.round+". ";
+        GlobalVariables.infoPanelTopText.text += GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].name+" goes first.";
+    
     }
 
     public static string[,] FindThreatCells(int attackRange, int posX, int posY){
@@ -1377,9 +1720,11 @@ public class GlobalFunctions : MonoBehaviour {
             UnitType defender = GlobalVariables.unitsMatrix[ targetX,targetY ];
 
             // variable bank
-            Enums.BattleOption battleOption = GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption;
+            Enums.BattleOption battleOption = attacker.battleOption;
             float attackRoll = UnityEngine.Random.Range(1, 21);
+            attackRoll += CombatCalculateAttackAcc(parentX,parentY);
             float defendRoll = UnityEngine.Random.Range(1, 21);
+            defendRoll += CombatCalculateDefense(targetX, targetY);
             int damageRoll = 0; // initialize
             // LIGHT ATTACK damage
             if(battleOption == Enums.BattleOption.LightAttack){
@@ -1387,12 +1732,7 @@ public class GlobalFunctions : MonoBehaviour {
             // HEAVY ATTACK damage
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
                 float highDamageTemp = attacker.highDamage;
-                highDamageTemp = highDamageTemp * GlobalVariables.heavyAttackMod;
-                float heavyDamageDiff = highDamageTemp - attacker.highDamage;
-                if(heavyDamageDiff < GlobalVariables.heavyAttackBonus){
-                    highDamageTemp = attacker.highDamage + GlobalVariables.heavyAttackBonus;
-                }
-                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)highDamageTemp+1) );  
+                damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)CombatCalculateHeavyAttackDmg(highDamageTemp)+1) );  
             }
             // set up BAL value 
             int BALvalue = 10; // initialize
@@ -1405,26 +1745,27 @@ public class GlobalFunctions : MonoBehaviour {
 
             // generate attack and defense scores
             // - consider attacker's accuracy
-            attackRoll += (int)attacker.accuracy;
-            // - consider heavy attack penalty to accuracy
-            if(battleOption == Enums.BattleOption.HeavyAttack){
-                attackRoll = attackRoll - GlobalVariables.heavyAttackAccPen;
-            }
-            defendRoll += (int)defender.defense;
-            // - consider rallying bonus
-            if(defender.rally){
-                defendRoll += GlobalVariables.rallyValue;
-                Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
-            }
-            // - consider terrain bonus to DEF
-            if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
-                defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
-                Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
-            }
+            // attackRoll += (int)attacker.accuracy;
+            // // - consider heavy attack penalty to accuracy
+            // if(battleOption == Enums.BattleOption.HeavyAttack){
+            //     attackRoll = attackRoll - GlobalVariables.heavyAttackAccPen;
+            // }
+            // defendRoll += (int)defender.defense;
+            // // - consider rallying bonus
+            // if(defender.rally){
+            //     defendRoll += GlobalVariables.rallyValue;
+            //     Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
+            // }
+            // // - consider terrain bonus to DEF
+            // if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
+            //     defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
+            //     Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
+            // }
 
             // consider critical hit (use critHit to remember locally)
+
             int critRoll = UnityEngine.Random.Range( 1,101 );
-            if(critRoll <= attacker.critical){
+            if(critRoll <= CombatCalculateCriticalHitRate(attacker)){
                 critHit = true;
                 float damageRollTemp = damageRoll * GlobalVariables.critMultiplier;
                 damageRoll = (int)damageRollTemp;
@@ -1434,30 +1775,30 @@ public class GlobalFunctions : MonoBehaviour {
             Debug.Log("BAL: "+defender.balance+" defend roll before: "+defendRoll);
 
             // factor BAL
-            float attFactor = ((float)attacker.balance / 100f);
-            float defFactor = ((float)defender.balance / 100f);
-            if(attFactor < 1){
-                Debug.Log("AT: "+attFactor);
-                float attFactorMod = 1 - attFactor;
-                // Debug.Log("ATM: "+attFactorMod);
-                attFactorMod = attFactorMod / GlobalVariables.BALmod;
-                // Debug.Log("ATM: "+attFactorMod);
-                attFactor = 1 - attFactorMod;
-                Debug.Log("AT: "+attFactor);
-            }
-            if(defFactor < 1){
-                Debug.Log("DF: "+defFactor);
-                float defFactorMod = 1 - defFactor;
-                // Debug.Log("DFM: "+defFactorMod);
-                defFactorMod = defFactorMod / GlobalVariables.BALmod;
-                // Debug.Log("DFM: "+defFactorMod);
-                defFactor = 1 - defFactorMod;
-                Debug.Log("DT: "+defFactor);
-            }
+            // float attFactor = ((float)attacker.balance / 100f);
+            // float defFactor = ((float)defender.balance / 100f);
+            // if(attFactor < 1){
+            //     Debug.Log("AT: "+attFactor);
+            //     float attFactorMod = 1 - attFactor;
+            //     // Debug.Log("ATM: "+attFactorMod);
+            //     attFactorMod = attFactorMod * GlobalVariables.BALmod;
+            //     // Debug.Log("ATM: "+attFactorMod);
+            //     attFactor = 1 - attFactorMod;
+            //     Debug.Log("AT: "+attFactor);
+            // }
+            // if(defFactor < 1){
+            //     Debug.Log("DF: "+defFactor);
+            //     float defFactorMod = 1 - defFactor;
+            //     // Debug.Log("DFM: "+defFactorMod);
+            //     defFactorMod = defFactorMod * GlobalVariables.BALmod;
+            //     // Debug.Log("DFM: "+defFactorMod);
+            //     defFactor = 1 - defFactorMod;
+            //     Debug.Log("DT: "+defFactor);
+            // }
             // Debug.Log("attackfactor: "+attFactor);
             // Debug.Log("defend factor: "+defFactor);
-            attackRoll = attackRoll * attFactor;
-            defendRoll = defendRoll * defFactor;
+            // attackRoll = attackRoll * attFactor;
+            // defendRoll = defendRoll * defFactor;
 
             Debug.Log("attack roll: "+attackRoll);
             Debug.Log("defend roll: "+defendRoll);
@@ -1469,12 +1810,15 @@ public class GlobalFunctions : MonoBehaviour {
                 defender.balance = LessThanZero(defender.balance - BALvalue);
                 if(critHit){
                     Debug.Log("critical hit!");
+                    GlobalVariables.infoPanelTopText.text += "Critical hit! ";
                 }
                 Debug.Log("attacker deals "+damageRoll+" damage with "+battleOption.ToString());
+                GlobalVariables.infoPanelTopText.text += attacker.name+" deals "+damageRoll+" damage to "+defender.name+" with "+battleOption.ToString()+".\n\n";
                 // MISS!
             }else{ 
                 attacker.balance = LessThanZero(attacker.balance - BALvalue);
                 Debug.Log("attacker missed!");
+                GlobalVariables.infoPanelTopText.text = attacker.name+" attacked "+defender.name+" but missed!\n\n";
             }
 
             // update units
@@ -1486,12 +1830,96 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // consume attacker's ability to act again this turn
         GlobalVariables.unitsMatrix[ parentX,parentY ].canAct = false;
+        GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption = Enums.BattleOption.None;
+		// clean up TOP status icons
+		foreach(GameObject statusIcon in GameObject.FindGameObjectsWithTag("Status_Icon_Top")){
+			Destroy(statusIcon);
+		}        
 
+    }
+
+    public static float CombatCalculateAttackAcc(int attX, int attY){
+        UnitType attacker = GlobalVariables.unitsMatrix[ attX,attY ];
+        // float attackRoll = UnityEngine.Random.Range(1, 21);
+        float attackRoll = 0;
+        // consider accuracy
+        attackRoll += (int)attacker.accuracy;
+        // consider heavy attack penalty to accuracy
+        if(attacker.battleOption == Enums.BattleOption.HeavyAttack){
+            attackRoll = attackRoll + GlobalVariables.heavyAttackAccMod;
+        }
+        // factor BAL
+        float attFactor = ((float)attacker.balance / 100f);
+        if(attFactor < 1){
+            Debug.Log("AT: "+attFactor);
+            float attFactorMod = 1 - attFactor;
+            // Debug.Log("ATM: "+attFactorMod);
+            attFactorMod = attFactorMod * GlobalVariables.BALmod;
+            // Debug.Log("ATM: "+attFactorMod);
+            attFactor = 1 - attFactorMod;
+            Debug.Log("AT: "+attFactor);
+        }
+        // Debug.Log("attackfactor: "+attFactor);
+        attackRoll = attackRoll * attFactor;
+
+        return attackRoll;
+    }
+
+    public static float CombatCalculateDefense(int posX, int posY){
+        UnitType defender = GlobalVariables.unitsMatrix[ posX,posY ];
+        float defendRoll = 0;
+        // consider defense
+        defendRoll += (int)defender.defense;
+        // - consider rallying bonus
+        if(defender.rally){
+            defendRoll += GlobalVariables.rallyValue;
+            Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
+        }
+        // - consider terrain bonus to DEF
+        if(GlobalVariables.tilesMatrix [ posX,posY ].defenseMod > 0){
+            defendRoll += GlobalVariables.tilesMatrix [ posX,posY ].defenseMod;
+            Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ posX,posY ].defenseMod+" DEF!");
+        }
+        // factor BAL
+        float defFactor = ((float)defender.balance / 100f);
+        if(defFactor < 1){
+            Debug.Log("DF: "+defFactor);
+            float defFactorMod = 1 - defFactor;
+            // Debug.Log("DFM: "+defFactorMod);
+            defFactorMod = defFactorMod * GlobalVariables.BALmod;
+            // Debug.Log("DFM: "+defFactorMod);
+            defFactor = 1 - defFactorMod;
+            Debug.Log("DT: "+defFactor);
+        }
+        // Debug.Log("defend factor: "+defFactor);
+        defendRoll = defendRoll * defFactor;
+
+        return defendRoll;
+    }
+
+    public static float CombatCalculateHeavyAttackDmg(float highDamageTemp){
+        float highDamage = highDamageTemp;
+        highDamageTemp = highDamageTemp * GlobalVariables.heavyAttackMod;
+        float heavyDamageDiff = highDamageTemp - highDamage;
+        if(heavyDamageDiff < GlobalVariables.heavyAttackBonus){
+            highDamageTemp = highDamage + GlobalVariables.heavyAttackBonus;
+        }
+        return highDamageTemp;
+    }
+
+    public static int CombatCalculateCriticalHitRate(UnitType thisUnit){
+        int critRate = thisUnit.critical;
+        if(thisUnit.battleOption == Enums.BattleOption.HeavyAttack){
+            critRate = critRate + GlobalVariables.heavyAttackBonus;
+        }
+        return critRate;
     }
 
     public static void CombatRally(int posX, int posY){
         // reset ICON state
-		GlobalFunctions.CleanUpBattleOptionIcons();
+		// GlobalFunctions.CleanUpBattleOptionIcons();
+        GlobalFunctions.DestroyGameObject("battleOptionIcon");
+        GlobalFunctions.DestroyGameObject("statusIconLOWER");
 
         // gather existing values
         int thisSTA = GlobalVariables.unitsMatrix[ posX,posY ].stamina;
@@ -1514,6 +1942,8 @@ public class GlobalFunctions : MonoBehaviour {
 
         // reflect updates in HUD
 		GlobalFunctions.DisplayTileInfo( posX,posY, true, true); 
+
+        GlobalVariables.infoPanelTopText.text = GlobalVariables.unitsMatrix[ posX,posY ].name+" uses Rally. +50 BAL and STA.\n\n";
 
         // clean up
         CheckForEndOfTurn(posX,posY);
@@ -1578,6 +2008,12 @@ public class GlobalFunctions : MonoBehaviour {
 
             GlobalVariables.initRoster.RemoveAt(0);
             // Debug.Log("removing (0) from initRoster. Count is now: "+GlobalVariables.initRoster.Count);
+
+            // un-SELECT this unit
+			GlobalVariables.selectedUnit = new Vector3Int(0,0,0); // this doesn't seem to work?
+            Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
+            GlobalVariables.infoPanelTopText.text += thisUnit.name+" finished it's turn.\n\n";
+
             if(GlobalVariables.initRoster.Count <= 0){
                 UpdateInitiative();
             }else{
@@ -1585,16 +2021,15 @@ public class GlobalFunctions : MonoBehaviour {
                 PrepForTurn();
             }
             UpdateWhoIsNext();
-            // un-SELECT this unit
-			GlobalVariables.selectedUnit = new Vector3Int(0,0,0); // this doesn't seem to work?
-            Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
 
             GlobalVariables.selectedUnit.x = 0;
             GlobalVariables.selectedUnit.y = 0;
         // if this unit is done attacking, but can still move
         }else if( !thisUnit.canAct && thisUnit.canMove ){
             DisplayAvailableCells(posX,posY);
-            CleanUpBattleOptionIcons(); // should it remove this HERE?
+            // CleanUpBattleOptionIcons(); // should it remove this HERE?
+            GlobalFunctions.DestroyGameObject("battleOptionIcon");
+            GlobalFunctions.DestroyGameObject("statusIconLOWER");
         }
 
     }
@@ -1640,8 +2075,7 @@ public class GlobalFunctions : MonoBehaviour {
         if (GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ] != null){
             UnitType thisChar = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
             // display first current unit in TOP PANEL
-            GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
-            // UpdateHUDreadyUnit( (int)thisChar.unitPrefab.transform.position.x,(int)thisChar.unitPrefab.transform.position.y );
+            // GlobalVariables.infoPanelTopText.text = thisChar.name + " (" + thisChar.unitID + ")";
             UpdateHUDreadyUnit( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
         }
     }

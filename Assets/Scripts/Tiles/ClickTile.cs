@@ -10,12 +10,15 @@ public class ClickTile : MonoBehaviour {
 
 		int posX = (int)this.transform.position.x;
 		int posY = (int)this.transform.position.y;
+		GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 
 		if( !GlobalVariables.freezeHUD ){
 
 			// reset ICON state
 			GlobalVariables.freezeIconHUD = false;
-			GlobalFunctions.CleanUpBattleOptionIcons();
+			// GlobalFunctions.CleanUpBattleOptionIcons();
+			GlobalFunctions.DestroyGameObject("battleOptionIcon");
+			GlobalFunctions.DestroyGameObject("statusIconLOWER");
 
 			if( GlobalVariables.unitsMatrix[ posX,posY ] != null ){
 
@@ -30,6 +33,8 @@ public class ClickTile : MonoBehaviour {
 					// update HUD info boxes
 					GlobalFunctions.CleanUpTerrainInfoPanel();
 					GlobalFunctions.CleanUpUnitInfoPanel();
+					GlobalFunctions.DestroyGameObject("unitIcon");
+					GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
 				// else, if *THERE IS NOT* a selected unit on this tile	
@@ -38,6 +43,9 @@ public class ClickTile : MonoBehaviour {
 					(GlobalVariables.unitsMatrix[ posX,posY ].unitID == GlobalVariables.initRoster[0].unitID) && 
 					(GlobalVariables.unitsMatrix[ posX,posY ].canMove || GlobalVariables.unitsMatrix[ posX,posY ].canAct) 
 					){
+
+					// wipe battle log in upper panel
+					GlobalFunctions.CleanUpBattleLog();
 
 					// SELECT this unit
 					GlobalVariables.selectedUnit = new Vector3Int(posX,posY,0);
@@ -57,6 +65,8 @@ public class ClickTile : MonoBehaviour {
 					// update HUD info boxes
 					GlobalFunctions.CleanUpTerrainInfoPanel();
 					GlobalFunctions.CleanUpUnitInfoPanel();
+					GlobalFunctions.DestroyGameObject("unitIcon");
+					GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 					GlobalFunctions.DisplayTileInfo(posX,posY);
 
 					// hide ready unit cursor
@@ -70,7 +80,16 @@ public class ClickTile : MonoBehaviour {
 					
 					// udpate unit info panel
 					GlobalFunctions.CleanUpUnitInfoPanel();
-					GlobalFunctions.DisplayUnitIcon(posX, posY);
+					GlobalFunctions.DestroyGameObject("unitIcon");
+					GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
+					GlobalFunctions.DisplayUnitIcon(
+						posX, 
+						posY, 
+						GlobalVariables.unitIconMiddlePanelX, 
+						GlobalVariables.unitIconMiddlePanelY, 
+						"unitIcon", 
+						GlobalFunctions.FindDirection(Enums.Direction.Down)
+					);
 				}	
 
 			}else{

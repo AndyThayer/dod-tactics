@@ -21,13 +21,27 @@ public class HoverThreat : MonoBehaviour {
 
 	void OnMouseOver() {
 
+		int parentX = this.GetComponent<HUDProperties>().parentX;
+		int parentY = this.GetComponent<HUDProperties>().parentY;
+
 		GlobalFunctions.UpdateHUDcursorThreat(posX, posY);
+		if( GlobalVariables.unitsMatrix [ posX,posY ] != null && !GlobalVariables.freezeHUD){
+			GlobalFunctions.DisplayCompareUnits( parentX,parentY,posX,posY );
+			GlobalVariables.freezeHUD = true;
+		}
 
     }
 
 	void OnMouseExit(){
 		
 		GlobalFunctions.CleanUpOldHUDcursorThreat();
+		GlobalFunctions.CleanUpCompareUnits();
+		// clean up TOP status icons
+		foreach(GameObject statusIcon in GameObject.FindGameObjectsWithTag("Status_Icon_Top")){
+			Destroy(statusIcon);
+		}
+
+		GlobalVariables.freezeHUD = false;
 
 	}
 

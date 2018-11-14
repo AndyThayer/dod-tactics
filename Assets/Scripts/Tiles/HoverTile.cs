@@ -25,6 +25,8 @@ public class HoverTile : MonoBehaviour {
 		int selUnitY = GlobalVariables.selectedUnit.y;
 		int selTileX = GlobalVariables.selectedTile.x;
 		int selTileY = GlobalVariables.selectedTile.y;
+		// GlobalVariables.hoverTile.x = posX;
+		// GlobalVariables.hoverTile.y = posY;
 
 		if( selUnitX == 0 && selUnitY == 0 ){
 			GlobalFunctions.UpdateHUDcursor(posX, posY);
@@ -57,6 +59,8 @@ public class HoverTile : MonoBehaviour {
 			GlobalFunctions.CleanUpOldHUDcursor();
 			// CleanUpHUDinfoPanel();
 			GlobalFunctions.CleanUpUnitInfoPanel();
+			GlobalFunctions.DestroyGameObject("unitIcon");
+			GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
 			GlobalFunctions.CleanUpTerrainInfoPanel();
 			GlobalFunctions.CleanUpHUDavailable(posX,posY);
 			// restore ready unit cursor
