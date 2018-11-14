@@ -669,6 +669,16 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTopTextACCvsDEFGO = GameObject.Find("InfoPanelTopTextACCvsDEF");
         GlobalVariables.infoPanelTopTextACCvsDEF = GlobalVariables.infoPanelTopTextACCvsDEFGO.GetComponent<Text>();
         GlobalVariables.infoPanelTopTextACCvsDEF.text = "";
+
+        // - top panel unit text Left
+        GlobalVariables.infoPanelTopTextLeftGO = GameObject.Find("InfoPanelTopTextLeft");
+        GlobalVariables.infoPanelTopTextLeft = GlobalVariables.infoPanelTopTextLeftGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextLeft.text = "";
+        // - top panel unit text Right
+        GlobalVariables.infoPanelTopTextRightGO = GameObject.Find("InfoPanelTopTextRight");
+        GlobalVariables.infoPanelTopTextRight = GlobalVariables.infoPanelTopTextRightGO.GetComponent<Text>();
+        GlobalVariables.infoPanelTopTextRight.text = "";
+
         // - info panel unit header
         GlobalVariables.infoPanelUnitHeaderGO = GameObject.Find("InfoPanelUnitHeader");
         GlobalVariables.infoPanelUnitHeader = GlobalVariables.infoPanelUnitHeaderGO.GetComponent<Text>();
@@ -1051,20 +1061,35 @@ public class GlobalFunctions : MonoBehaviour {
         int defY            y coord of defending unit
      */
      public static void DisplayCompareUnits(int attX, int attY, int defX, int defY){
+        UnitType attacker = GlobalVariables.unitsMatrix [ attX,attY ];
+        UnitType defender = GlobalVariables.unitsMatrix [ defX,defY ];
+
         // clean up infoPanelTopText
         GlobalVariables.infoPanelTopText.text = "";
 
         // display attacker's unit icon and ACC score
-        DisplayUnitIcon( attX, attY, 17.575f, 11.2f, "compareUnitIconAtt", GlobalFunctions.FindDirection(Enums.Direction.Right) );
+        DisplayUnitIcon( attX, attY, 17.575f, 11.3f, "compareUnitIconAtt", GlobalFunctions.FindDirection(Enums.Direction.Right) );
         GlobalVariables.infoPanelTopTextACC.text = CombatCalculateAttackAcc(attX,attY).ToString();
         // display attacker's status icons
         DisplayStatusIcons( attX,attY,Enums.StatusIconLocation.UpperLeft );
+        if(attacker.battleOption == Enums.BattleOption.LightAttack){
+            GlobalVariables.infoPanelTopTextLeft.text = attacker.battleOption.ToString();
+            GlobalVariables.infoPanelTopTextLeft.text += " "+attacker.lowDamage+"-"+attacker.highDamage+" dmg";
+            GlobalVariables.infoPanelTopTextLeft.text += "\nCrit chance: "+CombatCalculateCriticalHitRate(attacker)+" %";
+        }
+        if(attacker.battleOption == Enums.BattleOption.HeavyAttack){
+            GlobalVariables.infoPanelTopTextLeft.text = attacker.battleOption.ToString();
+            GlobalVariables.infoPanelTopTextLeft.text += " "+attacker.lowDamage+"-"+(int)CombatCalculateHeavyAttackDmg(attacker.highDamage)+" dmg";
+            GlobalVariables.infoPanelTopTextLeft.text += "\nCrit chance: "+CombatCalculateCriticalHitRate(attacker)+" %";
+        }
+
 
         // display defender's unit icon and DEF score
-        DisplayUnitIcon( defX, defY, 20.775f, 11.2f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );      
+        DisplayUnitIcon( defX, defY, 20.775f, 11.3f, "compareUnitIconDef", GlobalFunctions.FindDirection(Enums.Direction.Left) );      
         GlobalVariables.infoPanelTopTextDEF.text = CombatCalculateDefense(defX,defY).ToString();
         // display defender's status icons
-        DisplayStatusIcons( defX,defY,Enums.StatusIconLocation.UpperRight );          
+        DisplayStatusIcons( defX,defY,Enums.StatusIconLocation.UpperRight );   
+        GlobalVariables.infoPanelTopTextRight.text = defender.hitPoints+"/"+defender.hitPointMax+" HP";
 
         // generic compare HUD
         GlobalVariables.infoPanelTopTextACCvsDEF.text = "ACC  vs  DEF";      
@@ -1076,6 +1101,8 @@ public class GlobalFunctions : MonoBehaviour {
         GlobalVariables.infoPanelTopTextACCvsDEF.text = "";
         GlobalVariables.infoPanelTopTextACC.text = "";
         GlobalVariables.infoPanelTopTextDEF.text = "";
+        GlobalVariables.infoPanelTopTextLeft.text = "";
+        GlobalVariables.infoPanelTopTextRight.text = "";
      }
 
     /*
@@ -1181,7 +1208,7 @@ public class GlobalFunctions : MonoBehaviour {
 
             // terrain STATUS ICON
             if(defMod != 0){
-                if( !GameObject.Find("terrainStatusIconLOWER") ){
+                if( !GameObject.Find("terrainStatusIconLOWER") ){ // statusIconLOWER  terrainStatusIconLOWER
                     GameObject statusIcon = Instantiate(Instance.STATUSICONTerrain, 
                      new Vector3(GlobalVariables.statusIconLowerPanelX, GlobalVariables.statusIconLowerPanelY, 0), Quaternion.identity);
                     statusIcon.name = "terrainStatusIconLOWER";
@@ -1238,12 +1265,12 @@ public class GlobalFunctions : MonoBehaviour {
             statusIconName = "statusIconUPPERLEFT";
             statusIconTag = "Status_Icon_Top";
             statusIconX = 17.2f;
-            statusIconY = 10.375f;             
+            statusIconY = 10.445f;             
         }else if (location == Enums.StatusIconLocation.UpperRight){
             statusIconName = "statusIconUPPERRIGHT";
             statusIconTag = "Status_Icon_Top";
             statusIconX = 21.15f;
-            statusIconY = 10.375f;  
+            statusIconY = 10.445f;  
         }
 
         if( GlobalVariables.unitStatusIcons.posX != posX || 
@@ -1342,7 +1369,7 @@ public class GlobalFunctions : MonoBehaviour {
                 }                
             }                
             // heavy attack
-            if(heavyAttackTrigger && location != Enums.StatusIconLocation.UpperRight){
+            if(heavyAttackTrigger && location != Enums.StatusIconLocation.UpperRight && location != Enums.StatusIconLocation.Middle){
                 GameObject statusIcon = Instantiate(Instance.STATUSICONHeavyAttack, 
                     new Vector3(statusIconX, statusIconY, 0), Quaternion.identity);
                 // tag and name
@@ -1728,8 +1755,9 @@ public class GlobalFunctions : MonoBehaviour {
             // }
 
             // consider critical hit (use critHit to remember locally)
+
             int critRoll = UnityEngine.Random.Range( 1,101 );
-            if(critRoll <= attacker.critical){
+            if(critRoll <= CombatCalculateCriticalHitRate(attacker)){
                 critHit = true;
                 float damageRollTemp = damageRoll * GlobalVariables.critMultiplier;
                 damageRoll = (int)damageRollTemp;
@@ -1871,10 +1899,19 @@ public class GlobalFunctions : MonoBehaviour {
         return highDamageTemp;
     }
 
+    public static int CombatCalculateCriticalHitRate(UnitType thisUnit){
+        int critRate = thisUnit.critical;
+        if(thisUnit.battleOption == Enums.BattleOption.HeavyAttack){
+            critRate = critRate + 5;
+        }
+        return critRate;
+    }
+
     public static void CombatRally(int posX, int posY){
         // reset ICON state
 		// GlobalFunctions.CleanUpBattleOptionIcons();
         GlobalFunctions.DestroyGameObject("battleOptionIcon");
+        GlobalFunctions.DestroyGameObject("statusIconLOWER");
 
         // gather existing values
         int thisSTA = GlobalVariables.unitsMatrix[ posX,posY ].stamina;
@@ -1984,6 +2021,7 @@ public class GlobalFunctions : MonoBehaviour {
             DisplayAvailableCells(posX,posY);
             // CleanUpBattleOptionIcons(); // should it remove this HERE?
             GlobalFunctions.DestroyGameObject("battleOptionIcon");
+            GlobalFunctions.DestroyGameObject("statusIconLOWER");
         }
 
     }

@@ -42,14 +42,17 @@ public class ClickIcon : MonoBehaviour {
 			GlobalFunctions.CleanUpHUDIcons();
 		}
 		// light up this icon
-		if( !GlobalVariables.freezeIconHUD && GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){
+		if( !GlobalVariables.freezeIconHUD && GlobalVariables.unitsMatrix[ GlobalVariables.selectedUnit.x,GlobalVariables.selectedUnit.y ].canAct ){ // || true
 			this.GetComponent<HoverIcon>().PlayLit();
 			GlobalVariables.freezeIconHUD = true;
 		}else{
 			GlobalVariables.freezeIconHUD = false;
 		}
 		
-		if( !GlobalVariables.freezeHUD ){
+		if( !GlobalVariables.freezeHUD ){ // || true
+
+			// reset status icon LOWER
+			GlobalFunctions.DestroyGameObject("statusIconLOWER");
 
 			// clean up available cells
 			GlobalFunctions.RemoveAvailableCellsFromAllUnits();

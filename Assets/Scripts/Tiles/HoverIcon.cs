@@ -73,13 +73,14 @@ public class HoverIcon : MonoBehaviour {
 		
 		if( !GlobalVariables.freezeIconHUD ){
 			// clean up battle option HUD icon
-			// GlobalFunctions.CleanUpBattleOptionIcons();
 			GlobalFunctions.DestroyGameObject("battleOptionIcon");
+			GlobalFunctions.DestroyGameObject("statusIconLOWER");
 			// display terrian info again
 			GlobalFunctions.DisplayTileInfo(GlobalVariables.selectedUnit.x, GlobalVariables.selectedUnit.y);
 			anim.Play("idle");
+			
 		}
-		GlobalFunctions.DestroyGameObject("statusIconLOWER");
+		
 		// GlobalFunctions.DestroyGameObject("heavyAttackStatusIconLOWER");
 
 	}

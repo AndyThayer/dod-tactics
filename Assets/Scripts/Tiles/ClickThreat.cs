@@ -20,6 +20,7 @@ public class ClickThreat : MonoBehaviour {
 		GlobalVariables.freezeIconHUD = false;
 		// GlobalFunctions.CleanUpBattleOptionIcons();
 		GlobalFunctions.DestroyGameObject("battleOptionIcon");
+		GlobalFunctions.DestroyGameObject("statusIconLOWER");
 		GlobalFunctions.CleanUpCompareUnits();
 		// GlobalFunctions.DestroyGameObject("compareUnitIconAtt");
 		// GlobalFunctions.DestroyGameObject("compareUnitIconDef");

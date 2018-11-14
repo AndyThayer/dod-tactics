@@ -18,6 +18,7 @@ public class ClickTile : MonoBehaviour {
 			GlobalVariables.freezeIconHUD = false;
 			// GlobalFunctions.CleanUpBattleOptionIcons();
 			GlobalFunctions.DestroyGameObject("battleOptionIcon");
+			GlobalFunctions.DestroyGameObject("statusIconLOWER");
 
 			if( GlobalVariables.unitsMatrix[ posX,posY ] != null ){
 

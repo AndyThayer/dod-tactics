@@ -69,6 +69,14 @@ public class GlobalVariables : MonoBehaviour {
         // - top panel unit text DEF
         public static GameObject infoPanelTopTextACCvsDEFGO;
         public static Text infoPanelTopTextACCvsDEF;
+
+        // - top panel unit text Left
+        public static GameObject infoPanelTopTextLeftGO;
+        public static Text infoPanelTopTextLeft;
+        // - top panel unit text Right
+        public static GameObject infoPanelTopTextRightGO;
+        public static Text infoPanelTopTextRight;
+
         // - info panel unit header
         public static GameObject infoPanelUnitHeaderGO;
         public static Text infoPanelUnitHeader;
