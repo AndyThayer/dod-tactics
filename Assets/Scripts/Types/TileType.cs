@@ -51,8 +51,8 @@ public class TileType {
                 break;
             case Enums.TileType.WaterDeep:
                 name = "Deep Water";
-                movementCost = 9;
-                staminaCost = 25;
+                movementCost = 4;
+                staminaCost = 15;
 				defenseMod = -5;
                 break;
 			case Enums.TileType.Woods:

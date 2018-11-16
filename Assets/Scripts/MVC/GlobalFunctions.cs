@@ -98,9 +98,9 @@ public class GlobalFunctions : MonoBehaviour {
         }
     }
 
-    public static void InitializeBoardVariables(){
+    public static void InitializeBoardVariables(string mapName){
         GlobalVariables.grid = GameObject.FindGameObjectWithTag("Grid");
-		GlobalVariables.tilemapGO = GlobalVariables.grid.transform.Find("Tilemap").gameObject;
+		GlobalVariables.tilemapGO = GlobalVariables.grid.transform.Find(mapName).gameObject;
         GlobalVariables.tilemap = GlobalVariables.tilemapGO.GetComponent<Tilemap>();
     }   
 
@@ -542,6 +542,12 @@ public class GlobalFunctions : MonoBehaviour {
                     STAcost = 1;
                 }
                 break;
+            case Enums.TileType.WaterDeep:
+                if(thisUnit.passThroughWaterDeep){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;    
         }
         tc.STAcost = STAcost;
         tc.MOVcost = MOVcost;
@@ -2081,6 +2087,7 @@ public class GlobalFunctions : MonoBehaviour {
     }
 
     public static void PrepForTurn(){
+        Debug.Log("Prep for turn!!!!");
         GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
         GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
         GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].rally = false;

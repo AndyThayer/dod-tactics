@@ -156,6 +156,7 @@ public class UnitType {
                 // traits
                 passThroughGrassRough = true;
                 passThroughWaterShallow = true;
+                passThroughWaterDeep = true;
                 break;
             case Enums.UnitType.SaberToothWolf:
                 name = "Saber Tooth Wolf";
