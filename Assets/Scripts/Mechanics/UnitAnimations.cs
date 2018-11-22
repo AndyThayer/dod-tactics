@@ -12,11 +12,21 @@ public class UnitAnimations : MonoBehaviour {
 	}
 	
 	public void PlayIdle(){
-		anim.Play("idle");
+		if(anim != null){
+			anim.Play("idle");
+		}else{
+			anim = GetComponent<Animator>();
+			anim.Play("idle");
+		}	
 	}
 
 	public void PlayWalking(){
-		anim.Play("walking");
+		if(anim != null){
+			anim.Play("walking");
+		}else{
+			anim = GetComponent<Animator>();
+			anim.Play("walking");
+		}		
 	}
 
 	public void PlayBleed(){

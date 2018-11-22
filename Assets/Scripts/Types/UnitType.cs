@@ -39,6 +39,7 @@ public class UnitType {
     // map / pathfinding
     public string[,] availableCells = new string[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
     public string[,] availableCellsSTA = new string[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
+    public string[,] availableCellsDistance = new string[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
     public List<MovementNode>[,] avalablePaths = new List<MovementNode>[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
     public bool displayAvailableCells;
 
@@ -149,7 +150,7 @@ public class UnitType {
                 staRecovery = 0;
                 accuracy = 8; // 3
                 critical = 5;
-                speed = 0;
+                speed = 10; // 0
                 defense = 1;
                 lowDamage = 1;
                 highDamage = 2; // 2
@@ -168,7 +169,7 @@ public class UnitType {
                 staRecovery = 10;
                 accuracy = 6; // 1
                 critical = 2; // 2
-                speed = 4;
+                speed = 14; // 4
                 defense = 5;
                 lowDamage = 1;
                 highDamage = 5; // 5

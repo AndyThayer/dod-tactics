@@ -236,6 +236,8 @@ public class GlobalFunctions : MonoBehaviour {
         }
 
         character.team = team;
+        character.posX = posX;
+        character.posY = posY;
         GlobalVariables.unitsMatrix[posX,posY] = character;
 
         // determine which prefab to use
@@ -281,6 +283,13 @@ public class GlobalFunctions : MonoBehaviour {
 
 
    
+    /*
+        params:
+        float movement          how many movement points to consider
+        float stamina           how many stamina points to consider
+        int posX                x coord of unit in question
+        int poxY                y coord of unit in question
+     */
     public static AvailableCells FindAvailableCells(float movement, float stamina, int posX, int posY){
         
         // reset each list in each index of availablePaths for this unit
@@ -289,6 +298,7 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.unitsMatrix[ posX,posY ].avalablePaths[ x,y ].Clear();
             }
         }
+      
 
         // create wrapper for MV and STA tallies
         AvailableCells ac = new AvailableCells();
@@ -300,15 +310,16 @@ public class GlobalFunctions : MonoBehaviour {
         ac.availableSTA = availableSTA;
         bool[,] considered = new bool[GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1];
         Vector3Int source = new Vector3Int(posX,posY,0);
-        // float startingPoints = movement;
-        // int thisMV;
-        // float MVcost;
+  
         ac.available[ source.x,source.y ] = movement.ToString();
         ac.availableSTA[ source.x,source.y ] = stamina.ToString();
         // summon GF to get around weird static function object reference req's
         GlobalFunctions GF = GameObject.Find("Controller").GetComponent<GlobalFunctions>();
         UnitType thisUnit = GlobalVariables.unitsMatrix [ posX,posY ];
         int STAdecrementer = 100; // evaluate STA trail from highest to lowest
+        if(stamina > 100){
+            STAdecrementer = (int)stamina;
+        }
 
         bool processing = true;
         int inc = 0;
@@ -606,6 +617,9 @@ public class GlobalFunctions : MonoBehaviour {
         // swap this unit's coords in the unitMatrix
         GlobalVariables.unitsMatrix[ desX,desY ] = GlobalVariables.unitsMatrix[ parX,parY ];
         GlobalVariables.unitsMatrix[ parX,parY ] = null;
+        // update ths unit's poxY and posY values
+        GlobalVariables.unitsMatrix[ desX,desY ].posX = desX;
+        GlobalVariables.unitsMatrix[ desX,desY ].posY = desY;        
         // update initRoster's positioning of this unit
         for(int i = 0; i < GlobalVariables.initRoster.Count; i++){
             if( GlobalVariables.initRoster[ i ].posX == parX && GlobalVariables.initRoster[ i ].posY == parY ){
@@ -842,18 +856,16 @@ public class GlobalFunctions : MonoBehaviour {
 			// CharacterType thisChar = GlobalVariables.unitsMatrix[ parentX,parentY ];
 			GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetHUDPathCell();
 
-            // foreach (Vector3Int v3 in GlobalVariables.unitsMatrix[ parentX,parentY ].avalablePaths[ posX,posY ])
-            foreach (MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY ].avalablePaths[ posX,posY ])
-            {
+            foreach (MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY ].avalablePaths[ posX,posY ]) {
+
                 if ( !(mn.node.x == parentX && mn.node.y == parentY) ) {
-                    // GameObject tilePrefabGO = Instantiate(tilePrefab, new Vector3(v3.x, v3.y, 0), Quaternion.identity);
                     Instantiate(tilePrefab, new Vector3(mn.node.x, mn.node.y, 0), Quaternion.identity);
                 }
                 
             }
 			
 		}
-    } // displayAvailableCells
+    } // DisplayPathCells
 
     public static void UpdateHUDcursor(int posX, int posY){
 		CleanUpOldHUDcursor();
@@ -1882,9 +1894,12 @@ public class GlobalFunctions : MonoBehaviour {
             Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
         }
         // - consider terrain bonus to DEF
-        if(GlobalVariables.tilesMatrix [ posX,posY ].defenseMod > 0){
+        if(GlobalVariables.tilesMatrix [ posX,posY ].defenseMod != 0){
             defendRoll += GlobalVariables.tilesMatrix [ posX,posY ].defenseMod;
-            Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ posX,posY ].defenseMod+" DEF!");
+            if(GlobalVariables.tilesMatrix [ posX,posY ].defenseMod > 0){ // logic just for debug log
+                Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ posX,posY ].defenseMod+" DEF!");
+            }
+            Debug.Log("terrain bonus applied: "+GlobalVariables.tilesMatrix [ posX,posY ].defenseMod+" DEF!");
         }
         // factor BAL
         float defFactor = ((float)defender.balance / 100f);
@@ -2087,12 +2102,248 @@ public class GlobalFunctions : MonoBehaviour {
     }
 
     public static void PrepForTurn(){
-        Debug.Log("Prep for turn!!!!");
-        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
-        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
-        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].rally = false;
+        UnitType thisUnit = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
+        if(thisUnit.team != 1){
+            Debug.Log("Prepping "+thisUnit.name+" for it's turn!!!!");
+            AIProcessNPCTurn(GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY);
+            
+        }
+        
+        thisUnit.canAct = true;
+        thisUnit.canMove = true;
+        thisUnit.rally = false;
     }
 
+
+
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ******    ******          **************************************************************************************************************************
+    // ****   **   ********  ******************************************************************************************************************************
+    // ***  ******  *******  ******************************************************************************************************************************
+    // ***          *******  ******************************************************************************************************************************
+    // ***  ******  *******  ******************************************************************************************************************************
+    // ***  ******  *******  ******************************************************************************************************************************
+    // ***  ******  ***           *************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+
+
+
+    /*
+        params:
+        int posX        x coord of NPC
+        int posY        y coord of NPC
+     */
+    public static void AIProcessNPCTurn( int posX, int posY ){
+        Debug.Log("AIProcessNPCTurn");
+        UnitType nearestThreat = AIDetermineNearestThreat(posX,posY);
+        Debug.Log("nearest threat: "+nearestThreat.posX+"-"+nearestThreat.posY);
+        // true if enemy is far, false if enemy is near
+        bool availableCellsDistance = AIDetermineIfThreatIsNear(nearestThreat, posX, posY);      
+
+        // pathfind for entire map
+        if(availableCellsDistance){
+            int maxMove = GlobalVariables.boardHeight * GlobalVariables.boardWidth * 2;
+            AvailableCells ac = FindAvailableCells(maxMove,500,posX,posY);
+            GlobalVariables.unitsMatrix[ posX,posY ].availableCellsDistance = ac.available;
+            Debug.Log("gathering availableCellsDistance");
+        }
+
+        // determine best target tile
+        Vector2Int targetTile = AIDetermineBestTargetTile(GlobalVariables.unitsMatrix[ posX,posY ], nearestThreat, availableCellsDistance);
+        Debug.Log("targetTile "+targetTile.x+"-"+targetTile.y);
+
+        GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(posX,posY,targetTile.x,targetTile.y);
+
+    }
+
+    public static bool AIDetermineIfThreatIsNear(UnitType nearestThreat, int posX, int posY){
+        bool availableCellsDistance = true; // set to false if threat is within (or adjacent) existing availableCells
+        int threatAdjacentX = 0;
+        int threatAdjacentY = 0;
+        // above
+        threatAdjacentX = nearestThreat.posX;
+        threatAdjacentY = (nearestThreat.posY+1);
+        if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            availableCellsDistance = false;
+            Debug.Log("adjacent to threat! availableCellsDistance = false");
+        }
+        // below
+        threatAdjacentX = nearestThreat.posX;
+        threatAdjacentY = (nearestThreat.posY-1);    
+        if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            availableCellsDistance = false;
+            Debug.Log("adjacent to threat! availableCellsDistance = false");
+        }            
+        // left
+        threatAdjacentX = (nearestThreat.posX-1);
+        threatAdjacentY = nearestThreat.posY;        
+        if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            availableCellsDistance = false;
+            Debug.Log("adjacent to threat! availableCellsDistance = false");
+        }        
+        // right
+        threatAdjacentX = (nearestThreat.posX+1);
+        threatAdjacentY = nearestThreat.posY;   
+        if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            availableCellsDistance = false;
+            Debug.Log("adjacent to threat! availableCellsDistance = false");
+        }  
+        return availableCellsDistance;
+    }
+
+    /*
+        params:
+        int posX        x coord of NPC
+        int posY        y coord of NPC
+     */
+    public static UnitType AIDetermineNearestThreat(int posX, int posY){
+        Debug.Log("AIDetermineNearestThreat");
+        UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        
+        // distance of nearest team 1 unit
+        float nearestDistance = 1000f;
+        // location of nearest team 1 unit
+        int nearX = 0;
+        int nearY = 0;
+
+        // loop through team 1 units (initRoster is NOT the way to loop here. use unitMatrix instead)
+        foreach(UnitType unit in GlobalVariables.unitsMatrix){
+            if(unit != null && unit.team == 1){  
+                float thisDistance = AICalculateDistance(posX, posY, unit.posX, unit.posY);
+                if(thisDistance < nearestDistance){
+                    nearestDistance = thisDistance;
+                    nearX = unit.posX;
+                    nearY = unit.posY;
+                }
+            }
+        }
+        return GlobalVariables.unitsMatrix[ nearX,nearY ];
+    }
+
+    /*
+        params:
+        int posX1               x coord of NPC 
+        int posY1               y coord of NPC
+        int posX2               x coord of team 1 unit 
+        int posY2               y coord of team 1 unit
+     */
+    public static float AICalculateDistance(int posX1, int posY1, int posX2, int posY2){
+        Debug.Log("AICalculateDistance");
+        float distance = 0f;
+        float xDist = posX1 - posX2;
+        float yDist = posY1 - posY2;
+        Debug.Log("xDist: "+xDist+" yDist: "+yDist);
+        if(xDist < 0){
+            xDist = xDist * -1;
+        }
+        if(yDist < 0){
+            yDist = yDist * -1;
+        }
+        distance = xDist + yDist;
+        Debug.Log("distance: "+distance);
+
+        return distance;
+    }
+
+    public static Vector2Int AIDetermineBestTargetTile(UnitType thisUnit, UnitType nearestThreat, bool availableCellsAI){
+        Vector2Int bestTile = new Vector2Int(0,0);
+        if(!availableCellsAI){
+            thisUnit.availableCellsDistance = thisUnit.availableCells;
+            Debug.Log("swapping availableCellsAI for availableCells");
+        }
+
+        int availableTally = 0;
+        foreach(String place in thisUnit.availableCells){
+            if(place != null){
+                availableTally++;
+            }            
+        }
+        int AITally = 0;
+        foreach(String place in thisUnit.availableCellsDistance){
+            if(place != null){
+                AITally++;
+            } 
+        }        
+        Debug.Log("availableTally: "+availableTally);
+        Debug.Log("AITally: "+AITally);
+
+        int targetX = 0;
+        int targetY = 0;
+        int thisX = 0;
+        int thisY = 0;
+        int shortestDistance = -1;
+        
+        // above nearest
+        thisX = nearestThreat.posX;
+        thisY = (nearestThreat.posY+1);
+        if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
+            Debug.Log("nearestThreat ABOVE not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
+            if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
+                targetX = thisX;
+                targetY = thisY;
+                shortestDistance = Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]);
+            }
+        }
+
+        // left of nearest
+        thisX = (nearestThreat.posX-1);
+        thisY = nearestThreat.posY;
+        if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
+            Debug.Log("nearestThreat LEFT not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
+            if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
+                targetX = thisX;
+                targetY = thisY;
+                shortestDistance = Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]);
+            }
+        }
+      
+        // right of nearest
+        thisX = (nearestThreat.posX+1);
+        thisY = nearestThreat.posY;
+        if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
+            Debug.Log("nearestThreat RIGHT not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
+            if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
+                targetX = thisX;
+                targetY = thisY;
+                shortestDistance = Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]);
+            }
+        }
+     
+        // below nearest
+        thisX = nearestThreat.posX;
+        thisY = (nearestThreat.posY-1);
+        if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
+            Debug.Log("nearestThreat BELOW not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
+            if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
+                targetX = thisX;
+                targetY = thisY;
+                shortestDistance = Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]);
+            }
+        }
+
+        Debug.Log("targetX: "+targetX+" targetY: "+targetY);
+
+        // determine which adjacent cell to target
+        int lastX = 0;
+        int lastY = 0;
+        foreach (MovementNode mn in thisUnit.avalablePaths[ targetX,targetY ]) {            
+            // Debug.Log("full trail: "+mn.node.x+"-"+mn.node.y); // <------------------ this is your path trail!
+            if(thisUnit.availableCells[ mn.node.x,mn.node.y ] != null){
+                lastX = mn.node.x;
+                lastY = mn.node.y;
+                // Debug.Log("match! "+lastX+"-"+lastY);
+            }
+        }
+        // Debug.Log("LAST match: "+lastX+"-"+lastY);
+        bestTile.x = lastX;
+        bestTile.y = lastY;
+
+        return bestTile;
+    } // end AIDetermineBestTargetTile
 
 
 

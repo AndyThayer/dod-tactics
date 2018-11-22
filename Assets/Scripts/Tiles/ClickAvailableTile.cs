@@ -13,12 +13,8 @@ public class ClickAvailableTile : MonoBehaviour {
 			int parentX = this.GetComponent<HUDProperties>().parentX;
 			int parentY = this.GetComponent<HUDProperties>().parentY;
 
-			// Debug.Log(parentX+" "+parentY+" is my parent!");
-			// Debug.Log("\n"+posX+" "+posY+" is my target!");
-
 			GlobalVariables.unitsMatrix[ parentX,parentY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(parentX,parentY,posX,posY);
 
-			// GlobalFunctions.CheckForEndOfTurn(parentX,parentY);
 		}else{
 			Debug.Log("Trying to click an available cell while HUD is frozen!");
 		}

@@ -104,8 +104,11 @@ public class MovementUnit : MonoBehaviour {
 		transform.localRotation = GlobalFunctions.FindDirection(avalablePaths[0].direction);
 		GlobalVariables.freezeHUD = true; // pause HUD or other game functionality
 		moving = true; // begin moving in update()
-		// anim.Play("walking");
-		GlobalVariables.unitsMatrix[ parX,parY ].unitPrefab.GetComponent<UnitAnimations>().PlayWalking();
+
+		if(GlobalVariables.unitsMatrix[ parX,parY ].unitPrefab.GetComponent<UnitAnimations>() != null){
+			GlobalVariables.unitsMatrix[ parX,parY ].unitPrefab.GetComponent<UnitAnimations>().PlayWalking();
+		}
+		
 		movementPoints = (int)GlobalVariables.unitsMatrix[ parentX,parentY ].movementPoints;
 
 		// for(int c = 1; c < GlobalVariables.unitsMatrix[ parentX,parentY ].availableCells.GetLength(0); c++){
