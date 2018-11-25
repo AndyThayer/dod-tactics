@@ -29,7 +29,7 @@ public class Enums : MonoBehaviour {
         Hunter,
         Gatherer,
         Bandit,
-        Woodsman,
+        Nomad,
         // Monsters
         BarbedToad,
         SaberToothWolf

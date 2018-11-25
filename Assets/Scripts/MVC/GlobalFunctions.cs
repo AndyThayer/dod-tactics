@@ -38,7 +38,10 @@ public class GlobalFunctions : MonoBehaviour {
     public TileType[] tileTypes;
 
     // unit prefabs
+    // - characters
      public GameObject hunter;
+     public GameObject gatherer;
+     // - monsters
      public GameObject barbed_toad;
      public GameObject saber_tooth_wolf;
 
@@ -246,6 +249,9 @@ public class GlobalFunctions : MonoBehaviour {
             case Enums.UnitType.Hunter:
                 charPrefab = hunter;
                 break;
+            case Enums.UnitType.Gatherer:
+                charPrefab = gatherer;
+                break;                
             case Enums.UnitType.BarbedToad:
                 charPrefab = barbed_toad;
                 break;

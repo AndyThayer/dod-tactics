@@ -6501,6 +6501,7 @@ MonoBehaviour:
     name: 
     tilePrefab: {fileID: 0}
   hunter: {fileID: 1139032371184294, guid: 7ee34ed021892154bbdc3b774ac237d1, type: 2}
+  gatherer: {fileID: 1801229343295654, guid: 1ac5c7a2e19e0af4d81fb179982597a6, type: 2}
   barbed_toad: {fileID: 1828773548146260, guid: 2c4564c32501c234182c7b87bf38c62b,
     type: 2}
   saber_tooth_wolf: {fileID: 1410507288245418, guid: 694f3822c7055d247857d935929c585e,

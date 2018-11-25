@@ -124,8 +124,8 @@ public class UnitType {
                 lowDamage = 1;
                 highDamage = 5;
                 break;
-            case Enums.UnitType.Woodsman:
-                name = "Woodsman";
+            case Enums.UnitType.Nomad:
+                name = "Nomad";
                 // stats
                 movementPoints = 4;
                 hitPoints = 18;
