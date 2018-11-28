@@ -231,10 +231,10 @@ public class GlobalFunctions : MonoBehaviour {
         // create an instance and add it to the matrix
         UnitType character = new UnitType(type);
         // initialze a list in each index of availablePaths
-        for(int c = 1; c < character.avalablePaths.GetLength(0); c++){
-            for(int r = 1; r < character.avalablePaths.GetLength(1); r++){
+        for(int c = 1; c < character.availablePaths.GetLength(0); c++){
+            for(int r = 1; r < character.availablePaths.GetLength(1); r++){
                 // character.avalablePaths[ c,r ] = new List<Vector3Int>();
-                character.avalablePaths[ c,r ] = new List<MovementNode>();
+                character.availablePaths[ c,r ] = new List<MovementNode>();
             }
         }
 
@@ -299,9 +299,9 @@ public class GlobalFunctions : MonoBehaviour {
     public static AvailableCells FindAvailableCells(float movement, float stamina, int posX, int posY){
         
         // reset each list in each index of availablePaths for this unit
-        for(int x = 1; x < GlobalVariables.unitsMatrix[ posX,posY ].avalablePaths.GetLength(0); x++){
-            for(int y = 1; y < GlobalVariables.unitsMatrix[ posX,posY ].avalablePaths.GetLength(1); y++){
-                GlobalVariables.unitsMatrix[ posX,posY ].avalablePaths[ x,y ].Clear();
+        for(int x = 1; x < GlobalVariables.unitsMatrix[ posX,posY ].availablePaths.GetLength(0); x++){
+            for(int y = 1; y < GlobalVariables.unitsMatrix[ posX,posY ].availablePaths.GetLength(1); y++){
+                GlobalVariables.unitsMatrix[ posX,posY ].availablePaths[ x,y ].Clear();
             }
         }
       
@@ -456,8 +456,8 @@ public class GlobalFunctions : MonoBehaviour {
             MovementNode mn = new MovementNode();
             mn.node = new Vector3Int(c,r,0);
             mn.direction = direction;
-            // GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Add(new Vector3Int(c,r,0));
-            GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Add(mn);
+            // GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Add(new Vector3Int(c,r,0));
+            GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Add(mn);
             // Debug.Log(source.ToString() + ": c/r " + c + " " + r);
         }
 
@@ -517,13 +517,13 @@ public class GlobalFunctions : MonoBehaviour {
             MovementNode mn = new MovementNode();
             mn.node = new Vector3Int(c,r,0);
             mn.direction = direction;
-            // GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Add(new Vector3Int(c,r,0));
-            GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Add(mn);
+            // GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Add(new Vector3Int(c,r,0));
+            GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Add(mn);
             // Debug.Log(source.ToString() + ": c/r " + c + " " + r);
 
             if(c == source.x && r == source.y){
                 processing = false;
-                GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Reverse();
+                GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Reverse();
             }
 
             inc++; // just a safety net to ensure that we don't infinitely loop
@@ -862,7 +862,7 @@ public class GlobalFunctions : MonoBehaviour {
 			// CharacterType thisChar = GlobalVariables.unitsMatrix[ parentX,parentY ];
 			GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetHUDPathCell();
 
-            foreach (MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY ].avalablePaths[ posX,posY ]) {
+            foreach (MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY ].availablePaths[ posX,posY ]) {
 
                 if ( !(mn.node.x == parentX && mn.node.y == parentY) ) {
                     Instantiate(tilePrefab, new Vector3(mn.node.x, mn.node.y, 0), Quaternion.identity);
@@ -1977,6 +1977,7 @@ public class GlobalFunctions : MonoBehaviour {
     }
 
     public static void CombatEndTurn(int posX, int posY){
+        Debug.Log("CombatEndTurn()");
         // consumer unit's action and movement
         GlobalVariables.unitsMatrix [ posX,posY ].canAct = false;
         GlobalVariables.unitsMatrix [ posX,posY ].canMove = false;
@@ -2030,6 +2031,7 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void CheckForEndOfTurn(int posX, int posY){
         UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        Debug.Log("CheckForEndOfTurn()");
         // if this unit is done attacking, and moving
         if( !thisUnit.canAct && !thisUnit.canMove ){
 
@@ -2162,7 +2164,10 @@ public class GlobalFunctions : MonoBehaviour {
         Vector2Int targetTile = AIDetermineBestTargetTile(GlobalVariables.unitsMatrix[ posX,posY ], nearestThreat, availableCellsDistance);
         Debug.Log("targetTile "+targetTile.x+"-"+targetTile.y);
 
-        GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(posX,posY,targetTile.x,targetTile.y);
+        if(targetTile.x != posX || targetTile.y != posY){
+            GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(posX,posY,targetTile.x,targetTile.y);
+        }
+        
 
     }
 
@@ -2336,7 +2341,7 @@ public class GlobalFunctions : MonoBehaviour {
         // determine which adjacent cell to target
         int lastX = 0;
         int lastY = 0;
-        foreach (MovementNode mn in thisUnit.avalablePaths[ targetX,targetY ]) {            
+        foreach (MovementNode mn in thisUnit.availablePaths[ targetX,targetY ]) {            
             // Debug.Log("full trail: "+mn.node.x+"-"+mn.node.y); // <------------------ this is your path trail!
             if(thisUnit.availableCells[ mn.node.x,mn.node.y ] != null){
                 lastX = mn.node.x;

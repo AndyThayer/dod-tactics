@@ -90,15 +90,15 @@ public class MovementUnit : MonoBehaviour {
 		int counter = 0;
 		parentX = parX;
 		parentY = parY;
-		foreach(MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY].avalablePaths[ posX,posY ] ){
+		foreach(MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY].availablePaths[ posX,posY ] ){
 			counter++;
 			// skip the "last" (actually the first) node because the direction is defaulted to UP
-			if(counter < GlobalVariables.unitsMatrix[ parentX,parentY].avalablePaths[ posX,posY ].Count){
+			if(counter < GlobalVariables.unitsMatrix[ parentX,parentY].availablePaths[ posX,posY ].Count){
 				// Debug.Log(mn.direction.ToString());
 				totalNodes++;
 			}
 		}
-		avalablePaths = GlobalVariables.unitsMatrix[ parentX,parentY].avalablePaths[ posX,posY ];
+		avalablePaths = GlobalVariables.unitsMatrix[ parentX,parentY].availablePaths[ posX,posY ];
 		destX = posX;
 		destY = posY;
 		transform.localRotation = GlobalFunctions.FindDirection(avalablePaths[0].direction);

@@ -32,6 +32,8 @@ public class ClickIcon : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
+
+		Debug.Log("ClickIcon()");
 		
 		// selected unit's coords
 		int posX = GlobalVariables.selectedUnit.x;
