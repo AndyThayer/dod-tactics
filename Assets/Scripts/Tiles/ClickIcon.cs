@@ -105,6 +105,7 @@ public class ClickIcon : MonoBehaviour {
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.SpecialAbility);
 				Debug.Log("Special Ability clicked!");
 			}else if( endTurn ){
+				Debug.Log("End Turn clickd!");
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.EndTurn);
 				// GlobalFunctions.CombatEndTurn( posX,posY );
 				GlobalFunctions.CombatEndTurn( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );

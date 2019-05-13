@@ -10,7 +10,7 @@ public class GlobalVariables : MonoBehaviour {
 
         // number of tiles (height x width)
         public static int boardWidth = 16;
-        public static int boardHeight = 12;
+        public static int boardHeight = 12; 
 
         // number of pixels per tile (height x width)
         public static int tileSize = 32;

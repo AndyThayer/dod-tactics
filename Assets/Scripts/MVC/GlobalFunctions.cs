@@ -305,7 +305,6 @@ public class GlobalFunctions : MonoBehaviour {
             }
         }
       
-
         // create wrapper for MV and STA tallies
         AvailableCells ac = new AvailableCells();
 
@@ -897,12 +896,13 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void UpdateHUDreadyUnit(int posX, int posY){
 		CleanUpOldHUDreadyUnit();
-		
+		// Debug.Log("UpdateHUDreadyUnit");
 		GlobalVariables.HUDReadyUnit.transform.position = new Vector3(posX,posY, 0);
 		GlobalVariables.HUDReadyUnit.SetActive(true);
 	}
 
 	public static void CleanUpOldHUDreadyUnit(){
+        // Debug.Log("CleanUpOldHUDreadyUnit");
 		GlobalVariables.HUDReadyUnit.SetActive(false);
 	}
 
@@ -1533,6 +1533,7 @@ public class GlobalFunctions : MonoBehaviour {
 
 
     public static void UpdateInitiative(){
+        Debug.Log("UpdateInitiative()");
 
         GlobalVariables.initRoster.Clear();
 
@@ -1562,8 +1563,10 @@ public class GlobalFunctions : MonoBehaviour {
 			return a.CompareTo(b);
 		});
         // enable first unit
-        PrepForTurn();
-        UpdateWhoIsNext();
+        bool teamOne = PrepForTurn();
+        if(teamOne){
+            UpdateWhoIsNext();
+        }
 
 		Debug.Log("\nAfter sort by initiative:");
         foreach (Initiative init in GlobalVariables.initRoster)
@@ -2047,7 +2050,7 @@ public class GlobalFunctions : MonoBehaviour {
                 UpdateInitiative();
             }else{
                 // is this part necessary? don't we already do this in UpdateInitiative()?
-                PrepForTurn();
+                bool teamOne = PrepForTurn();
             }
             UpdateWhoIsNext();
 
@@ -2109,17 +2112,21 @@ public class GlobalFunctions : MonoBehaviour {
         }
     }
 
-    public static void PrepForTurn(){
+    public static bool PrepForTurn(){
+        Debug.Log("PrepForTurn()");
+        bool teamOne = true;
         UnitType thisUnit = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
         if(thisUnit.team != 1){
             Debug.Log("Prepping "+thisUnit.name+" for it's turn!!!!");
             AIProcessNPCTurn(GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY);
-            
+            teamOne = false;
         }
         
         thisUnit.canAct = true;
         thisUnit.canMove = true;
         thisUnit.rally = false;
+
+        return teamOne;
     }
 
 
@@ -2148,27 +2155,39 @@ public class GlobalFunctions : MonoBehaviour {
     public static void AIProcessNPCTurn( int posX, int posY ){
         Debug.Log("AIProcessNPCTurn");
         UnitType nearestThreat = AIDetermineNearestThreat(posX,posY);
-        Debug.Log("nearest threat: "+nearestThreat.posX+"-"+nearestThreat.posY);
+        // Debug.Log("nearest threat: "+nearestThreat.posX+"-"+nearestThreat.posY);
+        // if there is no "nearest threat", then bail out!
+        if (nearestThreat == null){
+            return;
+        }
         // true if enemy is far, false if enemy is near
         bool availableCellsDistance = AIDetermineIfThreatIsNear(nearestThreat, posX, posY);      
 
         // pathfind for entire map
         if(availableCellsDistance){
             int maxMove = GlobalVariables.boardHeight * GlobalVariables.boardWidth * 2;
-            AvailableCells ac = FindAvailableCells(maxMove,500,posX,posY);
-            GlobalVariables.unitsMatrix[ posX,posY ].availableCellsDistance = ac.available;
-            Debug.Log("gathering availableCellsDistance");
+            
+            // THIS IS WHERE THE PROBLEM IS!!!!!!
+             //AvailableCells ac = FindAvailableCells(maxMove,500,posX,posY);
+            // AvailableCells ac = FindAvailableCells(50,100,posX,posY);
+            // GlobalVariables.unitsMatrix[ posX,posY ].availableCellsDistance = ac.available;
+            // Debug.Log("gathering availableCellsDistance");
         }
 
         // determine best target tile
         Vector2Int targetTile = AIDetermineBestTargetTile(GlobalVariables.unitsMatrix[ posX,posY ], nearestThreat, availableCellsDistance);
-        Debug.Log("targetTile "+targetTile.x+"-"+targetTile.y);
+        // Debug.Log("targetTile "+targetTile.x+"-"+targetTile.y);
 
         if(targetTile.x != posX || targetTile.y != posY){
+            CleanUpOldHUDreadyUnit();
+            DisplayAvailableCells(posX, posY);
+            DisplayPathCells(targetTile.x,targetTile.y, posX, posY);
             GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(posX,posY,targetTile.x,targetTile.y);
+            // GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(posX,posY,3,11);
         }
+        CleanUpOldHUDreadyUnit();
+        Debug.Log("THIS SHOULD BE THE END!!");
         
-
     }
 
     public static bool AIDetermineIfThreatIsNear(UnitType nearestThreat, int posX, int posY){
@@ -2180,28 +2199,28 @@ public class GlobalFunctions : MonoBehaviour {
         threatAdjacentY = (nearestThreat.posY+1);
         if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
             availableCellsDistance = false;
-            Debug.Log("adjacent to threat! availableCellsDistance = false");
+            // Debug.Log("adjacent to threat! availableCellsDistance = false");
         }
         // below
         threatAdjacentX = nearestThreat.posX;
         threatAdjacentY = (nearestThreat.posY-1);    
         if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
             availableCellsDistance = false;
-            Debug.Log("adjacent to threat! availableCellsDistance = false");
+            // Debug.Log("adjacent to threat! availableCellsDistance = false");
         }            
         // left
         threatAdjacentX = (nearestThreat.posX-1);
         threatAdjacentY = nearestThreat.posY;        
         if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
             availableCellsDistance = false;
-            Debug.Log("adjacent to threat! availableCellsDistance = false");
+            // Debug.Log("adjacent to threat! availableCellsDistance = false");
         }        
         // right
         threatAdjacentX = (nearestThreat.posX+1);
         threatAdjacentY = nearestThreat.posY;   
         if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
             availableCellsDistance = false;
-            Debug.Log("adjacent to threat! availableCellsDistance = false");
+            // Debug.Log("adjacent to threat! availableCellsDistance = false");
         }  
         return availableCellsDistance;
     }
@@ -2212,7 +2231,7 @@ public class GlobalFunctions : MonoBehaviour {
         int posY        y coord of NPC
      */
     public static UnitType AIDetermineNearestThreat(int posX, int posY){
-        Debug.Log("AIDetermineNearestThreat");
+        // Debug.Log("AIDetermineNearestThreat");
         UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
         
         // distance of nearest team 1 unit
@@ -2243,11 +2262,11 @@ public class GlobalFunctions : MonoBehaviour {
         int posY2               y coord of team 1 unit
      */
     public static float AICalculateDistance(int posX1, int posY1, int posX2, int posY2){
-        Debug.Log("AICalculateDistance");
+        // Debug.Log("AICalculateDistance");
         float distance = 0f;
         float xDist = posX1 - posX2;
         float yDist = posY1 - posY2;
-        Debug.Log("xDist: "+xDist+" yDist: "+yDist);
+        // Debug.Log("xDist: "+xDist+" yDist: "+yDist);
         if(xDist < 0){
             xDist = xDist * -1;
         }
@@ -2255,7 +2274,7 @@ public class GlobalFunctions : MonoBehaviour {
             yDist = yDist * -1;
         }
         distance = xDist + yDist;
-        Debug.Log("distance: "+distance);
+        // Debug.Log("distance: "+distance);
 
         return distance;
     }
@@ -2264,7 +2283,7 @@ public class GlobalFunctions : MonoBehaviour {
         Vector2Int bestTile = new Vector2Int(0,0);
         if(!availableCellsAI){
             thisUnit.availableCellsDistance = thisUnit.availableCells;
-            Debug.Log("swapping availableCellsAI for availableCells");
+            // Debug.Log("swapping availableCellsAI for availableCells");
         }
 
         int availableTally = 0;
@@ -2279,8 +2298,8 @@ public class GlobalFunctions : MonoBehaviour {
                 AITally++;
             } 
         }        
-        Debug.Log("availableTally: "+availableTally);
-        Debug.Log("AITally: "+AITally);
+        // Debug.Log("availableTally: "+availableTally);
+        // Debug.Log("AITally: "+AITally);
 
         int targetX = 0;
         int targetY = 0;
@@ -2292,7 +2311,7 @@ public class GlobalFunctions : MonoBehaviour {
         thisX = nearestThreat.posX;
         thisY = (nearestThreat.posY+1);
         if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
-            Debug.Log("nearestThreat ABOVE not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
+            // Debug.Log("nearestThreat ABOVE not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
             if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
                 targetX = thisX;
                 targetY = thisY;
@@ -2304,7 +2323,7 @@ public class GlobalFunctions : MonoBehaviour {
         thisX = (nearestThreat.posX-1);
         thisY = nearestThreat.posY;
         if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
-            Debug.Log("nearestThreat LEFT not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
+            // Debug.Log("nearestThreat LEFT not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
             if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
                 targetX = thisX;
                 targetY = thisY;
@@ -2316,7 +2335,7 @@ public class GlobalFunctions : MonoBehaviour {
         thisX = (nearestThreat.posX+1);
         thisY = nearestThreat.posY;
         if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
-            Debug.Log("nearestThreat RIGHT not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
+            // Debug.Log("nearestThreat RIGHT not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
             if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
                 targetX = thisX;
                 targetY = thisY;
@@ -2328,7 +2347,7 @@ public class GlobalFunctions : MonoBehaviour {
         thisX = nearestThreat.posX;
         thisY = (nearestThreat.posY-1);
         if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
-            Debug.Log("nearestThreat BELOW not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
+            // Debug.Log("nearestThreat BELOW not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
             if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
                 targetX = thisX;
                 targetY = thisY;

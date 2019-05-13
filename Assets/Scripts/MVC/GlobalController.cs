@@ -23,13 +23,19 @@ public class GlobalController : MonoBehaviour {
 		// team 1
 		// gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Gatherer, 1,1, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
 		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 1,10, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
-		// team 2
-		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 6,10, GlobalFunctions.FindDirection(Enums.Direction.Up), 2);
-		// gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.SaberToothWolf, 10,4, GlobalFunctions.FindDirection(Enums.Direction.Left), 2);
+        // team 2
+        // gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 5,10, GlobalFunctions.FindDirection(Enums.Direction.Up), 2);
+        gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 6,11, GlobalFunctions.FindDirection(Enums.Direction.Up), 2);
+        //  gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.SaberToothWolf, 8,11, GlobalFunctions.FindDirection(Enums.Direction.Left), 2);
+        //gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 11,11, GlobalFunctions.FindDirection(Enums.Direction.Left), 1);
+
+        //gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 11, 11, GlobalFunctions.FindDirection(Enums.Direction.Left), 2);
+
+        //  team 2 at 6,11 while team 1 is present is infinite loop?
 
 
-		// run this after spawning units so that we know where all other units are beforehand
-		GlobalFunctions.RefreshUnitAvailabileCells();
+        // run this after spawning units so that we know where all other units are beforehand
+        GlobalFunctions.RefreshUnitAvailabileCells();
 
 		GlobalFunctions.UpdateInitiative();
 		// GlobalVariables.infoPanelTopHeader.text = "Round 1";
