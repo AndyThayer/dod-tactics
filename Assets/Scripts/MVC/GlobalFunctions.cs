@@ -2169,13 +2169,13 @@ public class GlobalFunctions : MonoBehaviour {
             
             // THIS IS WHERE THE PROBLEM IS!!!!!!
              //AvailableCells ac = FindAvailableCells(maxMove,500,posX,posY);
-            // AvailableCells ac = FindAvailableCells(50,100,posX,posY);
             // GlobalVariables.unitsMatrix[ posX,posY ].availableCellsDistance = ac.available;
             // Debug.Log("gathering availableCellsDistance");
         }
 
         // determine best target tile
         Vector2Int targetTile = AIDetermineBestTargetTile(GlobalVariables.unitsMatrix[ posX,posY ], nearestThreat, availableCellsDistance);
+        // Vector2Int targetTile = new Vector2Int(3,11);
         // Debug.Log("targetTile "+targetTile.x+"-"+targetTile.y);
 
         if(targetTile.x != posX || targetTile.y != posY){
@@ -2186,7 +2186,6 @@ public class GlobalFunctions : MonoBehaviour {
             // GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(posX,posY,3,11);
         }
         CleanUpOldHUDreadyUnit();
-        Debug.Log("THIS SHOULD BE THE END!!");
         
     }
 
@@ -2273,7 +2272,7 @@ public class GlobalFunctions : MonoBehaviour {
         if(yDist < 0){
             yDist = yDist * -1;
         }
-        distance = xDist + yDist;
+        distance = xDist + yDist - 1;
         // Debug.Log("distance: "+distance);
 
         return distance;
@@ -2281,94 +2280,30 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static Vector2Int AIDetermineBestTargetTile(UnitType thisUnit, UnitType nearestThreat, bool availableCellsAI){
         Vector2Int bestTile = new Vector2Int(0,0);
-        if(!availableCellsAI){
-            thisUnit.availableCellsDistance = thisUnit.availableCells;
-            // Debug.Log("swapping availableCellsAI for availableCells");
-        }
 
-        int availableTally = 0;
-        foreach(String place in thisUnit.availableCells){
-            if(place != null){
-                availableTally++;
-            }            
-        }
-        int AITally = 0;
-        foreach(String place in thisUnit.availableCellsDistance){
-            if(place != null){
-                AITally++;
-            } 
-        }        
-        // Debug.Log("availableTally: "+availableTally);
-        // Debug.Log("AITally: "+AITally);
-
-        int targetX = 0;
-        int targetY = 0;
-        int thisX = 0;
-        int thisY = 0;
-        int shortestDistance = -1;
-        
-        // above nearest
-        thisX = nearestThreat.posX;
-        thisY = (nearestThreat.posY+1);
-        if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
-            // Debug.Log("nearestThreat ABOVE not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
-            if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
-                targetX = thisX;
-                targetY = thisY;
-                shortestDistance = Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]);
-            }
-        }
-
-        // left of nearest
-        thisX = (nearestThreat.posX-1);
-        thisY = nearestThreat.posY;
-        if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
-            // Debug.Log("nearestThreat LEFT not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
-            if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
-                targetX = thisX;
-                targetY = thisY;
-                shortestDistance = Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]);
-            }
-        }
-      
-        // right of nearest
-        thisX = (nearestThreat.posX+1);
-        thisY = nearestThreat.posY;
-        if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
-            // Debug.Log("nearestThreat RIGHT not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
-            if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
-                targetX = thisX;
-                targetY = thisY;
-                shortestDistance = Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]);
-            }
-        }
-     
-        // below nearest
-        thisX = nearestThreat.posX;
-        thisY = (nearestThreat.posY-1);
-        if((thisUnit.availableCellsDistance[thisX,thisY]) != null){
-            // Debug.Log("nearestThreat BELOW not null: "+Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]));
-            if (Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]) > shortestDistance){
-                targetX = thisX;
-                targetY = thisY;
-                shortestDistance = Int32.Parse(thisUnit.availableCellsDistance[thisX,thisY]);
-            }
-        }
-
-        Debug.Log("targetX: "+targetX+" targetY: "+targetY);
-
-        // determine which adjacent cell to target
+        // determine best target cell among availableCells
         int lastX = 0;
         int lastY = 0;
-        foreach (MovementNode mn in thisUnit.availablePaths[ targetX,targetY ]) {            
-            // Debug.Log("full trail: "+mn.node.x+"-"+mn.node.y); // <------------------ this is your path trail!
-            if(thisUnit.availableCells[ mn.node.x,mn.node.y ] != null){
-                lastX = mn.node.x;
-                lastY = mn.node.y;
-                // Debug.Log("match! "+lastX+"-"+lastY);
+        float maxDistance = 10000f;
+        float thisDistance = 10000f;
+        for(int c = 1; c < thisUnit.availableCells.GetLength(0); c++){
+            for(int r = 1; r < thisUnit.availableCells.GetLength(1); r++){
+                if(thisUnit.availableCells[ c,r ] != null && 
+                    thisUnit.availableCellsSTA[ c,r ] != null &&
+                    GlobalVariables.unitsMatrix[ c,r ] == null &&                                   // doesn't include self
+                //   ( GlobalVariables.unitsMatrix[ c,r ] == null || (c == thisUnit.posX && r == thisUnit.posY) ) &&       // includes self 
+                    Int32.Parse(thisUnit.availableCellsSTA[ c,r ]) >= 0 ){
+                        thisDistance = AICalculateDistance(nearestThreat.posX, nearestThreat.posY, c, r);
+                        // Debug.Log("distance between "+c+"-"+r+" and "+nearestThreat.posX+"-"+nearestThreat.posY+" is "+thisDistance);
+                        if(thisDistance < maxDistance){
+                            maxDistance = thisDistance;
+                            lastX = c;
+                            lastY = r;
+                        }
+                    }
             }
         }
-        // Debug.Log("LAST match: "+lastX+"-"+lastY);
+        Debug.Log("LAST match: "+lastX+"-"+lastY);
         bestTile.x = lastX;
         bestTile.y = lastY;
 

@@ -39,7 +39,7 @@ public class UnitType {
     // map / pathfinding
     public string[,] availableCells = new string[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
     public string[,] availableCellsSTA = new string[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
-    public string[,] availableCellsDistance = new string[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
+    // public string[,] availableCellsDistance = new string[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
     public List<MovementNode>[,] availablePaths = new List<MovementNode>[ GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1 ];
     public bool displayAvailableCells;
 
