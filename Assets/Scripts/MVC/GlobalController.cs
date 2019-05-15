@@ -21,11 +21,11 @@ public class GlobalController : MonoBehaviour {
 		GlobalVariables.tilemapGO.SetActive(false);
 
 		// team 1
-		// gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Gatherer, 1,1, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
+		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Gatherer, 2,2, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
 		gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.Hunter, 1,10, GlobalFunctions.FindDirection(Enums.Direction.Right), 1);
         // team 2
-        // gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 5,10, GlobalFunctions.FindDirection(Enums.Direction.Up), 2);
-        gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 6,11, GlobalFunctions.FindDirection(Enums.Direction.Up), 2);
+        gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 5,10, GlobalFunctions.FindDirection(Enums.Direction.Up), 2);
+        // gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 6,11, GlobalFunctions.FindDirection(Enums.Direction.Up), 2);
         //  gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.SaberToothWolf, 8,11, GlobalFunctions.FindDirection(Enums.Direction.Left), 2);
         //gameObject.GetComponent<GlobalFunctions>().SpawnUnit(Enums.UnitType.BarbedToad, 11,11, GlobalFunctions.FindDirection(Enums.Direction.Left), 1);
 

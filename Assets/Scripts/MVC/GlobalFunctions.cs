@@ -2152,76 +2152,110 @@ public class GlobalFunctions : MonoBehaviour {
         int posX        x coord of NPC
         int posY        y coord of NPC
      */
-    public static void AIProcessNPCTurn( int posX, int posY ){
+    public static void AIProcessNPCTurn( int npcX, int npcY ){
         Debug.Log("AIProcessNPCTurn");
-        UnitType nearestThreat = AIDetermineNearestThreat(posX,posY);
-        // Debug.Log("nearest threat: "+nearestThreat.posX+"-"+nearestThreat.posY);
+        UnitType nearestThreat = AIDetermineNearestThreat(npcX,npcY);
+        // Debug.Log("nearest threat: "+nearestThreat.npcX+"-"+nearestThreat.npcY);
         // if there is no "nearest threat", then bail out!
         if (nearestThreat == null){
             return;
         }
         // true if enemy is far, false if enemy is near
-        bool availableCellsDistance = AIDetermineIfThreatIsNear(nearestThreat, posX, posY);      
+        bool foeIsAdjacent = AIDetermineIfThreatIsAdjacent(nearestThreat, npcX, npcY); 
+        Debug.Log("<---------------------------------------------- foeIsAdjacent is <"+foeIsAdjacent+" >");
 
-        // pathfind for entire map
-        if(availableCellsDistance){
-            int maxMove = GlobalVariables.boardHeight * GlobalVariables.boardWidth * 2;
-            
-            // THIS IS WHERE THE PROBLEM IS!!!!!!
-             //AvailableCells ac = FindAvailableCells(maxMove,500,posX,posY);
-            // GlobalVariables.unitsMatrix[ posX,posY ].availableCellsDistance = ac.available;
-            // Debug.Log("gathering availableCellsDistance");
+        Vector2Int targetTile;  
+        if(!foeIsAdjacent){
+            targetTile = AIDetermineBestTargetTile(GlobalVariables.unitsMatrix[ npcX,npcY ], nearestThreat);
+        }else{
+            targetTile = new Vector2Int(npcX,npcY); 
         }
 
-        // determine best target tile
-        Vector2Int targetTile = AIDetermineBestTargetTile(GlobalVariables.unitsMatrix[ posX,posY ], nearestThreat, availableCellsDistance);
-        // Vector2Int targetTile = new Vector2Int(3,11);
-        // Debug.Log("targetTile "+targetTile.x+"-"+targetTile.y);
-
-        if(targetTile.x != posX || targetTile.y != posY){
+        // if(targetTile.x != npcX || targetTile.y != npcY){
+        if(!foeIsAdjacent){
             CleanUpOldHUDreadyUnit();
-            DisplayAvailableCells(posX, posY);
-            DisplayPathCells(targetTile.x,targetTile.y, posX, posY);
-            GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(posX,posY,targetTile.x,targetTile.y);
-            // GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(posX,posY,3,11);
+            DisplayAvailableCells(npcX, npcY);
+            DisplayPathCells(targetTile.x,targetTile.y, npcX, npcY);
+            GlobalVariables.unitsMatrix[ npcX,npcY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(npcX,npcY,targetTile.x,targetTile.y);
         }
         CleanUpOldHUDreadyUnit();
         
     }
 
-    public static bool AIDetermineIfThreatIsNear(UnitType nearestThreat, int posX, int posY){
-        bool availableCellsDistance = true; // set to false if threat is within (or adjacent) existing availableCells
+    /*
+        Determine if threat is adjacent to NPC
+     */
+    public static bool AIDetermineIfThreatIsAdjacent(UnitType nearestThreat, int npcX, int npcY){
+        bool foeIsAdjacent = false; // set to true if foe is adjacent to NPC
         int threatAdjacentX = 0;
         int threatAdjacentY = 0;
         // above
         threatAdjacentX = nearestThreat.posX;
         threatAdjacentY = (nearestThreat.posY+1);
-        if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
-            availableCellsDistance = false;
-            // Debug.Log("adjacent to threat! availableCellsDistance = false");
+        if(threatAdjacentX == npcX && threatAdjacentY == npcY){
+            foeIsAdjacent = true;
+            // Debug.Log("adjacent to threat! foeIsAdjacent = true");
         }
         // below
         threatAdjacentX = nearestThreat.posX;
         threatAdjacentY = (nearestThreat.posY-1);    
-        if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
-            availableCellsDistance = false;
-            // Debug.Log("adjacent to threat! availableCellsDistance = false");
+        if(threatAdjacentX == npcX && threatAdjacentY == npcY){
+            foeIsAdjacent = true;
+            // Debug.Log("adjacent to threat! foeIsAdjacent = true");
         }            
         // left
         threatAdjacentX = (nearestThreat.posX-1);
         threatAdjacentY = nearestThreat.posY;        
-        if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
-            availableCellsDistance = false;
-            // Debug.Log("adjacent to threat! availableCellsDistance = false");
+        if(threatAdjacentX == npcX && threatAdjacentY == npcY){
+            foeIsAdjacent = true;
+            // Debug.Log("adjacent to threat! foeIsAdjacent = true");
         }        
         // right
         threatAdjacentX = (nearestThreat.posX+1);
         threatAdjacentY = nearestThreat.posY;   
-        if(GlobalVariables.unitsMatrix[ posX,posY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
-            availableCellsDistance = false;
-            // Debug.Log("adjacent to threat! availableCellsDistance = false");
+        if(threatAdjacentX == npcX && threatAdjacentY == npcY){
+            foeIsAdjacent = true;
+            // Debug.Log("adjacent to threat! foeIsAdjacent = true");
         }  
-        return availableCellsDistance;
+        return foeIsAdjacent;
+    }
+
+    /*
+        Determine if threat is adjacent to or within availableCells of NPC
+     */
+    public static bool AIDetermineIfThreatIsNear(UnitType nearestThreat, int npcX, int npcY){
+        bool foeIsNear = false; // set to false if threat is within (or adjacent) existing availableCells
+        int threatAdjacentX = 0;
+        int threatAdjacentY = 0;
+        // above
+        threatAdjacentX = nearestThreat.posX;
+        threatAdjacentY = (nearestThreat.posY+1);
+        if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            foeIsNear = true;
+            // Debug.Log("adjacent to threat! foeIsNear = true");
+        }
+        // below
+        threatAdjacentX = nearestThreat.posX;
+        threatAdjacentY = (nearestThreat.posY-1);    
+        if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            foeIsNear = true;
+            // Debug.Log("adjacent to threat! foeIsNear = true");
+        }            
+        // left
+        threatAdjacentX = (nearestThreat.posX-1);
+        threatAdjacentY = nearestThreat.posY;        
+        if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            foeIsNear = true;
+            // Debug.Log("adjacent to threat! foeIsNear = true");
+        }        
+        // right
+        threatAdjacentX = (nearestThreat.posX+1);
+        threatAdjacentY = nearestThreat.posY;   
+        if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            foeIsNear = true;
+            // Debug.Log("adjacent to threat! foeIsNear = true");
+        }  
+        return foeIsNear;
     }
 
     /*
@@ -2278,7 +2312,7 @@ public class GlobalFunctions : MonoBehaviour {
         return distance;
     }
 
-    public static Vector2Int AIDetermineBestTargetTile(UnitType thisUnit, UnitType nearestThreat, bool availableCellsAI){
+    public static Vector2Int AIDetermineBestTargetTile(UnitType thisUnit, UnitType nearestThreat){
         Vector2Int bestTile = new Vector2Int(0,0);
 
         // determine best target cell among availableCells
@@ -2303,7 +2337,7 @@ public class GlobalFunctions : MonoBehaviour {
                     }
             }
         }
-        Debug.Log("LAST match: "+lastX+"-"+lastY);
+        // Debug.Log("LAST match: "+lastX+"-"+lastY);
         bestTile.x = lastX;
         bestTile.y = lastY;
 
