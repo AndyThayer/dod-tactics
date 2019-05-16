@@ -758,7 +758,7 @@ public class GlobalFunctions : MonoBehaviour {
     // used to pass the prefab HUDAvailableCell
     public GameObject GetHUDAvailableCell(bool self = false){
         if(self){
-            return HUDAvailableCellSelf;
+            return HUDAvailableCellSelf;            
         }else{
             return HUDAvailableCell;
         }        
@@ -855,15 +855,16 @@ public class GlobalFunctions : MonoBehaviour {
 
     } // displayAvailableCells
 
-    public static void DisplayPathCells(int posX, int posY, int parentX, int parentY){
+    public static void DisplayPathCells(int targetX, int targetY, int parentX, int parentY){
         if( GlobalVariables.unitsMatrix[ parentX,parentY ] != null ){
 			
 			// CharacterType thisChar = GlobalVariables.unitsMatrix[ parentX,parentY ];
 			GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetHUDPathCell();
 
-            foreach (MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY ].availablePaths[ posX,posY ]) {
-
-                if ( !(mn.node.x == parentX && mn.node.y == parentY) ) {
+            foreach (MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY ].availablePaths[ targetX,targetY ]) {
+                
+                // for some reason team 1 has an extra movement node on their starting cell, but AI teams do not
+                if ( GlobalVariables.unitsMatrix[ parentX,parentY ].team != 1 || !(mn.node.x == parentX && mn.node.y == parentY) ) {
                     Instantiate(tilePrefab, new Vector3(mn.node.x, mn.node.y, 0), Quaternion.identity);
                 }
                 
@@ -2162,7 +2163,7 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // true if enemy is far, false if enemy is near
         bool foeIsAdjacent = AIDetermineIfThreatIsAdjacent(nearestThreat, npcX, npcY); 
-        Debug.Log("<---------------------------------------------- foeIsAdjacent is <"+foeIsAdjacent+" >");
+        // Debug.Log("<---------------------------------------------- foeIsAdjacent is <"+foeIsAdjacent+" >");
 
         Vector2Int targetTile;  
         if(!foeIsAdjacent){
@@ -2194,28 +2195,24 @@ public class GlobalFunctions : MonoBehaviour {
         threatAdjacentY = (nearestThreat.posY+1);
         if(threatAdjacentX == npcX && threatAdjacentY == npcY){
             foeIsAdjacent = true;
-            // Debug.Log("adjacent to threat! foeIsAdjacent = true");
         }
         // below
         threatAdjacentX = nearestThreat.posX;
         threatAdjacentY = (nearestThreat.posY-1);    
         if(threatAdjacentX == npcX && threatAdjacentY == npcY){
             foeIsAdjacent = true;
-            // Debug.Log("adjacent to threat! foeIsAdjacent = true");
         }            
         // left
         threatAdjacentX = (nearestThreat.posX-1);
         threatAdjacentY = nearestThreat.posY;        
         if(threatAdjacentX == npcX && threatAdjacentY == npcY){
             foeIsAdjacent = true;
-            // Debug.Log("adjacent to threat! foeIsAdjacent = true");
         }        
         // right
         threatAdjacentX = (nearestThreat.posX+1);
         threatAdjacentY = nearestThreat.posY;   
         if(threatAdjacentX == npcX && threatAdjacentY == npcY){
             foeIsAdjacent = true;
-            // Debug.Log("adjacent to threat! foeIsAdjacent = true");
         }  
         return foeIsAdjacent;
     }
@@ -2232,28 +2229,24 @@ public class GlobalFunctions : MonoBehaviour {
         threatAdjacentY = (nearestThreat.posY+1);
         if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
             foeIsNear = true;
-            // Debug.Log("adjacent to threat! foeIsNear = true");
         }
         // below
         threatAdjacentX = nearestThreat.posX;
         threatAdjacentY = (nearestThreat.posY-1);    
         if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
             foeIsNear = true;
-            // Debug.Log("adjacent to threat! foeIsNear = true");
         }            
         // left
         threatAdjacentX = (nearestThreat.posX-1);
         threatAdjacentY = nearestThreat.posY;        
         if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
             foeIsNear = true;
-            // Debug.Log("adjacent to threat! foeIsNear = true");
         }        
         // right
         threatAdjacentX = (nearestThreat.posX+1);
         threatAdjacentY = nearestThreat.posY;   
         if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
             foeIsNear = true;
-            // Debug.Log("adjacent to threat! foeIsNear = true");
         }  
         return foeIsNear;
     }
@@ -2331,6 +2324,7 @@ public class GlobalFunctions : MonoBehaviour {
                         // Debug.Log("distance between "+c+"-"+r+" and "+nearestThreat.posX+"-"+nearestThreat.posY+" is "+thisDistance);
                         if(thisDistance < maxDistance){
                             maxDistance = thisDistance;
+                            // Debug.Log("thisUnit.availableCells[ c,r ] "+thisUnit.availableCells[ c,r ]);
                             lastX = c;
                             lastY = r;
                         }
