@@ -1705,37 +1705,27 @@ public class GlobalFunctions : MonoBehaviour {
     public static void SpawnSwordSwoosh(int parentX, int parentY, int targetX, int targetY){
 
         GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetSwordSwoosh();
-        Quaternion quatDir = Quaternion.Euler (0, 0, 0);
+        Quaternion quatDir = FindDirectionToFaceTarget(parentX, parentY, targetX, targetY);
         float destX = 0;
         float destY = 0;
 
-        // Debug.Log(parentX+" "+parentY+" is my parent! "+targetX+" "+targetY+" is my target!");
         if(parentX == targetX){
             // Debug.Log("X is the same!");
             destX = parentX;
             if(parentY < targetY){ // up
                 destY = (parentY + .5f);
-                quatDir =  Quaternion.Euler (0, 0, 0);
-                // Debug.Log("parentY is less than targtetY");
             }else{ // down
                 destY = (parentY - .5f);
-                quatDir =  Quaternion.Euler (0, 0, 180);
-                // Debug.Log("parentY is more than targtetY");
             }
         }else if(parentY == targetY){
             destY = parentY;
             // Debug.Log("Y is the same!");
             if(parentX < targetX){ // right
                 destX = (parentX + .5f);
-                quatDir =  Quaternion.Euler (0, 0, 270);
-                // Debug.Log("parentX is less than targtetX");
             }else{ // left
                 destX = (parentX - .5f);
-                quatDir =  Quaternion.Euler (0, 0, 90);
-                // Debug.Log("parentX is more than targtetX");
             }
         }
-        // Debug.Log("destination coords: "+destX+" "+destY);
         Instantiate(tilePrefab, new Vector3(destX, destY, 0), quatDir);
     }
 
@@ -1771,25 +1761,6 @@ public class GlobalFunctions : MonoBehaviour {
             }
             bool critHit = false;
 
-            // generate attack and defense scores
-            // - consider attacker's accuracy
-            // attackRoll += (int)attacker.accuracy;
-            // // - consider heavy attack penalty to accuracy
-            // if(battleOption == Enums.BattleOption.HeavyAttack){
-            //     attackRoll = attackRoll - GlobalVariables.heavyAttackAccPen;
-            // }
-            // defendRoll += (int)defender.defense;
-            // // - consider rallying bonus
-            // if(defender.rally){
-            //     defendRoll += GlobalVariables.rallyValue;
-            //     Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
-            // }
-            // // - consider terrain bonus to DEF
-            // if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
-            //     defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
-            //     Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
-            // }
-
             // consider critical hit (use critHit to remember locally)
 
             int critRoll = UnityEngine.Random.Range( 1,101 );
@@ -1801,32 +1772,6 @@ public class GlobalFunctions : MonoBehaviour {
 
             Debug.Log("BAL: "+attacker.balance+" attack roll before: "+attackRoll);
             Debug.Log("BAL: "+defender.balance+" defend roll before: "+defendRoll);
-
-            // factor BAL
-            // float attFactor = ((float)attacker.balance / 100f);
-            // float defFactor = ((float)defender.balance / 100f);
-            // if(attFactor < 1){
-            //     Debug.Log("AT: "+attFactor);
-            //     float attFactorMod = 1 - attFactor;
-            //     // Debug.Log("ATM: "+attFactorMod);
-            //     attFactorMod = attFactorMod * GlobalVariables.BALmod;
-            //     // Debug.Log("ATM: "+attFactorMod);
-            //     attFactor = 1 - attFactorMod;
-            //     Debug.Log("AT: "+attFactor);
-            // }
-            // if(defFactor < 1){
-            //     Debug.Log("DF: "+defFactor);
-            //     float defFactorMod = 1 - defFactor;
-            //     // Debug.Log("DFM: "+defFactorMod);
-            //     defFactorMod = defFactorMod * GlobalVariables.BALmod;
-            //     // Debug.Log("DFM: "+defFactorMod);
-            //     defFactor = 1 - defFactorMod;
-            //     Debug.Log("DT: "+defFactor);
-            // }
-            // Debug.Log("attackfactor: "+attFactor);
-            // Debug.Log("defend factor: "+defFactor);
-            // attackRoll = attackRoll * attFactor;
-            // defendRoll = defendRoll * defFactor;
 
             Debug.Log("attack roll: "+attackRoll);
             Debug.Log("defend roll: "+defendRoll);
@@ -2341,7 +2286,50 @@ public class GlobalFunctions : MonoBehaviour {
 
 
 
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ***  ******  ***          ***          ***  ***********          ***          ***  ******  *********************************************************
+    // ***  ******  *******  ***********  *******  ***************  ***********  *******  ******  *********************************************************
+    // ***  ******  *******  ***********  *******  ***************  ***********  ********  ****  **********************************************************
+    // ***  ******  *******  ***********  *******  ***************  ***********  *********      ***********************************************************
+    // ***  ******  *******  ***********  *******  ***************  ***********  ***********  *************************************************************
+    // ***    **    *******  ***********  *******  ***************  ***********  ***********  *************************************************************
+    // *****      *********  *******          ***          ***          *******  ***********  *************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
 
+
+
+
+    public static Quaternion FindDirectionToFaceTarget(int parentX, int parentY, int targetX, int targetY){
+
+        Quaternion quatDir = Quaternion.Euler (0, 0, 0);
+
+        // Debug.Log(parentX+" "+parentY+" is my parent! "+targetX+" "+targetY+" is my target!");
+        if(parentX == targetX){
+            // Debug.Log("X is the same!");
+            if(parentY < targetY){ // up
+                quatDir =  Quaternion.Euler (0, 0, 0);
+                // Debug.Log("parentY is less than targtetY");
+            }else{ // down
+                quatDir =  Quaternion.Euler (0, 0, 180);
+                // Debug.Log("parentY is more than targtetY");
+            }
+        }else if(parentY == targetY){
+            // Debug.Log("Y is the same!");
+            if(parentX < targetX){ // right
+                quatDir =  Quaternion.Euler (0, 0, 270);
+                // Debug.Log("parentX is less than targtetX");
+            }else{ // left
+                quatDir =  Quaternion.Euler (0, 0, 90);
+                // Debug.Log("parentX is more than targtetX");
+            }
+        }
+        return quatDir;
+
+    }
 
 
 
