@@ -2307,24 +2307,17 @@ public class GlobalFunctions : MonoBehaviour {
 
         Quaternion quatDir = Quaternion.Euler (0, 0, 0);
 
-        // Debug.Log(parentX+" "+parentY+" is my parent! "+targetX+" "+targetY+" is my target!");
         if(parentX == targetX){
-            // Debug.Log("X is the same!");
             if(parentY < targetY){ // up
-                quatDir =  Quaternion.Euler (0, 0, 0);
-                // Debug.Log("parentY is less than targtetY");
+                quatDir = Quaternion.Euler (0, 0, 0);
             }else{ // down
-                quatDir =  Quaternion.Euler (0, 0, 180);
-                // Debug.Log("parentY is more than targtetY");
+                quatDir = Quaternion.Euler (0, 0, 180);
             }
         }else if(parentY == targetY){
-            // Debug.Log("Y is the same!");
             if(parentX < targetX){ // right
-                quatDir =  Quaternion.Euler (0, 0, 270);
-                // Debug.Log("parentX is less than targtetX");
+                quatDir = Quaternion.Euler (0, 0, 270);
             }else{ // left
-                quatDir =  Quaternion.Euler (0, 0, 90);
-                // Debug.Log("parentX is more than targtetX");
+                quatDir = Quaternion.Euler (0, 0, 90);
             }
         }
         return quatDir;
