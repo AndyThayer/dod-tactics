@@ -11,8 +11,11 @@ public class HoverTile : MonoBehaviour {
 	private int posY;
 
 	void Start(){
-		posX = (int)this.transform.position.x;
-		posY = (int)this.transform.position.y;
+		// posX = (int)this.transform.position.x;
+		// posY = (int)this.transform.position.y;
+		posX = this.GetComponent<GameTile>().posX;
+		posY = this.GetComponent<GameTile>().posY;
+		// Debug.Log(this.GetComponent<GameTile>().posX);
 	}
 
 	void Awake() {

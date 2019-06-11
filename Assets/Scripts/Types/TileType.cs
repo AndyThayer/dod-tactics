@@ -11,8 +11,11 @@ public class TileType {
 	public Enums.TileType tileType;
 	public int movementCost;
     public int staminaCost;
+
 	public int defenseMod;
     public string name;
+    public int posX;
+    public int posY;
 
     public GameObject tilePrefab;
 

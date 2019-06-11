@@ -109,9 +109,6 @@ public class GlobalFunctions : MonoBehaviour {
 
     public void LoadMapFromTilemap(){
 
-        // GameObject tilePrefab;
-        // Enums.TileType type;
-        // GameObject MT = GameObject.Find("Map Tiles");
         int posX;
         int posY;
         TileBase tile;
@@ -218,9 +215,14 @@ public class GlobalFunctions : MonoBehaviour {
         // spawn prefab, set its name, and add it to parent container
         GameObject tilePrefabGO = Instantiate(tilePrefab, new Vector3(posX, posY, 0), Quaternion.identity);
         tilePrefabGO.name = posX + "_" + posY + "_" + rawName + "_tile";
-        tilePrefabGO.transform.parent = MT.transform;
         tilePrefabGO.GetComponent<GameTile>().SetTileType(type);
+        tilePrefabGO.GetComponent<GameTile>().SetPosX(posX);
+        tilePrefabGO.GetComponent<GameTile>().SetPosY(posY);
+        tilePrefabGO.transform.parent = MT.transform;
+
         tile.tilePrefab = tilePrefabGO;
+        tile.posX = posX;
+        tile.posY = posY;
 
         GlobalVariables.tilesMatrix[ posX,posY ] = (tile);
     }
@@ -841,6 +843,8 @@ public class GlobalFunctions : MonoBehaviour {
 							tilePrefabGO.GetComponent<HUDProperties>().parentID = thisChar.unitID;
                             tilePrefabGO.GetComponent<HUDProperties>().parentX = posX;
                             tilePrefabGO.GetComponent<HUDProperties>().parentY = posY;
+                            tilePrefabGO.GetComponent<HUDProperties>().posX = c;
+                            tilePrefabGO.GetComponent<HUDProperties>().posY = r;
 							tilePrefabGO.name = "available_cell:_"+thisChar.unitType.ToString()+"_("+thisChar.unitID+")_"+c+"_"+r;
                             // Debug.Log(c+" "+r+" :"+GlobalVariables.unitsMatrix[ posX,posY ].availableCellsSTA[ c,r ]);
 						}
@@ -1693,6 +1697,8 @@ public class GlobalFunctions : MonoBehaviour {
                         tilePrefabGO.GetComponent<HUDProperties>().parentID = thisChar.unitID;
                         tilePrefabGO.GetComponent<HUDProperties>().parentX = posX;
                         tilePrefabGO.GetComponent<HUDProperties>().parentY = posY;
+                        tilePrefabGO.GetComponent<HUDProperties>().posX = c;
+                        tilePrefabGO.GetComponent<HUDProperties>().posY = r;                        
 						tilePrefabGO.name = "threat_cell:_"+thisChar.unitType.ToString()+"_("+thisChar.unitID+")_"+c+"_"+r;
                     }
                     

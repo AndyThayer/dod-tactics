@@ -23,8 +23,8 @@ public class HoverIcon : MonoBehaviour {
 
 	void Start(){
 		
-		posX = (int)this.transform.position.x;
-		posY = (int)this.transform.position.y;
+		// posX = (int)this.transform.position.x;
+		// posY = (int)this.transform.position.y;
 		anim = GetComponent<Animator>();
 
 		lightAttack = this.gameObject.GetComponent<IconProperties>().lightAttack;

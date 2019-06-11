@@ -10,4 +10,7 @@ public class HUDProperties : MonoBehaviour {
 	public int parentX;
 	public int parentY;
 
+	public int posX;
+	public int posY;
+
 }

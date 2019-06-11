@@ -11,8 +11,10 @@ public class HoverThreat : MonoBehaviour {
 
 	void Start(){
 		
-		posX = (int)this.transform.position.x;
-		posY = (int)this.transform.position.y;
+		// posX = (int)this.transform.position.x;
+		// posY = (int)this.transform.position.y;
+		posX = this.gameObject.GetComponent<HUDProperties>().posX;
+		posY = this.gameObject.GetComponent<HUDProperties>().posY;		
 	}
 
 	void Awake() {
