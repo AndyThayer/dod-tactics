@@ -81,6 +81,10 @@ public class MovementUnit : MonoBehaviour {
 	}
 
 	public void MoveUnit(int parX, int parY, int posX, int posY){
+		parentX = parX;
+		parentY = parY;
+		// consume unit's ability to move again this turn
+		GlobalVariables.unitsMatrix[ parentX,parentY ].canMove = false;
 		// hide ready unit cursor
 		GlobalFunctions.CleanUpOldHUDreadyUnit();
 		// refresh class variables
@@ -88,8 +92,7 @@ public class MovementUnit : MonoBehaviour {
 		totalNodes = 0;
 		// set local variables
 		int counter = 0;
-		parentX = parX;
-		parentY = parY;
+
 		foreach(MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY].availablePaths[ posX,posY ] ){
 			counter++;
 			// skip the "last" (actually the first) node because the direction is defaulted to UP
@@ -134,8 +137,6 @@ public class MovementUnit : MonoBehaviour {
 	}
 
 	private void cleanUpAfterMove(int parentX, int parentY, int targetX, int targetY){
-		// consume unit's ability to move again this turn
-		GlobalVariables.unitsMatrix[ parentX,parentY ].canMove = false;
 
 		// SELECT this unit (checkForEndOfTurn will UN-SELECT it if that's what should happen)
 		GlobalVariables.selectedUnit = new Vector3Int(targetX,targetY,0);

@@ -548,12 +548,30 @@ public class GlobalFunctions : MonoBehaviour {
         int MOVcost = GlobalVariables.tilesMatrix[ posX,posY ].movementCost;
         int STAcost = GlobalVariables.tilesMatrix[ posX,posY ].staminaCost;
         switch(GlobalVariables.tilesMatrix[ posX,posY ].tileType){
+            case Enums.TileType.Grass:
+                if(thisUnit.passThroughGrass){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;
             case Enums.TileType.GrassRough:
                 if(thisUnit.passThroughGrassRough){
                     MOVcost = 1;
                     STAcost = 1;
                 }
                 break;
+            case Enums.TileType.Woods:
+                if(thisUnit.passThroughWoods){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;     
+            case Enums.TileType.WoodsDense:
+                if(thisUnit.passThroughWoodsDense){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;                           
             case Enums.TileType.WaterShallow:
                 if(thisUnit.passThroughWaterShallow){
                     MOVcost = 1;
@@ -2072,12 +2090,12 @@ public class GlobalFunctions : MonoBehaviour {
             Debug.Log("Prepping "+thisUnit.name+" for it's turn!!!!");
             AIProcessNPCTurn(GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY);
             teamOne = false;
+        }else{
+            thisUnit.canAct = true;
+            thisUnit.canMove = true;
+            thisUnit.rally = false;
         }
         
-        thisUnit.canAct = true;
-        thisUnit.canMove = true;
-        thisUnit.rally = false;
-
         return teamOne;
     }
 
@@ -2106,6 +2124,12 @@ public class GlobalFunctions : MonoBehaviour {
      */
     public static void AIProcessNPCTurn( int npcX, int npcY ){
         Debug.Log("AIProcessNPCTurn");
+
+        UnitType thisUnit = GlobalVariables.unitsMatrix [ npcX,npcY ];
+        thisUnit.canAct = true;
+        thisUnit.canMove = true;
+        thisUnit.rally = false;
+
         UnitType nearestThreat = AIDetermineNearestThreat(npcX,npcY);
         // Debug.Log("nearest threat: "+nearestThreat.npcX+"-"+nearestThreat.npcY);
         // if there is no "nearest threat", then bail out!
@@ -2114,24 +2138,31 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // true if enemy is far, false if enemy is near
         bool foeIsAdjacent = AIDetermineIfThreatIsAdjacent(nearestThreat, npcX, npcY); 
-        // Debug.Log("<---------------------------------------------- foeIsAdjacent is <"+foeIsAdjacent+" >");
 
         Vector2Int targetTile;  
         if(!foeIsAdjacent){
-            targetTile = AIDetermineBestTargetTile(GlobalVariables.unitsMatrix[ npcX,npcY ], nearestThreat);
+            targetTile = AIDetermineBestTargetTile(thisUnit, nearestThreat);
         }else{
             targetTile = new Vector2Int(npcX,npcY); 
         }
-
-        // if(targetTile.x != npcX || targetTile.y != npcY){
+        
         if(!foeIsAdjacent){
             CleanUpOldHUDreadyUnit();
             DisplayAvailableCells(npcX, npcY);
             DisplayPathCells(targetTile.x,targetTile.y, npcX, npcY);
-            GlobalVariables.unitsMatrix[ npcX,npcY ].unitPrefab.GetComponent<MovementUnit>().MoveUnit(npcX,npcY,targetTile.x,targetTile.y);
+            thisUnit.unitPrefab.GetComponent<MovementUnit>().MoveUnit(npcX,npcY,targetTile.x,targetTile.y);
         }
-        CleanUpOldHUDreadyUnit();
-        
+        if(thisUnit.canAct){
+            Debug.Log("<------------------------ enemy can act");
+        }else{
+            Debug.Log("<----------------------- enemy can NOT act");
+        }
+        if(thisUnit.canMove){
+            Debug.Log("<------------------------ enemy can move");
+        }else{
+            Debug.Log("<----------------------- enemy can NOT move");
+        }
+        CleanUpOldHUDreadyUnit();        
     }
 
     /*
@@ -2272,10 +2303,8 @@ public class GlobalFunctions : MonoBehaviour {
                 //   ( GlobalVariables.unitsMatrix[ c,r ] == null || (c == thisUnit.posX && r == thisUnit.posY) ) &&       // includes self 
                     Int32.Parse(thisUnit.availableCellsSTA[ c,r ]) >= 0 ){
                         thisDistance = AICalculateDistance(nearestThreat.posX, nearestThreat.posY, c, r);
-                        // Debug.Log("distance between "+c+"-"+r+" and "+nearestThreat.posX+"-"+nearestThreat.posY+" is "+thisDistance);
                         if(thisDistance < maxDistance){
                             maxDistance = thisDistance;
-                            // Debug.Log("thisUnit.availableCells[ c,r ] "+thisUnit.availableCells[ c,r ]);
                             lastX = c;
                             lastY = r;
                         }

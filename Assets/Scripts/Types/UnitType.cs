@@ -155,6 +155,7 @@ public class UnitType {
                 lowDamage = 1;
                 highDamage = 2; // 2
                 // traits
+                passThroughGrass = true;
                 passThroughGrassRough = true;
                 passThroughWaterShallow = true;
                 passThroughWaterDeep = true;
