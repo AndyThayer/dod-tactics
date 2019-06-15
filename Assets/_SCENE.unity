@@ -6182,8 +6182,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 515, y: 270.3625}
-  m_SizeDelta: {x: 175, y: 18.724976}
+  m_AnchoredPosition: {x: 508.7525, y: 270.3625}
+  m_SizeDelta: {x: 187.505, y: 18.72}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1835105668
 MonoBehaviour:
@@ -6267,8 +6267,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 428.25003, y: -339}
-  m_SizeDelta: {x: 1.5, y: -54}
+  m_AnchoredPosition: {x: 422, y: -339}
+  m_SizeDelta: {x: 14.0000305, y: -54}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1847392480
 MonoBehaviour:
@@ -6524,36 +6524,48 @@ MonoBehaviour:
     staminaCost: 0
     defenseMod: 0
     name: 
+    posX: 0
+    posY: 0
     tilePrefab: {fileID: 0}
   - tileType: 1
     movementCost: 2
     staminaCost: 0
     defenseMod: 0
     name: 
+    posX: 0
+    posY: 0
     tilePrefab: {fileID: 0}
   - tileType: 2
     movementCost: 2
     staminaCost: 0
     defenseMod: 0
     name: 
+    posX: 0
+    posY: 0
     tilePrefab: {fileID: 0}
   - tileType: 3
     movementCost: 3
     staminaCost: 0
     defenseMod: 0
     name: 
+    posX: 0
+    posY: 0
     tilePrefab: {fileID: 0}
   - tileType: 4
     movementCost: 3
     staminaCost: 0
     defenseMod: 0
     name: 
+    posX: 0
+    posY: 0
     tilePrefab: {fileID: 0}
   - tileType: 5
     movementCost: 9
     staminaCost: 0
     defenseMod: 0
     name: 
+    posX: 0
+    posY: 0
     tilePrefab: {fileID: 0}
   hunter: {fileID: 1139032371184294, guid: 7ee34ed021892154bbdc3b774ac237d1, type: 3}
   gatherer: {fileID: 1801229343295654, guid: 1ac5c7a2e19e0af4d81fb179982597a6, type: 3}
@@ -7059,8 +7071,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 445.0001, y: 215.7025}
-  m_SizeDelta: {x: 35, y: -63.405}
+  m_AnchoredPosition: {x: 438.75006, y: 215.7025}
+  m_SizeDelta: {x: 47.500122, y: -63.405}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2117898352
 MonoBehaviour:
@@ -7144,8 +7156,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 423.78998, y: 16.66}
-  m_SizeDelta: {x: -7.4, y: -24.33}
+  m_AnchoredPosition: {x: 417.5425, y: 16.66}
+  m_SizeDelta: {x: 5.085022, y: -24.33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2122349473
 MonoBehaviour:

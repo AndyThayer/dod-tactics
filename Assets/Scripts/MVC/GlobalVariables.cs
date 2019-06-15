@@ -145,6 +145,10 @@ public class GlobalVariables : MonoBehaviour {
         public static float BALmod = .5f; 
 
         public static float critMultiplier = 2f;
-        
+
+        public static int lightAttackSTAcost = 10;
+        public static int heavyAttackSTAcost = 30;
+        public static int lightAttackBALworth = 10;
+        public static int heavyAttackBALworth = 30;
 
 }

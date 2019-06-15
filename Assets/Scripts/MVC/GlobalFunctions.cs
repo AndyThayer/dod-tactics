@@ -996,9 +996,9 @@ public class GlobalFunctions : MonoBehaviour {
                 // col 2                
                 GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";                                
-                GlobalVariables.infoPanelTerrainText2.text += "Worth 10 BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "Worth "+GlobalVariables.lightAttackBALworth+" BAL";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
-                GlobalVariables.infoPanelTerrainText2.text += "Costs 10 STA";
+                GlobalVariables.infoPanelTerrainText2.text += "Costs "+GlobalVariables.lightAttackSTAcost+" STA";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
                 GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: 0";
                 // icon
@@ -1017,9 +1017,9 @@ public class GlobalFunctions : MonoBehaviour {
                 float highDamageTemp = GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
                 GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttackDmg(highDamageTemp);                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";                                
-                GlobalVariables.infoPanelTerrainText2.text += "Worth 30 BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "Worth "+GlobalVariables.heavyAttackBALworth+" BAL";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
-                GlobalVariables.infoPanelTerrainText2.text += "Costs 30 STA";                
+                GlobalVariables.infoPanelTerrainText2.text += "Costs "+GlobalVariables.heavyAttackSTAcost+" STA";                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";                                                
                 GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: "+GlobalVariables.heavyAttackAccMod;                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";  
@@ -1314,17 +1314,17 @@ public class GlobalFunctions : MonoBehaviour {
         if (location == Enums.StatusIconLocation.Middle) {
             statusIconName = "statusIconMIDDLE";
             statusIconTag = "Status_Icon_Middle";
-            statusIconX = 17.2f;
+            statusIconX = 17.09f;
             statusIconY = 6.15f;            
         }else if (location == Enums.StatusIconLocation.UpperLeft){
             statusIconName = "statusIconUPPERLEFT";
             statusIconTag = "Status_Icon_Top";
-            statusIconX = 17.2f;
+            statusIconX = 17.09f;
             statusIconY = 10.445f;             
         }else if (location == Enums.StatusIconLocation.UpperRight){
             statusIconName = "statusIconUPPERRIGHT";
             statusIconTag = "Status_Icon_Top";
-            statusIconX = 21.15f;
+            statusIconX = 21.3f;
             statusIconY = 10.445f;  
         }
 
@@ -1776,12 +1776,15 @@ public class GlobalFunctions : MonoBehaviour {
                 float highDamageTemp = attacker.highDamage;
                 damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)CombatCalculateHeavyAttackDmg(highDamageTemp)+1) );  
             }
-            // set up BAL value 
-            int BALvalue = 10; // initialize
+            // set up STA and BAL value 
+            int BALvalue = GlobalVariables.lightAttackBALworth; // initialize
+            int STAvalue = GlobalVariables.lightAttackSTAcost; // initialize
             if(battleOption == Enums.BattleOption.LightAttack){
-                BALvalue = 10;
+                STAvalue = GlobalVariables.lightAttackSTAcost;
+                BALvalue = GlobalVariables.lightAttackBALworth;
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
-                BALvalue = 30; 
+                STAvalue = GlobalVariables.heavyAttackSTAcost;
+                BALvalue = GlobalVariables.heavyAttackBALworth; 
             }
             bool critHit = false;
 
@@ -1801,10 +1804,12 @@ public class GlobalFunctions : MonoBehaviour {
             Debug.Log("defend roll: "+defendRoll);
 
             // conduct attack
+                // whether hit or miss
+                attacker.stamina = LessThanZero(attacker.stamina - STAvalue);
                 // HIT!
             if(attackRoll >= defendRoll){ 
                 defender.hitPoints = LessThanZero(defender.hitPoints - damageRoll);
-                defender.balance = LessThanZero(defender.balance - BALvalue);
+                defender.balance = LessThanZero(defender.balance - BALvalue); // if hit then defender loses BAL
                 if(critHit){
                     Debug.Log("critical hit!");
                     GlobalVariables.infoPanelTopText.text += "Critical hit! ";
@@ -1813,7 +1818,7 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.infoPanelTopText.text += attacker.name+" deals "+damageRoll+" damage to "+defender.name+" with "+battleOption.ToString()+".\n\n";
                 // MISS!
             }else{ 
-                attacker.balance = LessThanZero(attacker.balance - BALvalue);
+                attacker.balance = LessThanZero(attacker.balance - BALvalue); // if miss then attacker loses BAL
                 Debug.Log("attacker missed!");
                 GlobalVariables.infoPanelTopText.text = attacker.name+" attacked "+defender.name+" but missed!\n\n";
             }
@@ -1848,15 +1853,14 @@ public class GlobalFunctions : MonoBehaviour {
         // factor BAL
         float attFactor = ((float)attacker.balance / 100f);
         if(attFactor < 1){
-            Debug.Log("AT: "+attFactor);
+            // Debug.Log("AT: "+attFactor);
             float attFactorMod = 1 - attFactor;
             // Debug.Log("ATM: "+attFactorMod);
             attFactorMod = attFactorMod * GlobalVariables.BALmod;
             // Debug.Log("ATM: "+attFactorMod);
             attFactor = 1 - attFactorMod;
-            Debug.Log("AT: "+attFactor);
+            // Debug.Log("AT: "+attFactor);
         }
-        // Debug.Log("attackfactor: "+attFactor);
         attackRoll = attackRoll * attFactor;
 
         return attackRoll;
@@ -1965,10 +1969,10 @@ public class GlobalFunctions : MonoBehaviour {
         UnitType thisChar = GlobalVariables.unitsMatrix[ posX,posY ];
         switch(thisChar.battleOption){
             case Enums.BattleOption.LightAttack:
-                thisChar.stamina = LessThanZero(thisChar.stamina - 10);
+                thisChar.stamina = LessThanZero(thisChar.stamina - GlobalVariables.lightAttackSTAcost);
                 break;
             case Enums.BattleOption.HeavyAttack:
-                thisChar.stamina = LessThanZero(thisChar.stamina - 30);
+                thisChar.stamina = LessThanZero(thisChar.stamina - GlobalVariables.heavyAttackSTAcost);
                 break;
             case Enums.BattleOption.Rally:
                 // thisChar.stamina = LessThanZero(thisChar.stamina - 10);
