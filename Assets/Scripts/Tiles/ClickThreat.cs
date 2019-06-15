@@ -32,6 +32,7 @@ public class ClickThreat : MonoBehaviour {
 		// process attack
 		GlobalFunctions.CombatAttack(parentX,parentY,targetX,targetY);
 		GlobalFunctions.UpdateStamina(parentX,parentY);
+
 		// reflect updated STA	
 		GlobalFunctions.DisplayTileInfo(parentX, parentY, true, false); 
 
@@ -46,6 +47,9 @@ public class ClickThreat : MonoBehaviour {
 		// change facing
 		Quaternion quatDir = GlobalFunctions.FindDirectionToFaceTarget(parentX, parentY, targetX, targetY);
 		GlobalVariables.unitsMatrix[ parentX,parentY ].unitPrefab.transform.rotation = quatDir;
+
+		// clean up
+		GlobalFunctions.CleanUpAfterAction(parentX,parentY);
 
 	}
 

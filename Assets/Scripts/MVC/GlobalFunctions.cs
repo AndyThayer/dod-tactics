@@ -1776,14 +1776,11 @@ public class GlobalFunctions : MonoBehaviour {
                 float highDamageTemp = attacker.highDamage;
                 damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)CombatCalculateHeavyAttackDmg(highDamageTemp)+1) );  
             }
-            // set up STA and BAL value 
+            // set up BAL value 
             int BALvalue = GlobalVariables.lightAttackBALworth; // initialize
-            int STAvalue = GlobalVariables.lightAttackSTAcost; // initialize
             if(battleOption == Enums.BattleOption.LightAttack){
-                STAvalue = GlobalVariables.lightAttackSTAcost;
                 BALvalue = GlobalVariables.lightAttackBALworth;
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
-                STAvalue = GlobalVariables.heavyAttackSTAcost;
                 BALvalue = GlobalVariables.heavyAttackBALworth; 
             }
             bool critHit = false;
@@ -1804,8 +1801,6 @@ public class GlobalFunctions : MonoBehaviour {
             Debug.Log("defend roll: "+defendRoll);
 
             // conduct attack
-                // whether hit or miss
-                attacker.stamina = LessThanZero(attacker.stamina - STAvalue);
                 // HIT!
             if(attackRoll >= defendRoll){ 
                 defender.hitPoints = LessThanZero(defender.hitPoints - damageRoll);
@@ -1832,7 +1827,7 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // consume attacker's ability to act again this turn
         GlobalVariables.unitsMatrix[ parentX,parentY ].canAct = false;
-        GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption = Enums.BattleOption.None;
+
 		// clean up TOP status icons
 		foreach(GameObject statusIcon in GameObject.FindGameObjectsWithTag("Status_Icon_Top")){
 			Destroy(statusIcon);
@@ -2101,6 +2096,10 @@ public class GlobalFunctions : MonoBehaviour {
         }
         
         return teamOne;
+    }
+
+    public static void CleanUpAfterAction(int parentX, int parentY){
+        GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption = Enums.BattleOption.None;
     }
 
 
