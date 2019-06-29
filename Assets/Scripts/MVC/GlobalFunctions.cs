@@ -1591,10 +1591,10 @@ public class GlobalFunctions : MonoBehaviour {
             UpdateWhoIsNext();
         }
 
-		Debug.Log("\nAfter sort by initiative:");
+		// Debug.Log("\nAfter sort by initiative:");
         foreach (Initiative init in GlobalVariables.initRoster)
         {
-            Debug.Log("Inititive: "+init.initiative+" UnitID: "+init.unitID);
+            // Debug.Log("Inititive: "+init.initiative+" UnitID: "+init.unitID);
         }
 
         GlobalVariables.round++;
@@ -2003,7 +2003,7 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void CheckForEndOfTurn(int posX, int posY){
         UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
-        Debug.Log("CheckForEndOfTurn()");
+        // Debug.Log("CheckForEndOfTurn()");
         // if this unit is done attacking, and moving
         if( !thisUnit.canAct && !thisUnit.canMove ){
 
@@ -2165,8 +2165,19 @@ public class GlobalFunctions : MonoBehaviour {
         }else{
             Debug.Log("<----------------------- enemy can NOT move");
         }
+
+        if(thisUnit.canAct){     
+            if(GlobalVariables.moving){
+                Instance.StartCoroutine(Instance.AIWaitToStopMoving());
+            }else{
+                // AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat)
+            }            
+            // Debug.Log("<========================== after");
+        }
+ 
         CleanUpOldHUDreadyUnit();        
     }
+
 
     /*
         Determine if threat is adjacent to NPC
@@ -2321,6 +2332,20 @@ public class GlobalFunctions : MonoBehaviour {
         return bestTile;
     } // end AIDetermineBestTargetTile
 
+    IEnumerator AIWaitToStopMoving(){
+        yield return new WaitUntil(() => GlobalVariables.moving == false);
+        // AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat)
+    } 
+    
+    public static void AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat){
+        if(GlobalVariables.moving){
+            // Debug.Log("I'm moving  still though dude!!!!!!");
+        }
+        while(!GlobalVariables.moving){
+            // Debug.Log("Finally not moving any more!!!!!");
+        }
+    }
+
 
 
 
@@ -2361,6 +2386,7 @@ public class GlobalFunctions : MonoBehaviour {
         return quatDir;
 
     }
+
 
 
 

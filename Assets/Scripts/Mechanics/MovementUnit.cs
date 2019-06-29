@@ -54,6 +54,7 @@ public class MovementUnit : MonoBehaviour {
 					it++;
 					
 					if(it >= avalablePaths.Count){
+						GlobalVariables.moving = false;
 						moving = false;
 						
 						// Debug.Log("case A");
@@ -64,11 +65,13 @@ public class MovementUnit : MonoBehaviour {
 
 				}
 			}else{
+				GlobalVariables.moving = false;
 				moving = false;
 				// Debug.Log("case B"); // not sure if this one is really firing
 			}
 
 			if(it >= avalablePaths.Count){
+				GlobalVariables.moving = false;
 				moving = false;
 			}
 
@@ -106,7 +109,8 @@ public class MovementUnit : MonoBehaviour {
 		destY = posY;
 		transform.localRotation = GlobalFunctions.FindDirection(avalablePaths[0].direction);
 		GlobalVariables.freezeHUD = true; // pause HUD or other game functionality
-		moving = true; // begin moving in update()
+		GlobalVariables.moving = true; // begin moving in update()
+		moving = true;
 
 		if(GlobalVariables.unitsMatrix[ parX,parY ].unitPrefab.GetComponent<UnitAnimations>() != null){
 			GlobalVariables.unitsMatrix[ parX,parY ].unitPrefab.GetComponent<UnitAnimations>().PlayWalking();
