@@ -10,7 +10,7 @@ public class GlobalVariables : MonoBehaviour {
 
         // number of tiles (height x width)
         public static int boardWidth = 16;
-        public static int boardHeight = 12;
+        public static int boardHeight = 12; 
 
         // number of pixels per tile (height x width)
         public static int tileSize = 32;
@@ -120,6 +120,8 @@ public class GlobalVariables : MonoBehaviour {
 
     // PATHFINDING
 
+        public static bool moving = false;
+
     // COMBAT
         public static List<Initiative> initRoster = new List<Initiative>();
         public static int round = 0;
@@ -145,6 +147,10 @@ public class GlobalVariables : MonoBehaviour {
         public static float BALmod = .5f; 
 
         public static float critMultiplier = 2f;
-        
+
+        public static int lightAttackSTAcost = 10;
+        public static int heavyAttackSTAcost = 30;
+        public static int lightAttackBALworth = 10;
+        public static int heavyAttackBALworth = 30;
 
 }

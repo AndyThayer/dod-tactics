@@ -54,6 +54,7 @@ public class MovementUnit : MonoBehaviour {
 					it++;
 					
 					if(it >= avalablePaths.Count){
+						GlobalVariables.moving = false;
 						moving = false;
 						
 						// Debug.Log("case A");
@@ -64,11 +65,13 @@ public class MovementUnit : MonoBehaviour {
 
 				}
 			}else{
+				GlobalVariables.moving = false;
 				moving = false;
 				// Debug.Log("case B"); // not sure if this one is really firing
 			}
 
 			if(it >= avalablePaths.Count){
+				GlobalVariables.moving = false;
 				moving = false;
 			}
 
@@ -81,6 +84,10 @@ public class MovementUnit : MonoBehaviour {
 	}
 
 	public void MoveUnit(int parX, int parY, int posX, int posY){
+		parentX = parX;
+		parentY = parY;
+		// consume unit's ability to move again this turn
+		GlobalVariables.unitsMatrix[ parentX,parentY ].canMove = false;
 		// hide ready unit cursor
 		GlobalFunctions.CleanUpOldHUDreadyUnit();
 		// refresh class variables
@@ -88,24 +95,27 @@ public class MovementUnit : MonoBehaviour {
 		totalNodes = 0;
 		// set local variables
 		int counter = 0;
-		parentX = parX;
-		parentY = parY;
-		foreach(MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY].avalablePaths[ posX,posY ] ){
+
+		foreach(MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY].availablePaths[ posX,posY ] ){
 			counter++;
 			// skip the "last" (actually the first) node because the direction is defaulted to UP
-			if(counter < GlobalVariables.unitsMatrix[ parentX,parentY].avalablePaths[ posX,posY ].Count){
+			if(counter < GlobalVariables.unitsMatrix[ parentX,parentY].availablePaths[ posX,posY ].Count){
 				// Debug.Log(mn.direction.ToString());
 				totalNodes++;
 			}
 		}
-		avalablePaths = GlobalVariables.unitsMatrix[ parentX,parentY].avalablePaths[ posX,posY ];
+		avalablePaths = GlobalVariables.unitsMatrix[ parentX,parentY].availablePaths[ posX,posY ];
 		destX = posX;
 		destY = posY;
 		transform.localRotation = GlobalFunctions.FindDirection(avalablePaths[0].direction);
 		GlobalVariables.freezeHUD = true; // pause HUD or other game functionality
-		moving = true; // begin moving in update()
-		// anim.Play("walking");
-		GlobalVariables.unitsMatrix[ parX,parY ].unitPrefab.GetComponent<UnitAnimations>().PlayWalking();
+		GlobalVariables.moving = true; // begin moving in update()
+		moving = true;
+
+		if(GlobalVariables.unitsMatrix[ parX,parY ].unitPrefab.GetComponent<UnitAnimations>() != null){
+			GlobalVariables.unitsMatrix[ parX,parY ].unitPrefab.GetComponent<UnitAnimations>().PlayWalking();
+		}
+		
 		movementPoints = (int)GlobalVariables.unitsMatrix[ parentX,parentY ].movementPoints;
 
 		// for(int c = 1; c < GlobalVariables.unitsMatrix[ parentX,parentY ].availableCells.GetLength(0); c++){
@@ -131,8 +141,6 @@ public class MovementUnit : MonoBehaviour {
 	}
 
 	private void cleanUpAfterMove(int parentX, int parentY, int targetX, int targetY){
-		// consume unit's ability to move again this turn
-		GlobalVariables.unitsMatrix[ parentX,parentY ].canMove = false;
 
 		// SELECT this unit (checkForEndOfTurn will UN-SELECT it if that's what should happen)
 		GlobalVariables.selectedUnit = new Vector3Int(targetX,targetY,0);

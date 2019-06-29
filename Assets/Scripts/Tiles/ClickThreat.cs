@@ -10,8 +10,8 @@ public class ClickThreat : MonoBehaviour {
 
 	void OnMouseDown() {
 
-		int posX = (int)this.transform.position.x;
-		int posY = (int)this.transform.position.y;
+		int targetX = (int)this.transform.position.x;
+		int targetY = (int)this.transform.position.y;
 
 		int parentX = this.GetComponent<HUDProperties>().parentX;
 		int parentY = this.GetComponent<HUDProperties>().parentY;
@@ -22,20 +22,17 @@ public class ClickThreat : MonoBehaviour {
 		GlobalFunctions.DestroyGameObject("battleOptionIcon");
 		GlobalFunctions.DestroyGameObject("statusIconLOWER");
 		GlobalFunctions.CleanUpCompareUnits();
-		// GlobalFunctions.DestroyGameObject("compareUnitIconAtt");
-		// GlobalFunctions.DestroyGameObject("compareUnitIconDef");
-		// GlobalVariables.infoPanelTopTextACC.text = "";
-		// GlobalVariables.infoPanelTopTextDEF.text = "";
 
-		GlobalFunctions.SpawnSwordSwoosh(parentX,parentY,posX,posY);
-		if(GlobalVariables.unitsMatrix[ posX,posY ] != null){
-			GlobalVariables.unitsMatrix[ posX,posY ].unitPrefab.GetComponent<UnitAnimations>().PlayBleed();
+		GlobalFunctions.SpawnSwordSwoosh(parentX,parentY,targetX,targetY);
+		if(GlobalVariables.unitsMatrix[ targetX,targetY ] != null){
+			GlobalVariables.unitsMatrix[ targetX,targetY ].unitPrefab.GetComponent<UnitAnimations>().PlayBleed();
 		}
 		// remove threat cells
 		GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 		// process attack
-		GlobalFunctions.CombatAttack(parentX,parentY,posX,posY);
+		GlobalFunctions.CombatAttack(parentX,parentY,targetX,targetY);
 		GlobalFunctions.UpdateStamina(parentX,parentY);
+
 		// reflect updated STA	
 		GlobalFunctions.DisplayTileInfo(parentX, parentY, true, false); 
 
@@ -43,11 +40,17 @@ public class ClickThreat : MonoBehaviour {
 		GlobalFunctions.RefreshUnitAvailabileCells(parentX,parentY);
 
 		// make sure you do this last, because it might NULL a unit!
-		GlobalFunctions.CheckForDeadUnit(posX,posY);
+		GlobalFunctions.CheckForDeadUnit(targetX,targetY);
 		GlobalFunctions.CheckForEndOfTurn(parentX,parentY); // before possibly NULLing parent
 		GlobalFunctions.CheckForDeadUnit(parentX,parentY);
 
+		// change facing
+		Quaternion quatDir = GlobalFunctions.FindDirectionToFaceTarget(parentX, parentY, targetX, targetY);
+		GlobalVariables.unitsMatrix[ parentX,parentY ].unitPrefab.transform.rotation = quatDir;
+
+		// clean up
+		GlobalFunctions.CleanUpAfterAction(parentX,parentY);
+
 	}
 
-	
 }

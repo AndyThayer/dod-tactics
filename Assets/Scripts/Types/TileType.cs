@@ -11,8 +11,11 @@ public class TileType {
 	public Enums.TileType tileType;
 	public int movementCost;
     public int staminaCost;
+
 	public int defenseMod;
     public string name;
+    public int posX;
+    public int posY;
 
     public GameObject tilePrefab;
 
@@ -51,8 +54,8 @@ public class TileType {
                 break;
             case Enums.TileType.WaterDeep:
                 name = "Deep Water";
-                movementCost = 9;
-                staminaCost = 25;
+                movementCost = 4;
+                staminaCost = 15;
 				defenseMod = -5;
                 break;
 			case Enums.TileType.Woods:

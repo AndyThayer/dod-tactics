@@ -6,6 +6,8 @@ public class GameTile : MonoBehaviour {
 	
 	// make an encapsulated variable (private, with getters and setters)
 	// for each public variable in class TileType
+	public int posX;
+    public int posY;
 
 	private Enums.TileType tileType;
 	// private int movementCost;
@@ -19,13 +21,20 @@ public class GameTile : MonoBehaviour {
 		tileType = tt;
 	}
 
-	// movementCost
-	// public int GetMovementCost(){
-	// 	return movementCost;
-	// }
+	public int GetPosX(){
+		return posX;
+	}
 
-	// public void SetMovementCost(int mc){
-	// 	movementCost = mc;
-	// }
+	public void SetPosX(int tilePosX){
+		posX = tilePosX;
+	}
+
+	public int GetPosY(){
+		return posY;
+	}
+
+	public void SetPosY(int tilePosY){
+		posY = tilePosY;
+	}
 
 }

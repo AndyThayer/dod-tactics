@@ -38,7 +38,10 @@ public class GlobalFunctions : MonoBehaviour {
     public TileType[] tileTypes;
 
     // unit prefabs
+    // - characters
      public GameObject hunter;
+     public GameObject gatherer;
+     // - monsters
      public GameObject barbed_toad;
      public GameObject saber_tooth_wolf;
 
@@ -98,17 +101,14 @@ public class GlobalFunctions : MonoBehaviour {
         }
     }
 
-    public static void InitializeBoardVariables(){
+    public static void InitializeBoardVariables(string mapName){
         GlobalVariables.grid = GameObject.FindGameObjectWithTag("Grid");
-		GlobalVariables.tilemapGO = GlobalVariables.grid.transform.Find("Tilemap").gameObject;
+		GlobalVariables.tilemapGO = GlobalVariables.grid.transform.Find(mapName).gameObject;
         GlobalVariables.tilemap = GlobalVariables.tilemapGO.GetComponent<Tilemap>();
     }   
 
     public void LoadMapFromTilemap(){
 
-        // GameObject tilePrefab;
-        // Enums.TileType type;
-        // GameObject MT = GameObject.Find("Map Tiles");
         int posX;
         int posY;
         TileBase tile;
@@ -215,9 +215,14 @@ public class GlobalFunctions : MonoBehaviour {
         // spawn prefab, set its name, and add it to parent container
         GameObject tilePrefabGO = Instantiate(tilePrefab, new Vector3(posX, posY, 0), Quaternion.identity);
         tilePrefabGO.name = posX + "_" + posY + "_" + rawName + "_tile";
-        tilePrefabGO.transform.parent = MT.transform;
         tilePrefabGO.GetComponent<GameTile>().SetTileType(type);
+        tilePrefabGO.GetComponent<GameTile>().SetPosX(posX);
+        tilePrefabGO.GetComponent<GameTile>().SetPosY(posY);
+        tilePrefabGO.transform.parent = MT.transform;
+
         tile.tilePrefab = tilePrefabGO;
+        tile.posX = posX;
+        tile.posY = posY;
 
         GlobalVariables.tilesMatrix[ posX,posY ] = (tile);
     }
@@ -228,14 +233,16 @@ public class GlobalFunctions : MonoBehaviour {
         // create an instance and add it to the matrix
         UnitType character = new UnitType(type);
         // initialze a list in each index of availablePaths
-        for(int c = 1; c < character.avalablePaths.GetLength(0); c++){
-            for(int r = 1; r < character.avalablePaths.GetLength(1); r++){
+        for(int c = 1; c < character.availablePaths.GetLength(0); c++){
+            for(int r = 1; r < character.availablePaths.GetLength(1); r++){
                 // character.avalablePaths[ c,r ] = new List<Vector3Int>();
-                character.avalablePaths[ c,r ] = new List<MovementNode>();
+                character.availablePaths[ c,r ] = new List<MovementNode>();
             }
         }
 
         character.team = team;
+        character.posX = posX;
+        character.posY = posY;
         GlobalVariables.unitsMatrix[posX,posY] = character;
 
         // determine which prefab to use
@@ -244,6 +251,9 @@ public class GlobalFunctions : MonoBehaviour {
             case Enums.UnitType.Hunter:
                 charPrefab = hunter;
                 break;
+            case Enums.UnitType.Gatherer:
+                charPrefab = gatherer;
+                break;                
             case Enums.UnitType.BarbedToad:
                 charPrefab = barbed_toad;
                 break;
@@ -281,15 +291,22 @@ public class GlobalFunctions : MonoBehaviour {
 
 
    
+    /*
+        params:
+        float movement          how many movement points to consider
+        float stamina           how many stamina points to consider
+        int posX                x coord of unit in question
+        int poxY                y coord of unit in question
+     */
     public static AvailableCells FindAvailableCells(float movement, float stamina, int posX, int posY){
         
         // reset each list in each index of availablePaths for this unit
-        for(int x = 1; x < GlobalVariables.unitsMatrix[ posX,posY ].avalablePaths.GetLength(0); x++){
-            for(int y = 1; y < GlobalVariables.unitsMatrix[ posX,posY ].avalablePaths.GetLength(1); y++){
-                GlobalVariables.unitsMatrix[ posX,posY ].avalablePaths[ x,y ].Clear();
+        for(int x = 1; x < GlobalVariables.unitsMatrix[ posX,posY ].availablePaths.GetLength(0); x++){
+            for(int y = 1; y < GlobalVariables.unitsMatrix[ posX,posY ].availablePaths.GetLength(1); y++){
+                GlobalVariables.unitsMatrix[ posX,posY ].availablePaths[ x,y ].Clear();
             }
         }
-
+      
         // create wrapper for MV and STA tallies
         AvailableCells ac = new AvailableCells();
 
@@ -300,15 +317,16 @@ public class GlobalFunctions : MonoBehaviour {
         ac.availableSTA = availableSTA;
         bool[,] considered = new bool[GlobalVariables.boardWidth+1,GlobalVariables.boardHeight+1];
         Vector3Int source = new Vector3Int(posX,posY,0);
-        // float startingPoints = movement;
-        // int thisMV;
-        // float MVcost;
+  
         ac.available[ source.x,source.y ] = movement.ToString();
         ac.availableSTA[ source.x,source.y ] = stamina.ToString();
         // summon GF to get around weird static function object reference req's
         GlobalFunctions GF = GameObject.Find("Controller").GetComponent<GlobalFunctions>();
         UnitType thisUnit = GlobalVariables.unitsMatrix [ posX,posY ];
         int STAdecrementer = 100; // evaluate STA trail from highest to lowest
+        if(stamina > 100){
+            STAdecrementer = (int)stamina;
+        }
 
         bool processing = true;
         int inc = 0;
@@ -439,8 +457,8 @@ public class GlobalFunctions : MonoBehaviour {
             MovementNode mn = new MovementNode();
             mn.node = new Vector3Int(c,r,0);
             mn.direction = direction;
-            // GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Add(new Vector3Int(c,r,0));
-            GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Add(mn);
+            // GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Add(new Vector3Int(c,r,0));
+            GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Add(mn);
             // Debug.Log(source.ToString() + ": c/r " + c + " " + r);
         }
 
@@ -500,13 +518,13 @@ public class GlobalFunctions : MonoBehaviour {
             MovementNode mn = new MovementNode();
             mn.node = new Vector3Int(c,r,0);
             mn.direction = direction;
-            // GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Add(new Vector3Int(c,r,0));
-            GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Add(mn);
+            // GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Add(new Vector3Int(c,r,0));
+            GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Add(mn);
             // Debug.Log(source.ToString() + ": c/r " + c + " " + r);
 
             if(c == source.x && r == source.y){
                 processing = false;
-                GlobalVariables.unitsMatrix[ source.x,source.y ].avalablePaths[ hoverX,hoverY ].Reverse();
+                GlobalVariables.unitsMatrix[ source.x,source.y ].availablePaths[ hoverX,hoverY ].Reverse();
             }
 
             inc++; // just a safety net to ensure that we don't infinitely loop
@@ -530,18 +548,42 @@ public class GlobalFunctions : MonoBehaviour {
         int MOVcost = GlobalVariables.tilesMatrix[ posX,posY ].movementCost;
         int STAcost = GlobalVariables.tilesMatrix[ posX,posY ].staminaCost;
         switch(GlobalVariables.tilesMatrix[ posX,posY ].tileType){
+            case Enums.TileType.Grass:
+                if(thisUnit.passThroughGrass){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;
             case Enums.TileType.GrassRough:
                 if(thisUnit.passThroughGrassRough){
                     MOVcost = 1;
                     STAcost = 1;
                 }
                 break;
+            case Enums.TileType.Woods:
+                if(thisUnit.passThroughWoods){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;     
+            case Enums.TileType.WoodsDense:
+                if(thisUnit.passThroughWoodsDense){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;                           
             case Enums.TileType.WaterShallow:
                 if(thisUnit.passThroughWaterShallow){
                     MOVcost = 1;
                     STAcost = 1;
                 }
                 break;
+            case Enums.TileType.WaterDeep:
+                if(thisUnit.passThroughWaterDeep){
+                    MOVcost = 1;
+                    STAcost = 1;
+                }
+                break;    
         }
         tc.STAcost = STAcost;
         tc.MOVcost = MOVcost;
@@ -600,6 +642,9 @@ public class GlobalFunctions : MonoBehaviour {
         // swap this unit's coords in the unitMatrix
         GlobalVariables.unitsMatrix[ desX,desY ] = GlobalVariables.unitsMatrix[ parX,parY ];
         GlobalVariables.unitsMatrix[ parX,parY ] = null;
+        // update ths unit's poxY and posY values
+        GlobalVariables.unitsMatrix[ desX,desY ].posX = desX;
+        GlobalVariables.unitsMatrix[ desX,desY ].posY = desY;        
         // update initRoster's positioning of this unit
         for(int i = 0; i < GlobalVariables.initRoster.Count; i++){
             if( GlobalVariables.initRoster[ i ].posX == parX && GlobalVariables.initRoster[ i ].posY == parY ){
@@ -733,7 +778,7 @@ public class GlobalFunctions : MonoBehaviour {
     // used to pass the prefab HUDAvailableCell
     public GameObject GetHUDAvailableCell(bool self = false){
         if(self){
-            return HUDAvailableCellSelf;
+            return HUDAvailableCellSelf;            
         }else{
             return HUDAvailableCell;
         }        
@@ -816,6 +861,8 @@ public class GlobalFunctions : MonoBehaviour {
 							tilePrefabGO.GetComponent<HUDProperties>().parentID = thisChar.unitID;
                             tilePrefabGO.GetComponent<HUDProperties>().parentX = posX;
                             tilePrefabGO.GetComponent<HUDProperties>().parentY = posY;
+                            tilePrefabGO.GetComponent<HUDProperties>().posX = c;
+                            tilePrefabGO.GetComponent<HUDProperties>().posY = r;
 							tilePrefabGO.name = "available_cell:_"+thisChar.unitType.ToString()+"_("+thisChar.unitID+")_"+c+"_"+r;
                             // Debug.Log(c+" "+r+" :"+GlobalVariables.unitsMatrix[ posX,posY ].availableCellsSTA[ c,r ]);
 						}
@@ -830,24 +877,23 @@ public class GlobalFunctions : MonoBehaviour {
 
     } // displayAvailableCells
 
-    public static void DisplayPathCells(int posX, int posY, int parentX, int parentY){
+    public static void DisplayPathCells(int targetX, int targetY, int parentX, int parentY){
         if( GlobalVariables.unitsMatrix[ parentX,parentY ] != null ){
 			
 			// CharacterType thisChar = GlobalVariables.unitsMatrix[ parentX,parentY ];
 			GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetHUDPathCell();
 
-            // foreach (Vector3Int v3 in GlobalVariables.unitsMatrix[ parentX,parentY ].avalablePaths[ posX,posY ])
-            foreach (MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY ].avalablePaths[ posX,posY ])
-            {
-                if ( !(mn.node.x == parentX && mn.node.y == parentY) ) {
-                    // GameObject tilePrefabGO = Instantiate(tilePrefab, new Vector3(v3.x, v3.y, 0), Quaternion.identity);
+            foreach (MovementNode mn in GlobalVariables.unitsMatrix[ parentX,parentY ].availablePaths[ targetX,targetY ]) {
+                
+                // for some reason team 1 has an extra movement node on their starting cell, but AI teams do not
+                if ( GlobalVariables.unitsMatrix[ parentX,parentY ].team != 1 || !(mn.node.x == parentX && mn.node.y == parentY) ) {
                     Instantiate(tilePrefab, new Vector3(mn.node.x, mn.node.y, 0), Quaternion.identity);
                 }
                 
             }
 			
 		}
-    } // displayAvailableCells
+    } // DisplayPathCells
 
     public static void UpdateHUDcursor(int posX, int posY){
 		CleanUpOldHUDcursor();
@@ -873,12 +919,13 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void UpdateHUDreadyUnit(int posX, int posY){
 		CleanUpOldHUDreadyUnit();
-		
+		// Debug.Log("UpdateHUDreadyUnit");
 		GlobalVariables.HUDReadyUnit.transform.position = new Vector3(posX,posY, 0);
 		GlobalVariables.HUDReadyUnit.SetActive(true);
 	}
 
 	public static void CleanUpOldHUDreadyUnit(){
+        // Debug.Log("CleanUpOldHUDreadyUnit");
 		GlobalVariables.HUDReadyUnit.SetActive(false);
 	}
 
@@ -949,9 +996,9 @@ public class GlobalFunctions : MonoBehaviour {
                 // col 2                
                 GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";                                
-                GlobalVariables.infoPanelTerrainText2.text += "Worth 10 BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "Worth "+GlobalVariables.lightAttackBALworth+" BAL";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
-                GlobalVariables.infoPanelTerrainText2.text += "Costs 10 STA";
+                GlobalVariables.infoPanelTerrainText2.text += "Costs "+GlobalVariables.lightAttackSTAcost+" STA";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
                 GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: 0";
                 // icon
@@ -970,9 +1017,9 @@ public class GlobalFunctions : MonoBehaviour {
                 float highDamageTemp = GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
                 GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttackDmg(highDamageTemp);                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";                                
-                GlobalVariables.infoPanelTerrainText2.text += "Worth 30 BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "Worth "+GlobalVariables.heavyAttackBALworth+" BAL";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
-                GlobalVariables.infoPanelTerrainText2.text += "Costs 30 STA";                
+                GlobalVariables.infoPanelTerrainText2.text += "Costs "+GlobalVariables.heavyAttackSTAcost+" STA";                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";                                                
                 GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: "+GlobalVariables.heavyAttackAccMod;                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";  
@@ -1267,17 +1314,17 @@ public class GlobalFunctions : MonoBehaviour {
         if (location == Enums.StatusIconLocation.Middle) {
             statusIconName = "statusIconMIDDLE";
             statusIconTag = "Status_Icon_Middle";
-            statusIconX = 17.2f;
+            statusIconX = 17.09f;
             statusIconY = 6.15f;            
         }else if (location == Enums.StatusIconLocation.UpperLeft){
             statusIconName = "statusIconUPPERLEFT";
             statusIconTag = "Status_Icon_Top";
-            statusIconX = 17.2f;
+            statusIconX = 17.09f;
             statusIconY = 10.445f;             
         }else if (location == Enums.StatusIconLocation.UpperRight){
             statusIconName = "statusIconUPPERRIGHT";
             statusIconTag = "Status_Icon_Top";
-            statusIconX = 21.15f;
+            statusIconX = 21.3f;
             statusIconY = 10.445f;  
         }
 
@@ -1509,6 +1556,7 @@ public class GlobalFunctions : MonoBehaviour {
 
 
     public static void UpdateInitiative(){
+        Debug.Log("UpdateInitiative()");
 
         GlobalVariables.initRoster.Clear();
 
@@ -1538,13 +1586,15 @@ public class GlobalFunctions : MonoBehaviour {
 			return a.CompareTo(b);
 		});
         // enable first unit
-        PrepForTurn();
-        UpdateWhoIsNext();
+        bool teamOne = PrepForTurn();
+        if(teamOne){
+            UpdateWhoIsNext();
+        }
 
-		Debug.Log("\nAfter sort by initiative:");
+		// Debug.Log("\nAfter sort by initiative:");
         foreach (Initiative init in GlobalVariables.initRoster)
         {
-            Debug.Log("Inititive: "+init.initiative+" UnitID: "+init.unitID);
+            // Debug.Log("Inititive: "+init.initiative+" UnitID: "+init.unitID);
         }
 
         GlobalVariables.round++;
@@ -1665,6 +1715,8 @@ public class GlobalFunctions : MonoBehaviour {
                         tilePrefabGO.GetComponent<HUDProperties>().parentID = thisChar.unitID;
                         tilePrefabGO.GetComponent<HUDProperties>().parentX = posX;
                         tilePrefabGO.GetComponent<HUDProperties>().parentY = posY;
+                        tilePrefabGO.GetComponent<HUDProperties>().posX = c;
+                        tilePrefabGO.GetComponent<HUDProperties>().posY = r;                        
 						tilePrefabGO.name = "threat_cell:_"+thisChar.unitType.ToString()+"_("+thisChar.unitID+")_"+c+"_"+r;
                     }
                     
@@ -1677,37 +1729,27 @@ public class GlobalFunctions : MonoBehaviour {
     public static void SpawnSwordSwoosh(int parentX, int parentY, int targetX, int targetY){
 
         GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetSwordSwoosh();
-        Quaternion quatDir = Quaternion.Euler (0, 0, 0);
+        Quaternion quatDir = FindDirectionToFaceTarget(parentX, parentY, targetX, targetY);
         float destX = 0;
         float destY = 0;
 
-        // Debug.Log(parentX+" "+parentY+" is my parent! "+targetX+" "+targetY+" is my target!");
         if(parentX == targetX){
             // Debug.Log("X is the same!");
             destX = parentX;
             if(parentY < targetY){ // up
                 destY = (parentY + .5f);
-                quatDir =  Quaternion.Euler (0, 0, 0);
-                // Debug.Log("parentY is less than targtetY");
             }else{ // down
                 destY = (parentY - .5f);
-                quatDir =  Quaternion.Euler (0, 0, 180);
-                // Debug.Log("parentY is more than targtetY");
             }
         }else if(parentY == targetY){
             destY = parentY;
             // Debug.Log("Y is the same!");
             if(parentX < targetX){ // right
                 destX = (parentX + .5f);
-                quatDir =  Quaternion.Euler (0, 0, 270);
-                // Debug.Log("parentX is less than targtetX");
             }else{ // left
                 destX = (parentX - .5f);
-                quatDir =  Quaternion.Euler (0, 0, 90);
-                // Debug.Log("parentX is more than targtetX");
             }
         }
-        // Debug.Log("destination coords: "+destX+" "+destY);
         Instantiate(tilePrefab, new Vector3(destX, destY, 0), quatDir);
     }
 
@@ -1735,32 +1777,13 @@ public class GlobalFunctions : MonoBehaviour {
                 damageRoll = UnityEngine.Random.Range( attacker.lowDamage,((int)CombatCalculateHeavyAttackDmg(highDamageTemp)+1) );  
             }
             // set up BAL value 
-            int BALvalue = 10; // initialize
+            int BALvalue = GlobalVariables.lightAttackBALworth; // initialize
             if(battleOption == Enums.BattleOption.LightAttack){
-                BALvalue = 10;
+                BALvalue = GlobalVariables.lightAttackBALworth;
             }else if(battleOption == Enums.BattleOption.HeavyAttack){
-                BALvalue = 30; 
+                BALvalue = GlobalVariables.heavyAttackBALworth; 
             }
             bool critHit = false;
-
-            // generate attack and defense scores
-            // - consider attacker's accuracy
-            // attackRoll += (int)attacker.accuracy;
-            // // - consider heavy attack penalty to accuracy
-            // if(battleOption == Enums.BattleOption.HeavyAttack){
-            //     attackRoll = attackRoll - GlobalVariables.heavyAttackAccPen;
-            // }
-            // defendRoll += (int)defender.defense;
-            // // - consider rallying bonus
-            // if(defender.rally){
-            //     defendRoll += GlobalVariables.rallyValue;
-            //     Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
-            // }
-            // // - consider terrain bonus to DEF
-            // if(GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus > 0){
-            //     defendRoll += GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus;
-            //     Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ targetX,targetY ].defenseBonus+" DEF!");
-            // }
 
             // consider critical hit (use critHit to remember locally)
 
@@ -1774,32 +1797,6 @@ public class GlobalFunctions : MonoBehaviour {
             Debug.Log("BAL: "+attacker.balance+" attack roll before: "+attackRoll);
             Debug.Log("BAL: "+defender.balance+" defend roll before: "+defendRoll);
 
-            // factor BAL
-            // float attFactor = ((float)attacker.balance / 100f);
-            // float defFactor = ((float)defender.balance / 100f);
-            // if(attFactor < 1){
-            //     Debug.Log("AT: "+attFactor);
-            //     float attFactorMod = 1 - attFactor;
-            //     // Debug.Log("ATM: "+attFactorMod);
-            //     attFactorMod = attFactorMod * GlobalVariables.BALmod;
-            //     // Debug.Log("ATM: "+attFactorMod);
-            //     attFactor = 1 - attFactorMod;
-            //     Debug.Log("AT: "+attFactor);
-            // }
-            // if(defFactor < 1){
-            //     Debug.Log("DF: "+defFactor);
-            //     float defFactorMod = 1 - defFactor;
-            //     // Debug.Log("DFM: "+defFactorMod);
-            //     defFactorMod = defFactorMod * GlobalVariables.BALmod;
-            //     // Debug.Log("DFM: "+defFactorMod);
-            //     defFactor = 1 - defFactorMod;
-            //     Debug.Log("DT: "+defFactor);
-            // }
-            // Debug.Log("attackfactor: "+attFactor);
-            // Debug.Log("defend factor: "+defFactor);
-            // attackRoll = attackRoll * attFactor;
-            // defendRoll = defendRoll * defFactor;
-
             Debug.Log("attack roll: "+attackRoll);
             Debug.Log("defend roll: "+defendRoll);
 
@@ -1807,7 +1804,7 @@ public class GlobalFunctions : MonoBehaviour {
                 // HIT!
             if(attackRoll >= defendRoll){ 
                 defender.hitPoints = LessThanZero(defender.hitPoints - damageRoll);
-                defender.balance = LessThanZero(defender.balance - BALvalue);
+                defender.balance = LessThanZero(defender.balance - BALvalue); // if hit then defender loses BAL
                 if(critHit){
                     Debug.Log("critical hit!");
                     GlobalVariables.infoPanelTopText.text += "Critical hit! ";
@@ -1816,7 +1813,7 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.infoPanelTopText.text += attacker.name+" deals "+damageRoll+" damage to "+defender.name+" with "+battleOption.ToString()+".\n\n";
                 // MISS!
             }else{ 
-                attacker.balance = LessThanZero(attacker.balance - BALvalue);
+                attacker.balance = LessThanZero(attacker.balance - BALvalue); // if miss then attacker loses BAL
                 Debug.Log("attacker missed!");
                 GlobalVariables.infoPanelTopText.text = attacker.name+" attacked "+defender.name+" but missed!\n\n";
             }
@@ -1830,7 +1827,7 @@ public class GlobalFunctions : MonoBehaviour {
         }
         // consume attacker's ability to act again this turn
         GlobalVariables.unitsMatrix[ parentX,parentY ].canAct = false;
-        GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption = Enums.BattleOption.None;
+
 		// clean up TOP status icons
 		foreach(GameObject statusIcon in GameObject.FindGameObjectsWithTag("Status_Icon_Top")){
 			Destroy(statusIcon);
@@ -1851,15 +1848,14 @@ public class GlobalFunctions : MonoBehaviour {
         // factor BAL
         float attFactor = ((float)attacker.balance / 100f);
         if(attFactor < 1){
-            Debug.Log("AT: "+attFactor);
+            // Debug.Log("AT: "+attFactor);
             float attFactorMod = 1 - attFactor;
             // Debug.Log("ATM: "+attFactorMod);
             attFactorMod = attFactorMod * GlobalVariables.BALmod;
             // Debug.Log("ATM: "+attFactorMod);
             attFactor = 1 - attFactorMod;
-            Debug.Log("AT: "+attFactor);
+            // Debug.Log("AT: "+attFactor);
         }
-        // Debug.Log("attackfactor: "+attFactor);
         attackRoll = attackRoll * attFactor;
 
         return attackRoll;
@@ -1876,9 +1872,12 @@ public class GlobalFunctions : MonoBehaviour {
             Debug.Log("rally bonus applied: +"+GlobalVariables.rallyValue+" DEF!");
         }
         // - consider terrain bonus to DEF
-        if(GlobalVariables.tilesMatrix [ posX,posY ].defenseMod > 0){
+        if(GlobalVariables.tilesMatrix [ posX,posY ].defenseMod != 0){
             defendRoll += GlobalVariables.tilesMatrix [ posX,posY ].defenseMod;
-            Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ posX,posY ].defenseMod+" DEF!");
+            if(GlobalVariables.tilesMatrix [ posX,posY ].defenseMod > 0){ // logic just for debug log
+                Debug.Log("terrain bonus applied: +"+GlobalVariables.tilesMatrix [ posX,posY ].defenseMod+" DEF!");
+            }
+            Debug.Log("terrain bonus applied: "+GlobalVariables.tilesMatrix [ posX,posY ].defenseMod+" DEF!");
         }
         // factor BAL
         float defFactor = ((float)defender.balance / 100f);
@@ -1950,6 +1949,7 @@ public class GlobalFunctions : MonoBehaviour {
     }
 
     public static void CombatEndTurn(int posX, int posY){
+        Debug.Log("CombatEndTurn()");
         // consumer unit's action and movement
         GlobalVariables.unitsMatrix [ posX,posY ].canAct = false;
         GlobalVariables.unitsMatrix [ posX,posY ].canMove = false;
@@ -1964,10 +1964,10 @@ public class GlobalFunctions : MonoBehaviour {
         UnitType thisChar = GlobalVariables.unitsMatrix[ posX,posY ];
         switch(thisChar.battleOption){
             case Enums.BattleOption.LightAttack:
-                thisChar.stamina = LessThanZero(thisChar.stamina - 10);
+                thisChar.stamina = LessThanZero(thisChar.stamina - GlobalVariables.lightAttackSTAcost);
                 break;
             case Enums.BattleOption.HeavyAttack:
-                thisChar.stamina = LessThanZero(thisChar.stamina - 30);
+                thisChar.stamina = LessThanZero(thisChar.stamina - GlobalVariables.heavyAttackSTAcost);
                 break;
             case Enums.BattleOption.Rally:
                 // thisChar.stamina = LessThanZero(thisChar.stamina - 10);
@@ -2003,6 +2003,7 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void CheckForEndOfTurn(int posX, int posY){
         UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        // Debug.Log("CheckForEndOfTurn()");
         // if this unit is done attacking, and moving
         if( !thisUnit.canAct && !thisUnit.canMove ){
 
@@ -2018,7 +2019,7 @@ public class GlobalFunctions : MonoBehaviour {
                 UpdateInitiative();
             }else{
                 // is this part necessary? don't we already do this in UpdateInitiative()?
-                PrepForTurn();
+                bool teamOne = PrepForTurn();
             }
             UpdateWhoIsNext();
 
@@ -2080,16 +2081,311 @@ public class GlobalFunctions : MonoBehaviour {
         }
     }
 
-    public static void PrepForTurn(){
-        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canAct = true;
-        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].canMove = true;
-        GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ].rally = false;
+    public static bool PrepForTurn(){
+        Debug.Log("PrepForTurn()");
+        bool teamOne = true;
+        UnitType thisUnit = GlobalVariables.unitsMatrix [ GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY ];
+        if(thisUnit.team != 1){
+            Debug.Log("Prepping "+thisUnit.name+" for it's turn!!!!");
+            AIProcessNPCTurn(GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY);
+            teamOne = false;
+        }else{
+            thisUnit.canAct = true;
+            thisUnit.canMove = true;
+            thisUnit.rally = false;
+        }
+        
+        return teamOne;
+    }
+
+    public static void CleanUpAfterAction(int parentX, int parentY){
+        GlobalVariables.unitsMatrix[ parentX,parentY ].battleOption = Enums.BattleOption.None;
+    }
+
+
+
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ******    ******          **************************************************************************************************************************
+    // ****   **   ********  ******************************************************************************************************************************
+    // ***  ******  *******  ******************************************************************************************************************************
+    // ***          *******  ******************************************************************************************************************************
+    // ***  ******  *******  ******************************************************************************************************************************
+    // ***  ******  *******  ******************************************************************************************************************************
+    // ***  ******  ***           *************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+
+
+
+    /*
+        params:
+        int posX        x coord of NPC
+        int posY        y coord of NPC
+     */
+    public static void AIProcessNPCTurn( int npcX, int npcY ){
+        Debug.Log("AIProcessNPCTurn");
+
+        UnitType thisUnit = GlobalVariables.unitsMatrix [ npcX,npcY ];
+        thisUnit.canAct = true;
+        thisUnit.canMove = true;
+        thisUnit.rally = false;
+
+        UnitType nearestThreat = AIDetermineNearestThreat(npcX,npcY);
+        // Debug.Log("nearest threat: "+nearestThreat.npcX+"-"+nearestThreat.npcY);
+        // if there is no "nearest threat", then bail out!
+        if (nearestThreat == null){
+            return;
+        }
+        // true if enemy is far, false if enemy is near
+        bool foeIsAdjacent = AIDetermineIfThreatIsAdjacent(nearestThreat, npcX, npcY); 
+
+        Vector2Int targetTile;  
+        if(!foeIsAdjacent){
+            targetTile = AIDetermineBestTargetTile(thisUnit, nearestThreat);
+        }else{
+            targetTile = new Vector2Int(npcX,npcY); 
+        }
+        
+        if(!foeIsAdjacent){
+            CleanUpOldHUDreadyUnit();
+            DisplayAvailableCells(npcX, npcY);
+            DisplayPathCells(targetTile.x,targetTile.y, npcX, npcY);
+            thisUnit.unitPrefab.GetComponent<MovementUnit>().MoveUnit(npcX,npcY,targetTile.x,targetTile.y);
+        }
+        if(thisUnit.canAct){
+            Debug.Log("<------------------------ enemy can act");
+        }else{
+            Debug.Log("<----------------------- enemy can NOT act");
+        }
+        if(thisUnit.canMove){
+            Debug.Log("<------------------------ enemy can move");
+        }else{
+            Debug.Log("<----------------------- enemy can NOT move");
+        }
+
+        if(thisUnit.canAct){     
+            if(GlobalVariables.moving){
+                Instance.StartCoroutine(Instance.AIWaitToStopMoving());
+            }else{
+                // AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat)
+            }            
+            // Debug.Log("<========================== after");
+        }
+ 
+        CleanUpOldHUDreadyUnit();        
+    }
+
+
+    /*
+        Determine if threat is adjacent to NPC
+     */
+    public static bool AIDetermineIfThreatIsAdjacent(UnitType nearestThreat, int npcX, int npcY){
+        bool foeIsAdjacent = false; // set to true if foe is adjacent to NPC
+        int threatAdjacentX = 0;
+        int threatAdjacentY = 0;
+        // above
+        threatAdjacentX = nearestThreat.posX;
+        threatAdjacentY = (nearestThreat.posY+1);
+        if(threatAdjacentX == npcX && threatAdjacentY == npcY){
+            foeIsAdjacent = true;
+        }
+        // below
+        threatAdjacentX = nearestThreat.posX;
+        threatAdjacentY = (nearestThreat.posY-1);    
+        if(threatAdjacentX == npcX && threatAdjacentY == npcY){
+            foeIsAdjacent = true;
+        }            
+        // left
+        threatAdjacentX = (nearestThreat.posX-1);
+        threatAdjacentY = nearestThreat.posY;        
+        if(threatAdjacentX == npcX && threatAdjacentY == npcY){
+            foeIsAdjacent = true;
+        }        
+        // right
+        threatAdjacentX = (nearestThreat.posX+1);
+        threatAdjacentY = nearestThreat.posY;   
+        if(threatAdjacentX == npcX && threatAdjacentY == npcY){
+            foeIsAdjacent = true;
+        }  
+        return foeIsAdjacent;
+    }
+
+    /*
+        Determine if threat is adjacent to or within availableCells of NPC
+     */
+    public static bool AIDetermineIfThreatIsNear(UnitType nearestThreat, int npcX, int npcY){
+        bool foeIsNear = false; // set to false if threat is within (or adjacent) existing availableCells
+        int threatAdjacentX = 0;
+        int threatAdjacentY = 0;
+        // above
+        threatAdjacentX = nearestThreat.posX;
+        threatAdjacentY = (nearestThreat.posY+1);
+        if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            foeIsNear = true;
+        }
+        // below
+        threatAdjacentX = nearestThreat.posX;
+        threatAdjacentY = (nearestThreat.posY-1);    
+        if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            foeIsNear = true;
+        }            
+        // left
+        threatAdjacentX = (nearestThreat.posX-1);
+        threatAdjacentY = nearestThreat.posY;        
+        if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            foeIsNear = true;
+        }        
+        // right
+        threatAdjacentX = (nearestThreat.posX+1);
+        threatAdjacentY = nearestThreat.posY;   
+        if(GlobalVariables.unitsMatrix[ npcX,npcY ].availableCells[ threatAdjacentX,threatAdjacentY ] != null){
+            foeIsNear = true;
+        }  
+        return foeIsNear;
+    }
+
+    /*
+        params:
+        int posX        x coord of NPC
+        int posY        y coord of NPC
+     */
+    public static UnitType AIDetermineNearestThreat(int posX, int posY){
+        // Debug.Log("AIDetermineNearestThreat");
+        UnitType thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        
+        // distance of nearest team 1 unit
+        float nearestDistance = 1000f;
+        // location of nearest team 1 unit
+        int nearX = 0;
+        int nearY = 0;
+
+        // loop through team 1 units (initRoster is NOT the way to loop here. use unitMatrix instead)
+        foreach(UnitType unit in GlobalVariables.unitsMatrix){
+            if(unit != null && unit.team == 1){  
+                float thisDistance = AICalculateDistance(posX, posY, unit.posX, unit.posY);
+                if(thisDistance < nearestDistance){
+                    nearestDistance = thisDistance;
+                    nearX = unit.posX;
+                    nearY = unit.posY;
+                }
+            }
+        }
+        return GlobalVariables.unitsMatrix[ nearX,nearY ];
+    }
+
+    /*
+        params:
+        int posX1               x coord of NPC 
+        int posY1               y coord of NPC
+        int posX2               x coord of team 1 unit 
+        int posY2               y coord of team 1 unit
+     */
+    public static float AICalculateDistance(int posX1, int posY1, int posX2, int posY2){
+        // Debug.Log("AICalculateDistance");
+        float distance = 0f;
+        float xDist = posX1 - posX2;
+        float yDist = posY1 - posY2;
+        // Debug.Log("xDist: "+xDist+" yDist: "+yDist);
+        if(xDist < 0){
+            xDist = xDist * -1;
+        }
+        if(yDist < 0){
+            yDist = yDist * -1;
+        }
+        distance = xDist + yDist - 1;
+        // Debug.Log("distance: "+distance);
+
+        return distance;
+    }
+
+    public static Vector2Int AIDetermineBestTargetTile(UnitType thisUnit, UnitType nearestThreat){
+        Vector2Int bestTile = new Vector2Int(0,0);
+
+        // determine best target cell among availableCells
+        int lastX = 0;
+        int lastY = 0;
+        float maxDistance = 10000f;
+        float thisDistance = 10000f;
+        for(int c = 1; c < thisUnit.availableCells.GetLength(0); c++){
+            for(int r = 1; r < thisUnit.availableCells.GetLength(1); r++){
+                if(thisUnit.availableCells[ c,r ] != null && 
+                    thisUnit.availableCellsSTA[ c,r ] != null &&
+                    GlobalVariables.unitsMatrix[ c,r ] == null &&                                   // doesn't include self
+                //   ( GlobalVariables.unitsMatrix[ c,r ] == null || (c == thisUnit.posX && r == thisUnit.posY) ) &&       // includes self 
+                    Int32.Parse(thisUnit.availableCellsSTA[ c,r ]) >= 0 ){
+                        thisDistance = AICalculateDistance(nearestThreat.posX, nearestThreat.posY, c, r);
+                        if(thisDistance < maxDistance){
+                            maxDistance = thisDistance;
+                            lastX = c;
+                            lastY = r;
+                        }
+                    }
+            }
+        }
+        // Debug.Log("LAST match: "+lastX+"-"+lastY);
+        bestTile.x = lastX;
+        bestTile.y = lastY;
+
+        return bestTile;
+    } // end AIDetermineBestTargetTile
+
+    IEnumerator AIWaitToStopMoving(){
+        yield return new WaitUntil(() => GlobalVariables.moving == false);
+        // AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat)
+    } 
+    
+    public static void AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat){
+        if(GlobalVariables.moving){
+            // Debug.Log("I'm moving  still though dude!!!!!!");
+        }
+        while(!GlobalVariables.moving){
+            // Debug.Log("Finally not moving any more!!!!!");
+        }
     }
 
 
 
 
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ***  ******  ***          ***          ***  ***********          ***          ***  ******  *********************************************************
+    // ***  ******  *******  ***********  *******  ***************  ***********  *******  ******  *********************************************************
+    // ***  ******  *******  ***********  *******  ***************  ***********  ********  ****  **********************************************************
+    // ***  ******  *******  ***********  *******  ***************  ***********  *********      ***********************************************************
+    // ***  ******  *******  ***********  *******  ***************  ***********  ***********  *************************************************************
+    // ***    **    *******  ***********  *******  ***************  ***********  ***********  *************************************************************
+    // *****      *********  *******          ***          ***          *******  ***********  *************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
+    // ****************************************************************************************************************************************************
 
+
+
+
+    public static Quaternion FindDirectionToFaceTarget(int parentX, int parentY, int targetX, int targetY){
+
+        Quaternion quatDir = Quaternion.Euler (0, 0, 0);
+
+        if(parentX == targetX){
+            if(parentY < targetY){ // up
+                quatDir = Quaternion.Euler (0, 0, 0);
+            }else{ // down
+                quatDir = Quaternion.Euler (0, 0, 180);
+            }
+        }else if(parentY == targetY){
+            if(parentX < targetX){ // right
+                quatDir = Quaternion.Euler (0, 0, 270);
+            }else{ // left
+                quatDir = Quaternion.Euler (0, 0, 90);
+            }
+        }
+        return quatDir;
+
+    }
 
 
 

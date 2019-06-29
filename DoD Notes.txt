@@ -1,0 +1,2 @@
+Aspect Ratio: 1365 x 765
+	Note: this is sometimes reset when the repo is cloned.
