@@ -994,11 +994,7 @@ public class GlobalFunctions : MonoBehaviour {
                 // col 1
 
                 // col 2                
-                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;                
-                GlobalVariables.infoPanelTerrainText2.text += "\n";                                
-                GlobalVariables.infoPanelTerrainText2.text += "Worth "+GlobalVariables.lightAttackBALworth+" BAL";
-                GlobalVariables.infoPanelTerrainText2.text += "\n";
-                GlobalVariables.infoPanelTerrainText2.text += "Costs "+GlobalVariables.lightAttackSTAcost+" STA";
+
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
                 GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: 0";
                 // icon
@@ -1960,6 +1956,43 @@ public class GlobalFunctions : MonoBehaviour {
         CheckForEndOfTurn(posX,posY);
     }
 
+    public static void CombatProcessAttack(int parentX, int parentY, int targetX, int targetY){
+        // reset ICON state
+		GlobalVariables.freezeIconHUD = false;
+		// GlobalFunctions.CleanUpBattleOptionIcons();
+		GlobalFunctions.DestroyGameObject("battleOptionIcon");
+		GlobalFunctions.DestroyGameObject("statusIconLOWER");
+		GlobalFunctions.CleanUpCompareUnits();
+
+		GlobalFunctions.SpawnSwordSwoosh(parentX,parentY,targetX,targetY);
+		if(GlobalVariables.unitsMatrix[ targetX,targetY ] != null){
+			GlobalVariables.unitsMatrix[ targetX,targetY ].unitPrefab.GetComponent<UnitAnimations>().PlayBleed();
+		}
+		// remove threat cells
+		GlobalFunctions.RemoveAvailableCellsFromAllUnits();
+		// process attack
+		GlobalFunctions.CombatAttack(parentX,parentY,targetX,targetY);
+		GlobalFunctions.UpdateStamina(parentX,parentY);
+
+		// reflect updated STA	
+		GlobalFunctions.DisplayTileInfo(parentX, parentY, true, false); 
+
+		// since STA might have changed, update availableCells
+		GlobalFunctions.RefreshUnitAvailabileCells(parentX,parentY);
+
+		// make sure you do this last, because it might NULL a unit!
+		GlobalFunctions.CheckForDeadUnit(targetX,targetY);
+		GlobalFunctions.CheckForEndOfTurn(parentX,parentY); // before possibly NULLing parent
+		GlobalFunctions.CheckForDeadUnit(parentX,parentY);
+
+		// change facing
+		Quaternion quatDir = GlobalFunctions.FindDirectionToFaceTarget(parentX, parentY, targetX, targetY);
+		GlobalVariables.unitsMatrix[ parentX,parentY ].unitPrefab.transform.rotation = quatDir;
+
+		// clean up
+		GlobalFunctions.CleanUpAfterAction(parentX,parentY);
+    }
+
     public static void UpdateStamina(int posX, int posY){
         UnitType thisChar = GlobalVariables.unitsMatrix[ posX,posY ];
         switch(thisChar.battleOption){
@@ -2012,7 +2045,7 @@ public class GlobalFunctions : MonoBehaviour {
 
             // un-SELECT this unit
 			GlobalVariables.selectedUnit = new Vector3Int(0,0,0); // this doesn't seem to work?
-            Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
+            // Debug.Log(GlobalVariables.unitsMatrix[ posX,posY ].name+" finished it's turn.");
             GlobalVariables.infoPanelTopText.text += thisUnit.name+" finished it's turn.\n\n";
 
             if(GlobalVariables.initRoster.Count <= 0){
@@ -2128,54 +2161,30 @@ public class GlobalFunctions : MonoBehaviour {
     public static void AIProcessNPCTurn( int npcX, int npcY ){
         Debug.Log("AIProcessNPCTurn");
 
-        UnitType thisUnit = GlobalVariables.unitsMatrix [ npcX,npcY ];
-        thisUnit.canAct = true;
-        thisUnit.canMove = true;
-        thisUnit.rally = false;
-
         UnitType nearestThreat = AIDetermineNearestThreat(npcX,npcY);
-        // Debug.Log("nearest threat: "+nearestThreat.npcX+"-"+nearestThreat.npcY);
         // if there is no "nearest threat", then bail out!
         if (nearestThreat == null){
             return;
         }
         // true if enemy is far, false if enemy is near
         bool foeIsAdjacent = AIDetermineIfThreatIsAdjacent(nearestThreat, npcX, npcY); 
+        UnitType thisUnit = GlobalVariables.unitsMatrix [ npcX,npcY ];
+        thisUnit.canAct = true;
+        thisUnit.canMove = true;
+        thisUnit.rally = false;
+        CleanUpOldHUDreadyUnit();    
 
-        Vector2Int targetTile;  
-        if(!foeIsAdjacent){
-            targetTile = AIDetermineBestTargetTile(thisUnit, nearestThreat);
-        }else{
-            targetTile = new Vector2Int(npcX,npcY); 
-        }
-        
-        if(!foeIsAdjacent){
-            CleanUpOldHUDreadyUnit();
-            DisplayAvailableCells(npcX, npcY);
-            DisplayPathCells(targetTile.x,targetTile.y, npcX, npcY);
-            thisUnit.unitPrefab.GetComponent<MovementUnit>().MoveUnit(npcX,npcY,targetTile.x,targetTile.y);
-        }
-        if(thisUnit.canAct){
-            Debug.Log("<------------------------ enemy can act");
-        }else{
-            Debug.Log("<----------------------- enemy can NOT act");
-        }
-        if(thisUnit.canMove){
-            Debug.Log("<------------------------ enemy can move");
-        }else{
-            Debug.Log("<----------------------- enemy can NOT move");
-        }
+        AIProcessNPCMovement(thisUnit, nearestThreat, foeIsAdjacent);
 
+        /*
+            this coroutine waits a dynamic amount of time
+            this should be the LAST thing that happens in this function
+        */       
         if(thisUnit.canAct){     
-            if(GlobalVariables.moving){
-                Instance.StartCoroutine(Instance.AIWaitToStopMoving());
-            }else{
-                // AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat)
-            }            
-            // Debug.Log("<========================== after");
+            // wait until GlobalVariables.moving is false, then call AIDetermineWhichActionToTake()
+            Instance.StartCoroutine(Instance.AIWaitToStopMoving(thisUnit, nearestThreat));
         }
- 
-        CleanUpOldHUDreadyUnit();        
+             
     }
 
 
@@ -2331,22 +2340,87 @@ public class GlobalFunctions : MonoBehaviour {
 
         return bestTile;
     } // end AIDetermineBestTargetTile
-
-    IEnumerator AIWaitToStopMoving(){
-        yield return new WaitUntil(() => GlobalVariables.moving == false);
-        // AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat)
-    } 
     
-    public static void AIDetermineWhichActionToTake(UnitType thisUnit, UnitType nearestThreat){
-        if(GlobalVariables.moving){
-            // Debug.Log("I'm moving  still though dude!!!!!!");
+    public static void AIProcessNPCAction(UnitType thisUnit, UnitType nearestThreat){
+        Debug.Log("AIProcessNPCAction()");
+        // clean up LOWER PANEL
+        GlobalFunctions.DestroyGameObject("terrainStatusIconLOWER");
+        GlobalFunctions.CleanUpTerrainInfoPanel(true);
+        // Instance.StartCoroutine(DelayDestroyGameObject("tileIcon",0.17f));
+        DestroyGameObject("tileIcon");
+        // gather strategic logistics
+        bool foeIsAdjacent = AIDetermineIfThreatIsAdjacent(nearestThreat, thisUnit.posX, thisUnit.posY); 
+        // determine action
+        Enums.BattleOption battleOption = Enums.BattleOption.LightAttack;
+        if(foeIsAdjacent){
+            battleOption = Enums.BattleOption.LightAttack;
+        }else{
+            battleOption = Enums.BattleOption.Rally;
         }
-        while(!GlobalVariables.moving){
-            // Debug.Log("Finally not moving any more!!!!!");
+
+        switch(battleOption){
+            case Enums.BattleOption.LightAttack:
+                Debug.Log("AIProcessNPCAction()->LightAttack");
+
+                GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
+                
+				// determine threat cells
+				GlobalVariables.unitsMatrix[ thisUnit.posX,thisUnit.posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ thisUnit.posX,thisUnit.posY ].lightAttackRange,thisUnit.posX,thisUnit.posY );
+				// set battleOption and display threat cells
+                GlobalFunctions.DisplayThreatCells( thisUnit.posX,thisUnit.posY );
+                GlobalVariables.unitsMatrix[ thisUnit.posX,thisUnit.posY ].battleOption = Enums.BattleOption.LightAttack;
+                // display compare
+                GlobalFunctions.UpdateHUDcursorThreat(nearestThreat.posX, nearestThreat.posY);
+                if( GlobalVariables.unitsMatrix [ nearestThreat.posX,nearestThreat.posY ] != null && !GlobalVariables.freezeHUD){
+                    GlobalFunctions.DisplayCompareUnits( thisUnit.posX,thisUnit.posY,nearestThreat.posX,nearestThreat.posY );
+                    GlobalVariables.freezeHUD = true;
+                }
+                // actual attack                
+                Instance.StartCoroutine(DelayAICombatAction(thisUnit, nearestThreat, Enums.AICombatAction.CombatProcessAttack, 1.25f));
+            break;
+        }
+
+    }
+
+    public static void AIProcessNPCMovement(UnitType thisUnit, UnitType nearestThreat, bool foeIsAdjacent){
+        Vector2Int targetTile;  
+        if(!foeIsAdjacent){
+            targetTile = AIDetermineBestTargetTile(thisUnit, nearestThreat);
+        }else{
+            targetTile = new Vector2Int(thisUnit.posX,thisUnit.posY); 
+        }
+        
+        if(!foeIsAdjacent){
+            CleanUpOldHUDreadyUnit();
+            DisplayAvailableCells(thisUnit.posX, thisUnit.posY);
+            DisplayPathCells(targetTile.x,targetTile.y, thisUnit.posX, thisUnit.posY);
+            thisUnit.unitPrefab.GetComponent<MovementUnit>().MoveUnit(thisUnit.posX, thisUnit.posY,targetTile.x,targetTile.y);
         }
     }
 
+    public static IEnumerator DelayAIProcessNPCAction(UnitType thisUnit, UnitType nearestThreat, float wait){
+        yield return new WaitForSeconds(wait);
+        AIProcessNPCAction(thisUnit, nearestThreat);
+    }
 
+    IEnumerator AIWaitToStopMoving(UnitType thisUnit, UnitType nearestThreat){
+        yield return new WaitUntil(() => GlobalVariables.AIdoneMoving == true);
+        Instance.StartCoroutine(DelayAICombatAction(thisUnit, nearestThreat, Enums.AICombatAction.AIProcessNPCAction, 0.5f));
+    } 
+
+    public static IEnumerator DelayAICombatAction(UnitType thisUnit, UnitType nearestThreat, Enums.AICombatAction action, float wait){
+        yield return new WaitForSeconds(wait);
+        switch(action){
+            case Enums.AICombatAction.AIProcessNPCAction:
+                AIProcessNPCAction(thisUnit, nearestThreat);
+            break;
+            case Enums.AICombatAction.CombatProcessAttack:
+                CombatProcessAttack(thisUnit.posX,thisUnit.posY,nearestThreat.posX,nearestThreat.posY);
+            break;
+            default:
+            break;
+        }        
+    }
 
 
     // ****************************************************************************************************************************************************
@@ -2387,7 +2461,18 @@ public class GlobalFunctions : MonoBehaviour {
 
     }
 
+    public static IEnumerator WaitForSomeTime(float wait){
+        yield return new WaitForSeconds(wait);
+    }
 
+    public static IEnumerator DelayDestroyGameObject(string objectName, float wait){
+        yield return new WaitForSeconds(wait);
+        DestroyGameObject(objectName);
+    }
+
+
+
+    
 
 
 
