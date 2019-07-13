@@ -32,7 +32,8 @@ public class GlobalFunctions : MonoBehaviour {
     public GameObject STATUSICONHeavyAttack;
 
     // HUD misc
-    public GameObject swordSwoosh;
+    public GameObject combatSwordSwoosh;
+    public GameObject combatMISS;
 
     // tileTypes
     public TileType[] tileTypes;
@@ -792,8 +793,12 @@ public class GlobalFunctions : MonoBehaviour {
         return HUDThreatCell;
     }
 
-    public GameObject GetSwordSwoosh(){
-        return swordSwoosh;
+    public GameObject GetCombatSwordSwoosh(){
+        return combatSwordSwoosh;
+    }
+
+    public GameObject GetCombatMISS(){
+        return combatMISS;
     }
 
     public static IEnumerator FlashUnit(int posX, int posY, bool updateInfo=false){
@@ -994,7 +999,11 @@ public class GlobalFunctions : MonoBehaviour {
                 // col 1
 
                 // col 2                
-
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;                
+                GlobalVariables.infoPanelTerrainText2.text += "\n";                                
+                GlobalVariables.infoPanelTerrainText2.text += "Worth "+GlobalVariables.lightAttackBALworth+" BAL";
+                GlobalVariables.infoPanelTerrainText2.text += "\n";
+                GlobalVariables.infoPanelTerrainText2.text += "Costs "+GlobalVariables.lightAttackSTAcost+" STA";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
                 GlobalVariables.infoPanelTerrainText2.text += "ACC Mod: 0";
                 // icon
@@ -1724,7 +1733,7 @@ public class GlobalFunctions : MonoBehaviour {
 
     public static void SpawnSwordSwoosh(int parentX, int parentY, int targetX, int targetY){
 
-        GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetSwordSwoosh();
+        GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetCombatSwordSwoosh();
         Quaternion quatDir = FindDirectionToFaceTarget(parentX, parentY, targetX, targetY);
         float destX = 0;
         float destY = 0;
@@ -1799,6 +1808,9 @@ public class GlobalFunctions : MonoBehaviour {
             // conduct attack
                 // HIT!
             if(attackRoll >= defendRoll){ 
+                if(GlobalVariables.unitsMatrix[ targetX,targetY ] != null){
+                    GlobalVariables.unitsMatrix[ targetX,targetY ].unitPrefab.GetComponent<UnitAnimations>().PlayBleed();
+                }
                 defender.hitPoints = LessThanZero(defender.hitPoints - damageRoll);
                 defender.balance = LessThanZero(defender.balance - BALvalue); // if hit then defender loses BAL
                 if(critHit){
@@ -1809,6 +1821,8 @@ public class GlobalFunctions : MonoBehaviour {
                 GlobalVariables.infoPanelTopText.text += attacker.name+" deals "+damageRoll+" damage to "+defender.name+" with "+battleOption.ToString()+".\n\n";
                 // MISS!
             }else{ 
+                GameObject tilePrefab = GameObject.Find("Controller").GetComponent<GlobalFunctions>().GetCombatMISS();
+                Instantiate(tilePrefab, new Vector3(targetX, targetY, 0), Quaternion.identity);
                 attacker.balance = LessThanZero(attacker.balance - BALvalue); // if miss then attacker loses BAL
                 Debug.Log("attacker missed!");
                 GlobalVariables.infoPanelTopText.text = attacker.name+" attacked "+defender.name+" but missed!\n\n";
@@ -1965,9 +1979,9 @@ public class GlobalFunctions : MonoBehaviour {
 		GlobalFunctions.CleanUpCompareUnits();
 
 		GlobalFunctions.SpawnSwordSwoosh(parentX,parentY,targetX,targetY);
-		if(GlobalVariables.unitsMatrix[ targetX,targetY ] != null){
-			GlobalVariables.unitsMatrix[ targetX,targetY ].unitPrefab.GetComponent<UnitAnimations>().PlayBleed();
-		}
+		// if(GlobalVariables.unitsMatrix[ targetX,targetY ] != null){
+		// 	GlobalVariables.unitsMatrix[ targetX,targetY ].unitPrefab.GetComponent<UnitAnimations>().PlayBleed();
+		// }
 		// remove threat cells
 		GlobalFunctions.RemoveAvailableCellsFromAllUnits();
 		// process attack
@@ -2398,10 +2412,10 @@ public class GlobalFunctions : MonoBehaviour {
         }
     }
 
-    public static IEnumerator DelayAIProcessNPCAction(UnitType thisUnit, UnitType nearestThreat, float wait){
-        yield return new WaitForSeconds(wait);
-        AIProcessNPCAction(thisUnit, nearestThreat);
-    }
+    // public static IEnumerator DelayAIProcessNPCAction(UnitType thisUnit, UnitType nearestThreat, float wait){
+    //     yield return new WaitForSeconds(wait);
+    //     AIProcessNPCAction(thisUnit, nearestThreat);
+    // }
 
     IEnumerator AIWaitToStopMoving(UnitType thisUnit, UnitType nearestThreat){
         yield return new WaitUntil(() => GlobalVariables.AIdoneMoving == true);
@@ -2413,12 +2427,12 @@ public class GlobalFunctions : MonoBehaviour {
         switch(action){
             case Enums.AICombatAction.AIProcessNPCAction:
                 AIProcessNPCAction(thisUnit, nearestThreat);
-            break;
+                break;
             case Enums.AICombatAction.CombatProcessAttack:
                 CombatProcessAttack(thisUnit.posX,thisUnit.posY,nearestThreat.posX,nearestThreat.posY);
-            break;
+                break;
             default:
-            break;
+                break;
         }        
     }
 
