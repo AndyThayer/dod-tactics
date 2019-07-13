@@ -989,17 +989,29 @@ public class GlobalFunctions : MonoBehaviour {
     //     }
     // }
 
-    public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption){
+    /*
+        TODO:
+        Updated all (or most?) references to DisplayBattleOptionInfo() to include the passedUnit param
+    */
+    public static void DisplayBattleOptionInfo(Enums.BattleOption battleOption, UnitType passedUnit = null){
+
         int posX = GlobalVariables.selectedUnit.x;
         int posY = GlobalVariables.selectedUnit.y;
+        UnitType thisUnit;
+        if(passedUnit == null){
+            thisUnit = GlobalVariables.unitsMatrix[ posX,posY ];
+        }else{
+            thisUnit = passedUnit;
+        }
         // do these cases need null checks?
         switch(battleOption){
             case Enums.BattleOption.LightAttack:
                 GlobalVariables.infoPanelTerrainHeader.text = "Light Attack";
                 // col 1
 
-                // col 2                
-                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+GlobalVariables.unitsMatrix[ posX,posY ].highDamage;                
+                // col 2    
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+thisUnit.lowDamage+" - "+thisUnit.highDamage;  
+                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";                                
                 GlobalVariables.infoPanelTerrainText2.text += "Worth "+GlobalVariables.lightAttackBALworth+" BAL";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
@@ -1019,8 +1031,8 @@ public class GlobalFunctions : MonoBehaviour {
                 // col 1
 
                 // col 2
-                float highDamageTemp = GlobalVariables.unitsMatrix[ posX,posY ].highDamage;
-                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+GlobalVariables.unitsMatrix[ posX,posY ].lowDamage+" - "+CombatCalculateHeavyAttackDmg(highDamageTemp);                
+                float highDamageTemp = thisUnit.highDamage;
+                GlobalVariables.infoPanelTerrainText2.text = "DMG: "+thisUnit.lowDamage+" - "+CombatCalculateHeavyAttackDmg(highDamageTemp);                
                 GlobalVariables.infoPanelTerrainText2.text += "\n";                                
                 GlobalVariables.infoPanelTerrainText2.text += "Worth "+GlobalVariables.heavyAttackBALworth+" BAL";
                 GlobalVariables.infoPanelTerrainText2.text += "\n";
@@ -1799,11 +1811,11 @@ public class GlobalFunctions : MonoBehaviour {
                 damageRoll = (int)damageRollTemp;
             }
 
-            Debug.Log("BAL: "+attacker.balance+" attack roll before: "+attackRoll);
-            Debug.Log("BAL: "+defender.balance+" defend roll before: "+defendRoll);
+            // Debug.Log("BAL: "+attacker.balance+" attack roll before: "+attackRoll);
+            // Debug.Log("BAL: "+defender.balance+" defend roll before: "+defendRoll);
 
-            Debug.Log("attack roll: "+attackRoll);
-            Debug.Log("defend roll: "+defendRoll);
+            // Debug.Log("attack roll: "+attackRoll);
+            // Debug.Log("defend roll: "+defendRoll);
 
             // conduct attack
                 // HIT!
@@ -2376,7 +2388,7 @@ public class GlobalFunctions : MonoBehaviour {
             case Enums.BattleOption.LightAttack:
                 Debug.Log("AIProcessNPCAction()->LightAttack");
 
-                GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack);
+                GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.LightAttack, thisUnit);
                 
 				// determine threat cells
 				GlobalVariables.unitsMatrix[ thisUnit.posX,thisUnit.posY ].threatCells = GlobalFunctions.FindThreatCells( GlobalVariables.unitsMatrix[ thisUnit.posX,thisUnit.posY ].lightAttackRange,thisUnit.posX,thisUnit.posY );
