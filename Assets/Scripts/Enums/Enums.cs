@@ -67,4 +67,9 @@ public class Enums : MonoBehaviour {
         Middle
     }
 
+    public enum AICombatAction{
+        AIProcessNPCAction,
+        CombatProcessAttack
+    }
+
 }

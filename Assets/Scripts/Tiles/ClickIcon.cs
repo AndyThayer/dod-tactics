@@ -101,14 +101,13 @@ public class ClickIcon : MonoBehaviour {
 				}
 			}else if( thisUnit.canAct && castSpell ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.CastSpell);
-				Debug.Log("Cast Spell clicked!");
+				// Debug.Log("Cast Spell clicked!");
 			}else if( thisUnit.canAct && specialAbility ){
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.SpecialAbility);
-				Debug.Log("Special Ability clicked!");
+				// Debug.Log("Special Ability clicked!");
 			}else if( endTurn ){
-				Debug.Log("End Turn clickd!");
+				// Debug.Log("End Turn clickd!");
 				GlobalFunctions.DisplayBattleOptionInfo(Enums.BattleOption.EndTurn);
-				// GlobalFunctions.CombatEndTurn( posX,posY );
 				GlobalFunctions.CombatEndTurn( GlobalVariables.initRoster[0].posX,GlobalVariables.initRoster[0].posY );
 				// CombatEndTurn > CheckForEndOfTurn wipes selectedUnit values, but we still need them in this scenario
 				GlobalVariables.selectedUnit.x = posX;
