@@ -120,7 +120,7 @@ public class GlobalVariables : MonoBehaviour {
 
     // PATHFINDING
 
-        public static bool moving = false;
+        public static bool AIdoneMoving = true;
 
     // COMBAT
         public static List<Initiative> initRoster = new List<Initiative>();
